@@ -184,7 +184,12 @@ class RefraxFragmentCache {
       // from a REST perspective collections are typically modified when creating into them
       if (descriptor.classify === CLASSIFY_COLLECTION) {
         if (dataId) {
-          queryData = RefraxTools.concatUnique(queryData, dataId);
+          if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
+            queryData = RefraxTools.concatUnique(queryData, dataId);
+          }
+          else {
+            queryData = RefraxTools.isArray(dataId) ? dataId : [dataId];
+          }
         }
         // if no data was received creating into a collection we can mark it as stale
         else {

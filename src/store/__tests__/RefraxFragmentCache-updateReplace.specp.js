@@ -210,7 +210,8 @@ export default function() {
 
             it('should update existing cache data', function() {
               fragmentCache.update(TestHelper.descriptorCollection({
-                path: '/other-projects'
+                path: '/other-projects',
+                cacheStrategy: 'merge'
               }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_2]);
 
               expectedFragments[DefaultPartial]['1'] = {
@@ -240,7 +241,8 @@ export default function() {
             it('should add new cache data', function() {
               fragmentCache.update(TestHelper.descriptorCollection({
                 path: '/projects',
-                partial: MinimalPartial
+                partial: MinimalPartial,
+                cacheStrategy: 'merge'
               }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_2]);
 
               expectedFragments[MinimalPartial]['1'] = {
@@ -268,7 +270,8 @@ export default function() {
             it('should update existing cache data', function() {
               fragmentCache.update(TestHelper.descriptorCollection({
                 path: '/other-projects',
-                partial: MinimalPartial
+                partial: MinimalPartial,
+                cacheStrategy: 'merge'
               }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_2]);
 
               expectedFragments[MinimalPartial]['1'] = {
