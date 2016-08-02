@@ -181,7 +181,6 @@ class RefraxFragmentCache {
     if (resourcePath) {
       queryData = this.queries[resourcePath] && this.queries[resourcePath].data;
 
-      // from a REST perspective collections are typically modified when creating into them
       if (descriptor.classify === CLASSIFY_COLLECTION) {
         if (dataId) {
           if (descriptor.collectionStrategy === STRATEGY_MERGE) {
