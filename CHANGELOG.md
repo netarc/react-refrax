@@ -1,3 +1,12 @@
+## [v0.4.8]
+> August 2, 2016
+
+- **Minor** Remove `noPropagate` behavior from invoke fetch
+- **Minor** Allow `null` values in an Action to override default values
+- **Feature** Add `collectionStrategy` behavior for FragmentCache updating
+
+[v0.4.8]: https://github.com/netarc/refrax/compare/v0.4.7...v0.4.8
+
 ## [v0.4.7]
 > July 25, 2016
 
