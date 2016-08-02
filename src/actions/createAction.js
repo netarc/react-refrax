@@ -37,8 +37,16 @@ function mixinStatus(target) {
 
 const MixinMutable = {
   get: function(attribute) {
-    return attribute && (this.mutable[attribute] ||
-      (this.getDefault && this.getDefault()[attribute]));
+    var value;
+
+    if (!attribute) {
+      return null;
+    }
+
+    value = this.mutable[attribute];
+    return value !== undefined
+      ? value
+      : this.getDefault && this.getDefault()[attribute];
   },
   set: function(attribute, value, options = {}) {
     this.mutable[attribute] = value;
