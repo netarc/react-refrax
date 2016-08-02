@@ -15,8 +15,10 @@ const RefraxPath = require('RefraxPath');
 const RefraxOptions = require('RefraxOptions');
 const RefraxConstants = require('RefraxConstants');
 const ACTION_GET = RefraxConstants.action.get;
+const ACTION_CREATE = RefraxConstants.action.create;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
-const CACHE_STRATEGY_REPLACE = RefraxConstants.cacheStrategy.replace;
+const STRATEGY_MERGE = RefraxConstants.strategy.merge;
+const STRATEGY_REPLACE = RefraxConstants.strategy.replace;
 const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
 
 
@@ -150,6 +152,10 @@ function processStack(resourceDescriptor, stack) {
       if (item.cacheStrategy) {
         resourceDescriptor.cacheStrategy = item.cacheStrategy;
       }
+
+      if (item.collectionStrategy) {
+        resourceDescriptor.collectionStrategy = item.collectionStrategy;
+      }
     }
     else if (item instanceof RefraxParameters) {
       RefraxTools.extend(resourceDescriptor.params, item);
@@ -238,7 +244,8 @@ class RefraxResourceDescriptor {
     this.payload = {};
     this.store = null;
     this.type = null;
-    this.cacheStrategy = CACHE_STRATEGY_REPLACE;
+    this.cacheStrategy = STRATEGY_REPLACE;
+    this.collectionStrategy = action === ACTION_CREATE ? STRATEGY_MERGE : STRATEGY_REPLACE;
 
     if (!RefraxTools.isArray(stack)) {
       stack = [stack];

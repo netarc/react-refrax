@@ -17,7 +17,7 @@ const MinimalPartial = 'minimal';
 const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
 const STATUS_STALE = RefraxConstants.status.STALE;
 const TIMESTAMP_STALE = RefraxConstants.timestamp.stale;
-const CACHE_STRATEGY_MERGE = RefraxConstants.cacheStrategy.merge;
+const STRATEGY_MERGE = RefraxConstants.strategy.merge;
 
 
 const mockTimestamp = 1234567890;
@@ -118,7 +118,8 @@ export default function() {
           describe('with no specified partial', function() {
             it('should not modify cache', function() {
               fragmentCache.update(TestHelper.descriptorFrom({
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }));
 
               expect(fragmentCache).to.have.property('fragments')
@@ -132,7 +133,8 @@ export default function() {
             it('should not modify cache', function() {
               fragmentCache.update(TestHelper.descriptorFrom({
                 partial: MinimalPartial,
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }));
 
               expect(fragmentCache).to.have.property('fragments')
@@ -189,7 +191,8 @@ export default function() {
             it('should add new cache data', function() {
               fragmentCache.update(TestHelper.descriptorCollection({
                 path: '/projects',
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_2]);
 
               expectedFragments[DefaultPartial]['1'] = {
@@ -217,7 +220,8 @@ export default function() {
             it('should update existing cache data', function() {
               fragmentCache.update(TestHelper.descriptorCollection({
                 path: '/other-projects',
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_2]);
 
               expectedFragments[DefaultPartial]['1'] = {
@@ -248,7 +252,8 @@ export default function() {
               fragmentCache.update(TestHelper.descriptorCollection({
                 path: '/projects',
                 partial: MinimalPartial,
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_2]);
 
               expectedFragments[MinimalPartial]['1'] = {
@@ -277,7 +282,8 @@ export default function() {
               fragmentCache.update(TestHelper.descriptorCollection({
                 path: '/other-projects',
                 partial: MinimalPartial,
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_2]);
 
               expectedFragments[MinimalPartial]['1'] = {
@@ -310,7 +316,8 @@ export default function() {
             it('should add new cache data', function() {
               fragmentCache.update(TestHelper.descriptorCollection({
                 path: '/projects',
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }), dataSegmentFull__ID_1);
 
               expectedFragments[DefaultPartial]['1'] = {
@@ -333,7 +340,8 @@ export default function() {
             it('should update existing cache data', function() {
               fragmentCache.update(TestHelper.descriptorCollectionItem({
                 path: '/projects/3',
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }), dataSegmentUpdated__ID_3);
 
               expectedFragments[DefaultPartial]['3'] = {
@@ -359,7 +367,8 @@ export default function() {
               fragmentCache.update(TestHelper.descriptorCollection({
                 path: '/projects',
                 partial: MinimalPartial,
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }), dataSegmentFull__ID_1);
 
               expectedFragments[MinimalPartial]['1'] = {
@@ -383,7 +392,8 @@ export default function() {
               fragmentCache.update(TestHelper.descriptorCollectionItem({
                 path: '/projects/3',
                 partial: MinimalPartial,
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }), dataSegmentUpdated__ID_3);
 
               expectedFragments[MinimalPartial]['3'] = {
@@ -411,7 +421,8 @@ export default function() {
             it('should add new cache data', function() {
               fragmentCache.update(TestHelper.descriptorResource({
                 path: '/resource',
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }), dataSegmentFull_Resource);
 
               expectedQueries['/resource'] = {
@@ -429,7 +440,8 @@ export default function() {
             it('should update existing cache data', function() {
               fragmentCache.update(TestHelper.descriptorResource({
                 path: '/other-resource',
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }), dataSegmentUpdated_Resource);
 
               expectedQueries['/other-resource'] = {
@@ -468,7 +480,8 @@ export default function() {
               fragmentCache.update(TestHelper.descriptorResource({
                 path: '/other-resource',
                 partial: MinimalPartial,
-                cacheStrategy: CACHE_STRATEGY_MERGE
+                cacheStrategy: STRATEGY_MERGE,
+                collectionStrategy: STRATEGY_MERGE
               }), dataSegmentUpdated_Resource);
 
               expectedQueries['/other-resource'] = {
@@ -495,7 +508,8 @@ export default function() {
         describe('with no specified partial', function() {
           it('should not modify cache', function() {
             fragmentCache.update(TestHelper.descriptorFrom({
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }));
 
             expect(fragmentCache).to.have.property('fragments')
@@ -509,7 +523,8 @@ export default function() {
           it('should not modify cache', function() {
             fragmentCache.update(TestHelper.descriptorFrom({
               partial: MinimalPartial,
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }));
 
             expect(fragmentCache).to.have.property('fragments')
@@ -526,7 +541,8 @@ export default function() {
           it('should mark new cache data as stale', function() {
             fragmentCache.update(TestHelper.descriptorFrom({
               path: '/projects',
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }), null);
 
             expectedQueries['/projects'] = {
@@ -544,7 +560,8 @@ export default function() {
           it('should mark existing cache data as stale', function() {
             fragmentCache.update(TestHelper.descriptorFrom({
               path: '/other-projects',
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }), null);
 
             expectedQueries['/other-projects'] = {
@@ -565,7 +582,8 @@ export default function() {
             fragmentCache.update(TestHelper.descriptorFrom({
               path: '/projects',
               partial: MinimalPartial,
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }), null);
 
             expectedQueries['/projects'] = {
@@ -584,7 +602,8 @@ export default function() {
             fragmentCache.update(TestHelper.descriptorFrom({
               path: '/other-projects',
               partial: MinimalPartial,
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }), null);
 
             expectedQueries['/other-projects'] = {
@@ -607,7 +626,8 @@ export default function() {
           it('should mark new cache data as stale', function() {
             fragmentCache.update(TestHelper.descriptorCollection({
               path: '/projects',
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }), null);
 
             expectedQueries['/projects'] = {
@@ -626,7 +646,8 @@ export default function() {
             fragmentCache.update(TestHelper.descriptorCollectionItem({
               path: '/projects/3',
               id: 3,
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }), null);
 
             expectedFragments[DefaultPartial]['3'] = {
@@ -652,7 +673,8 @@ export default function() {
             fragmentCache.update(TestHelper.descriptorCollection({
               path: '/projects',
               partial: MinimalPartial,
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }), null);
 
             expectedQueries['/projects'] = {
@@ -672,7 +694,8 @@ export default function() {
               path: '/projects/3',
               id: 3,
               partial: MinimalPartial,
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }), null);
 
             expectedFragments[MinimalPartial]['3'] = {
@@ -700,7 +723,8 @@ export default function() {
           it('should mark new cache data as stale', function() {
             fragmentCache.update(TestHelper.descriptorResource({
               path: '/resource',
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }), null);
 
             expectedQueries['/resource'] = {
@@ -718,7 +742,8 @@ export default function() {
           it('should mark existing cache data as stale', function() {
             fragmentCache.update(TestHelper.descriptorResource({
               path: '/other-resource',
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }), null);
 
             expectedQueries['/other-resource'] = {
@@ -739,7 +764,8 @@ export default function() {
             fragmentCache.update(TestHelper.descriptorResource({
               path: '/resource',
               partial: MinimalPartial,
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }), null);
 
             expectedQueries['/resource'] = {
@@ -758,7 +784,8 @@ export default function() {
             fragmentCache.update(TestHelper.descriptorResource({
               path: '/other-resource',
               partial: MinimalPartial,
-              cacheStrategy: CACHE_STRATEGY_MERGE
+              cacheStrategy: STRATEGY_MERGE,
+              collectionStrategy: STRATEGY_MERGE
             }), null);
 
             expectedQueries['/other-resource'] = {

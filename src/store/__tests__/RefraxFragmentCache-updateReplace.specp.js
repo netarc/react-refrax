@@ -226,7 +226,7 @@ export default function() {
               expectedQueries['/other-projects'] = {
                 timestamp: mockTimestamp,
                 status: STATUS_COMPLETE,
-                data: ['3', '4', '1', '2']
+                data: ['1', '2']
               };
 
               expect(fragmentCache).to.have.property('fragments')
@@ -284,7 +284,7 @@ export default function() {
               expectedQueries['/other-projects'] = {
                 timestamp: mockTimestamp,
                 status: STATUS_COMPLETE,
-                data: ['3', '4', '1', '2']
+                data: ['1', '2']
               };
 
               expect(fragmentCache).to.have.property('fragments')

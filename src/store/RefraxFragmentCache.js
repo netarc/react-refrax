@@ -8,7 +8,7 @@
 const RefraxConstants = require('RefraxConstants');
 const RefraxTools = require('RefraxTools');
 const RefraxFragmentResult = require('RefraxFragmentResult');
-const CACHE_STRATEGY_MERGE = RefraxConstants.cacheStrategy.merge;
+const STRATEGY_MERGE = RefraxConstants.strategy.merge;
 const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
@@ -184,9 +184,14 @@ class RefraxFragmentCache {
       // from a REST perspective collections are typically modified when creating into them
       if (descriptor.classify === CLASSIFY_COLLECTION) {
         if (dataId) {
-          queryData = RefraxTools.concatUnique(queryData, dataId);
+          if (descriptor.collectionStrategy === STRATEGY_MERGE) {
+            queryData = RefraxTools.concatUnique(queryData, dataId);
+          }
+          else {
+            queryData = RefraxTools.isArray(dataId) ? dataId : [dataId];
+          }
         }
-        // if no data was received creating into a collection we can mark it as stale
+        // if no data was received modifying a collection we can mark it as stale
         else {
           result.status = STATUS_STALE;
           result.timestamp = TIMESTAMP_STALE;
@@ -196,7 +201,7 @@ class RefraxFragmentCache {
         queryData = dataId;
       }
       else if (data) {
-        if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
+        if (descriptor.cacheStrategy === STRATEGY_MERGE) {
           if (RefraxTools.isArray(queryData) || RefraxTools.isArray(data)) {
             queryData = RefraxTools.concatUnique(queryData, data);
           }
@@ -245,7 +250,7 @@ class RefraxFragmentCache {
       snapshot = JSON.stringify(fragmentData);
     }
 
-    if (descriptor.cacheStrategy === CACHE_STRATEGY_MERGE) {
+    if (descriptor.cacheStrategy === STRATEGY_MERGE) {
       fragmentData = RefraxTools.extend(fragmentData, data);
     }
     // default replace strategy

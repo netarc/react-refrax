@@ -28,7 +28,7 @@ export default {
     item: 'item',
     resource: 'resource'
   },
-  cacheStrategy: {
+  strategy: {
     replace: 'replace',
     merge: 'merge'
   }
