@@ -1,3 +1,10 @@
+## [v0.4.9]
+> August 2, 2016
+
+- **Minor** Pass `MutableResource` options into invocation methods
+
+[v0.4.9]: https://github.com/netarc/refrax/compare/v0.4.8...v0.4.9
+
 ## [v0.4.8]
 > August 2, 2016
 
