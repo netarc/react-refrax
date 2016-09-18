@@ -17,7 +17,7 @@ var RefraxResource = null;
 
 // Determine if a stack matches the ending of another
 function compareStack(part, stack) {
-  stack = stack.slice(Math.max(stack.length - part.length, 1));
+  stack = stack.slice(Math.max(stack.length - part.length, 0));
   return JSON.stringify(part) === JSON.stringify(stack);
 }
 
