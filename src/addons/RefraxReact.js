@@ -226,3 +226,10 @@ export const Mixin = {
 };
 
 RefraxTools.extend(Mixin, MixinBase);
+
+export default {
+  Shims,
+  attach,
+  extend,
+  Mixin
+};
