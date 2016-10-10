@@ -1,3 +1,11 @@
+## [v0.4.10]
+> September 10, 2016
+
+- **Minor** Fix default import for `RefraxReact`
+- **Minor** Fix SchemaNodeAccessor compareStack slicing bug
+
+[v0.4.10]: https://github.com/netarc/refrax/compare/v0.4.9...v0.4.10
+
 ## [v0.4.9]
 > August 2, 2016
 
