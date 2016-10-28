@@ -22,9 +22,11 @@ class RefraxQueryParameters {
     }
   }
 
-  constructor(params = {}) {
-    RefraxQueryParameters.validate(params);
-    RefraxTools.extend(this, params);
+  constructor(...args) {
+    RefraxTools.each(args, (params) => {
+      RefraxQueryParameters.validate(params);
+      RefraxTools.extend(this, params);
+    });
   }
 }
 

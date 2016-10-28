@@ -14,7 +14,7 @@ const RefraxTools = require('RefraxTools');
  */
 class RefraxParameters {
   static validate(params) {
-    if (!RefraxTools.isPlainObject(params)) {
+    if (params && !RefraxTools.isPlainObject(params)) {
       throw new TypeError(
         'RefraxParameters expected argument of type `Object`\n\r' +
         'found: `' + params + '`'
@@ -22,9 +22,11 @@ class RefraxParameters {
     }
   }
 
-  constructor(params = {}) {
-    RefraxParameters.validate(params);
-    RefraxTools.extend(this, params);
+  constructor(...args) {
+    RefraxTools.each(args, (params) => {
+      RefraxParameters.validate(params);
+      RefraxTools.extend(this, params);
+    });
   }
 }
 

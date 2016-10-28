@@ -10,11 +10,6 @@ const RefraxParameters = require('RefraxParameters');
 const expect = chai.expect;
 
 
-const dataParams = {
-  'foo': 'bar',
-  'baz': 123
-};
-
 /* eslint-disable no-new */
 describe('RefraxParameters', function() {
   describe('instantiation', function() {
@@ -30,6 +25,18 @@ describe('RefraxParameters', function() {
       expect(function() {
         new RefraxParameters(function() {});
       }).to.throw(Error, 'RefraxParameters expected argument of type `Object`');
+
+      expect(function() {
+        new RefraxParameters({}, 123);
+      }).to.throw(Error, 'RefraxParameters expected argument of type `Object`');
+
+      expect(function() {
+        new RefraxParameters({}, 'bar');
+      }).to.throw(Error, 'RefraxParameters expected argument of type `Object`');
+
+      expect(function() {
+        new RefraxParameters({}, function() {});
+      }).to.throw(Error, 'RefraxParameters expected argument of type `Object`');
     });
 
     it('should accept no arguments', function() {
@@ -41,11 +48,14 @@ describe('RefraxParameters', function() {
     });
 
     it('should accept correct arguments and look like a RefraxParameters', function() {
-      var result = new RefraxParameters(dataParams);
+      var result = new RefraxParameters({ 'foo': 'bar' }, { 'baz': 123 });
 
       expect(result)
         .that.is.an.instanceof(RefraxParameters)
-        .to.deep.equal(dataParams);
+        .to.deep.equal({
+          'foo': 'bar',
+          'baz': 123
+        });
     });
   });
 });
