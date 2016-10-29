@@ -21,7 +21,7 @@ function compareStack(part, stack) {
   return JSON.stringify(part) === JSON.stringify(stack);
 }
 
-function enumerateLeafs(node, stack, action) {
+function enumerateNodeLeafs(node, stack, action) {
   RefraxTools.each(node.leafs, function(leaf, key) {
     if (!leaf.stack || compareStack(leaf.stack, stack)) {
       action(key, leaf.node, stack.concat(leaf.node.subject));
@@ -85,7 +85,7 @@ class RefraxSchemaNodeAccessor {
       RefraxTools.extend(this, mixin);
     });
 
-    enumerateLeafs(node, stack, function(key, leafNode, leafStack) {
+    enumerateNodeLeafs(node, stack, function(key, leafNode, leafStack) {
       Object.defineProperty(self, key, {
         get: function() {
           return new RefraxSchemaNodeAccessor(leafNode, node, leafStack);
@@ -94,14 +94,21 @@ class RefraxSchemaNodeAccessor {
     });
   }
 
-  inspect(result = {}) {
-    var node = this.__node
-      , stack = this.__stack;
+  enumerateLeafs(iteratee) {
+    const node = this.__node;
+    const stack = this.__stack;
 
-    enumerateLeafs(node, stack, function(key, leafNode, leafStack) {
-      var descriptor = new RefraxResourceDescriptor(ACTION_INSPECT, leafStack);
+    enumerateNodeLeafs(node, stack, function(key, leafNode, leafStack) {
+      const accessor = new RefraxSchemaNodeAccessor(leafNode, node, leafStack);
+      iteratee(key, accessor);
+    });
+  }
+
+  inspect(result = {}) {
+    this.enumerateLeafs(function(key, accessor) {
+      var descriptor = new RefraxResourceDescriptor(ACTION_INSPECT, accessor.__stack);
       result[descriptor.path] = descriptor;
-      new RefraxSchemaNodeAccessor(leafNode, node, leafStack).inspect(result);
+      accessor.inspect(result);
     });
 
     return result;
@@ -110,11 +117,10 @@ class RefraxSchemaNodeAccessor {
   invalidate(options = {}) {
     // circular dependency workaround
     (RefraxResource || (RefraxResource = require('RefraxResource')))
-      .from(this, new RefraxOptions(RefraxTools.extend({
+      .from(this, new RefraxOptions(options, {
         noFetchGet: true,
-        noSubscribe: true,
-        params: options.params
-      })))
+        noSubscribe: true
+      }))
       .invalidate(options);
   }
 

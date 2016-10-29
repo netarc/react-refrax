@@ -52,6 +52,30 @@ describe('RefraxSchemaNodeAccessor', function() {
   });
 
   describe('methods', function() {
+    describe('enumerateLeafs', function() {
+      it('should only enumerate shallow leafs', function() {
+        var nodeAccessor = new RefraxSchemaNodeAccessor(new RefraxSchemaNode())
+          , schemaNode = new RefraxSchemaNode(123)
+          , schemaNodeWithLiteral = new RefraxSchemaNode(123, 'foo')
+          , schemaNodeNested = new RefraxSchemaNode(123)
+          , keys = []
+          , accessorNodes = [];
+
+        nodeAccessor.addLeaf('bar', schemaNode);
+        nodeAccessor.addLeaf(schemaNodeWithLiteral);
+        nodeAccessor.bar.addLeaf('baz', schemaNodeNested);
+
+        nodeAccessor.enumerateLeafs((key, accessor) => {
+          keys.push(key);
+          accessorNodes.push(accessor.__node);
+        });
+
+        expect(keys).to.deep.equal(['bar', 'foo']);
+        expect(accessorNodes[0]).to.equal(schemaNode);
+        expect(accessorNodes[1]).to.equal(schemaNodeWithLiteral);
+      });
+    });
+
     describe('addLeaf', function() {
       it('should only accept a leaf object optionally preceeded by an identifier', function() {
         var nodeAccessor = new RefraxSchemaNodeAccessor(new RefraxSchemaNode())
