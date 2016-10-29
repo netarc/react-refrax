@@ -20,6 +20,7 @@ const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
 const STRATEGY_MERGE = RefraxConstants.strategy.merge;
 const STRATEGY_REPLACE = RefraxConstants.strategy.replace;
 const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
+const CLASSIFY_INVALID = RefraxConstants.classify.invalid;
 
 
 // simple-depth serialize to avoid circular references for error debugging
@@ -43,7 +44,8 @@ function serializer() {
 function fillURI(uri, params, paramMap) {
   var vars = uri.match(/:(\w+)/g) || []
     , lastParamKey = null
-    , i, v, value;
+    , i, v, value
+    , errors = [];
 
   for (i = 0; i < vars.length; i++) {
     v = vars[i];
@@ -57,14 +59,15 @@ function fillURI(uri, params, paramMap) {
       uri = uri.replace(v, value);
     }
     else {
-      throw new TypeError('Failed to map path component `' + lastParamKey + '` from `' + uri + '`' +
-      ' while using params: ' + JSON.stringify(params, serializer()));
+      errors.push(lastParamKey);
+      uri = uri.replace(v, ':' + lastParamKey);
     }
   }
 
   return {
     lastParamKey: lastParamKey,
-    uri: uri
+    uri: uri,
+    errors: errors
   };
 }
 
@@ -101,12 +104,13 @@ function encodeURIData(data) {
  */
 function processStack(resourceDescriptor, stack) {
   var action = resourceDescriptor.action
-    , canResolveParams = action !== 'inspect'
+    , errorOnInvalid = action !== 'inspect'
     , resolvedParamMap = {}
     , resolvedPath = []
     , resolvedParamId = null
     , resolvedQueryParams = {}
     , resolvedAppendPaths = []
+    , pathErrors = []
     , i, item, definition
     , lastURIParamId = null
     , key, result;
@@ -156,6 +160,10 @@ function processStack(resourceDescriptor, stack) {
       if (item.collectionStrategy) {
         resourceDescriptor.collectionStrategy = item.collectionStrategy;
       }
+
+      if (typeof(item.errorOnInvalid) === 'boolean') {
+        errorOnInvalid = item.errorOnInvalid;
+      }
     }
     else if (item instanceof RefraxParameters) {
       RefraxTools.extend(resourceDescriptor.params, item);
@@ -177,19 +185,17 @@ function processStack(resourceDescriptor, stack) {
     definition = item.definition;
 
     if (item instanceof RefraxTreeNode) {
+      result = null;
+
       if (definition.uri) {
-        result = canResolveParams ? fillURI(definition.uri,
-                                            resourceDescriptor.params,
-                                            resolvedParamMap)
-                                  : {uri: definition.uri};
-        resolvedPath.push(result.uri);
-        lastURIParamId = result.lastParamKey;
+        result = fillURI(definition.uri, resourceDescriptor.params, resolvedParamMap);
       }
       else if (definition.paramId) {
-        result = canResolveParams ? fillURI(':'+definition.paramId,
-                                            resourceDescriptor.params,
-                                            resolvedParamMap)
-                                  : {uri: ':'+definition.paramId};
+        result = fillURI(':'+definition.paramId, resourceDescriptor.params, resolvedParamMap);
+      }
+
+      if (result) {
+        pathErrors = pathErrors.concat(result.errors);
         resolvedPath.push(result.uri);
         lastURIParamId = result.lastParamKey;
       }
@@ -230,6 +236,17 @@ function processStack(resourceDescriptor, stack) {
   resourceDescriptor.event = ['change'].concat(resolvedParamId || []).join(':');
   resourceDescriptor.id = resolvedParamId;
   resourceDescriptor.fragments = resourceDescriptor.fragments.reverse();
+
+  if (pathErrors.length > 0) {
+    resourceDescriptor.valid = false;
+
+    if (errorOnInvalid) {
+      throw new TypeError(
+        'Failed to map path: `' + resourceDescriptor.path + '` using params: ' +
+        JSON.stringify(resourceDescriptor.params, serializer())
+      );
+    }
+  }
 }
 
 class RefraxResourceDescriptor {
@@ -246,6 +263,7 @@ class RefraxResourceDescriptor {
     this.type = null;
     this.cacheStrategy = STRATEGY_REPLACE;
     this.collectionStrategy = action === ACTION_CREATE ? STRATEGY_MERGE : STRATEGY_REPLACE;
+    this.valid = true;
 
     if (!RefraxTools.isArray(stack)) {
       stack = [stack];
