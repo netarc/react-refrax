@@ -7,6 +7,7 @@
  */
 const RefraxTools = require('RefraxTools');
 const RefraxConstants = require('RefraxConstants');
+const RefraxOptions = require('RefraxOptions');
 const RefraxResourceBase = require('RefraxResourceBase');
 const invokeDescriptor = require('invokeDescriptor');
 const STATUS_STALE = RefraxConstants.status.STALE;
@@ -42,42 +43,39 @@ class RefraxResource extends RefraxResourceBase {
   constructor(accessor, ...args) {
     super(accessor, ...args);
 
-    var self = this
-      , descriptor;
-
     Object.defineProperty(this, '_disposers', {value: []});
 
-    descriptor = this._generateDescriptor();
+    this._generateDescriptor((descriptor) => {
+      // NOTE: we invalidate before potentially subscribing
+      if (this._options.invalidate) {
+        // shortcut for no options
+        if (this._options.invalidate === true) {
+          this._options.invalidate = {noPropagate: true};
+        }
 
-    // NOTE: we invalidate before potentially subscribing
-    if (this._options.invalidate) {
-      // shortcut for no options
-      if (this._options.invalidate === true) {
-        this._options.invalidate = {noPropagate: true};
+        this.invalidate(this._options.invalidate);
       }
 
-      this.invalidate(this._options.invalidate);
-    }
+      if (this._options.noSubscribe !== true && descriptor.store) {
+        this._disposers.push(
+          descriptor.store.subscribe(descriptor.event, (event) => {
+            // If we are an item resource and we encounter a destroy event, we switch on the
+            // 'no fetching' option so we can still passively poll the data but not cause a re-fetch
+            if (descriptor.classify === CLASSIFY_ITEM && event.action === 'destroy') {
+              this._options.noFetchGet = true;
+            }
 
-    if (this._options.noSubscribe !== true && descriptor.store) {
-      this._disposers.push(
-        descriptor.store.subscribe(descriptor.event, function(event) {
-          // If we are an item resource and we encounter a destroy event, we switch on the
-          // 'no fetching' option so we can still passively poll the data but not cause a re-fetch
-          if (descriptor.classify === CLASSIFY_ITEM && event.action === 'destroy') {
-            self._options.noFetchGet = true;
-          }
+            this._fetchCache();
 
-          self._fetchCache();
+            if (event.noPropagate !== true) {
+              this.emit('change', this, event);
+            }
+          })
+        );
+      }
 
-          if (event.noPropagate !== true) {
-            self.emit('change', self, event);
-          }
-        })
-      );
-    }
-
-    this._fetchCache();
+      this._fetchCache();
+    });
   }
 
   _dispose() {
@@ -92,8 +90,10 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   _fetch() {
-    return invokeDescriptor.fetch(this._generateDescriptor(), {
-      noFetchGet: this._options.noFetchGet
+    return this._generateDescriptor((descriptor) => {
+      return invokeDescriptor.fetch(descriptor, {
+        noFetchGet: this._options.noFetchGet
+      });
     });
   }
 
@@ -105,11 +105,21 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   invalidate(options) {
-    var descriptor = this._generateDescriptor();
+    const descriptorOptions = new RefraxOptions({ errorOnInvalid: !!options.errorOnInvalid });
 
-    if (descriptor.store) {
-      descriptor.store.invalidate(descriptor, options);
-    }
+    this._generateDescriptor(null, descriptorOptions, (descriptor) => {
+      if (descriptor.store) {
+        descriptor.store.invalidate(descriptor, options);
+      }
+
+      if (options.cascade === true) {
+        options = RefraxTools.extend({}, options, { errorOnInvalid: false });
+
+        this._accessor.enumerateLeafs((key, accessor) => {
+          accessor.invalidate(options);
+        });
+      }
+    });
   }
 
   isLoading() {

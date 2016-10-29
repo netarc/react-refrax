@@ -63,7 +63,7 @@ class RefraxResourceBase {
 
     mixinSubscribable(this);
 
-    Object.defineProperty(this, '_accessorStack', {value: accessor.__stack});
+    Object.defineProperty(this, '_accessor', {value: accessor});
     Object.defineProperty(this, '_paths', {value: paths});
     Object.defineProperty(this, '_options', {value: options});
     Object.defineProperty(this, '_parameters', {value: parameters});
@@ -104,7 +104,7 @@ class RefraxResourceBase {
     }
 
     return [].concat(
-      this._accessorStack,
+      this._accessor.__stack,
       this._paths,
       this._parameters,
       this._queryParams,
@@ -113,10 +113,20 @@ class RefraxResourceBase {
     );
   }
 
-  _generateDescriptor(action, data) {
-    var stack = this._generateStack().concat(data || []);
+  _generateDescriptor(action, data, onValid) {
+    if (RefraxTools.isFunction(action)) {
+      onValid = action;
+      action = null;
+    }
 
-    return new RefraxResourceDescriptor(action || ACTION_GET, stack);
+    const stack = this._generateStack().concat(data || []);
+    const descriptor = new RefraxResourceDescriptor(action || ACTION_GET, stack);
+
+    if (!onValid) {
+      return descriptor;
+    }
+
+    return descriptor.valid && onValid(descriptor);
   }
 }
 

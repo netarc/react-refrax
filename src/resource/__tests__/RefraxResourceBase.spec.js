@@ -12,6 +12,7 @@ const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
 const RefraxPath = require('RefraxPath');
 const RefraxQueryParameters = require('RefraxQueryParameters');
+const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const RefraxConstants = require('RefraxConstants');
 const createSchemaCollection = require('createSchemaCollection');
 const ACTION_GET = RefraxConstants.action.get;
@@ -62,8 +63,8 @@ describe('RefraxResourceBase', function() {
       expect(resource)
         .to.be.instanceof(RefraxResourceBase);
       expect(resource)
-        .to.have.property('_accessorStack')
-          .that.is.an.instanceof(Array);
+        .to.have.property('_accessor')
+          .that.is.an.instanceof(RefraxSchemaNodeAccessor);
       expect(resource)
         .to.have.property('_paths')
           .that.is.an.instanceof(Array);
