@@ -57,5 +57,15 @@ describe('RefraxQueryParameters', function() {
           'baz': 123
         });
     });
+
+    it('should accept another RefraxQueryParameters instance', function() {
+      var result = new RefraxQueryParameters(new RefraxQueryParameters({ 'foo': 'bar' }));
+
+      expect(result)
+        .that.is.an.instanceof(RefraxQueryParameters)
+        .to.deep.equal({
+          'foo': 'bar'
+        });
+    });
   });
 });

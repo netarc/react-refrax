@@ -57,5 +57,15 @@ describe('RefraxParameters', function() {
           'baz': 123
         });
     });
+
+    it('should accept another RefraxParameters instance', function() {
+      var result = new RefraxParameters(new RefraxParameters({ 'foo': 'bar' }));
+
+      expect(result)
+        .that.is.an.instanceof(RefraxParameters)
+        .to.deep.equal({
+          'foo': 'bar'
+        });
+    });
   });
 });

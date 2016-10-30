@@ -13,7 +13,8 @@ const RefraxTools = require('RefraxTools');
  */
 class RefraxOptions {
   static validate(options) {
-    if (options && !RefraxTools.isPlainObject(options)) {
+    if (options && !(options instanceof RefraxOptions ||
+                     RefraxTools.isPlainObject(options))) {
       throw new TypeError(
         'RefraxOptions expected argument of type `Object`\n\r' +
         'found: `' + options + '`'
