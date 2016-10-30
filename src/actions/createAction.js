@@ -25,27 +25,34 @@ class ActionInvoker {
   mutableFrom(accessor, ...args) {
     return RefraxMutableResource.from(accessor, new RefraxOptions(this._options.resource), ...args);
   }
+
+  invalidate(items, options) {
+    options = RefraxTools.extend({}, this._options.resource, options);
+    items = [].concat(items || []);
+
+    RefraxTools.each(items, (item) => item.invalidate(options));
+  }
 }
 
-function invokeAction(emitters, method, params, options, args) {
+function invokeAction(emitters, method, data, options, args) {
   var action = emitters[0]
     , invoker = new ActionInvoker(action, options)
     , promise, result, i;
 
   // reset errors on invocation
   action.errors = {};
-  params = RefraxTools.extend(
+  data = RefraxTools.extend(
     {},
     options.includeDefault === true ? action.getDefault() : null,
     action.mutable,
-    params
+    data
   );
 
   for (i=0; i<emitters.length; i++) {
     emitters[i].emit('start');
   }
 
-  promise = result = method.apply(invoker, [params].concat(args));
+  promise = result = method.apply(invoker, [data].concat(args));
 
   if (!RefraxTools.isPromise(result)) {
     promise = new Promise(function(resolve, reject) {
@@ -79,8 +86,8 @@ function invokeAction(emitters, method, params, options, args) {
 }
 
 function createActionInstance(Action, method, options) {
-  function ActionInstance(params, ...args) {
-    return invokeAction([ActionInstance, Action], method, params, options, args);
+  function ActionInstance(data, ...args) {
+    return invokeAction([ActionInstance, Action], method, data, options, args);
   }
 
   ActionInstance.getDefault = function() {
@@ -118,12 +125,12 @@ function createAction(method) {
    * An Action can either be globally invoked or instantiated and invoked on that
    * particular instance.
    */
-  function Action(params, ...args) {
+  function Action(arg1, ...args) {
     if (this instanceof Action) {
-      return createActionInstance(Action, method, params);
+      return createActionInstance(Action, method, arg1);
     }
     else {
-      return invokeAction([Action], method, params, {}, args);
+      return invokeAction([Action], method, arg1, {}, args);
     }
   }
   // templates all share the same prototype so they can be identified above with instanceof
