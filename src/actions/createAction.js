@@ -8,7 +8,7 @@
 const Promise = require('bluebird');
 const mixinSubscribable = require('mixinSubscribable');
 const mixinMutable = require('mixinMutable');
-const mixinStatus = require('mixinStatus');
+const mixinConfigurable = require('mixinConfigurable');
 const RefraxMutableResource = require('RefraxMutableResource');
 const RefraxOptions = require('RefraxOptions');
 const RefraxResource = require('RefraxResource');
@@ -17,81 +17,97 @@ const prototypeAction = {};
 
 
 class ActionInvoker {
-  constructor(action, options) {
+  constructor(action) {
     Object.defineProperty(this, '_action', {value: action});
-    Object.defineProperty(this, '_options', {value: options});
   }
 
   mutableFrom(accessor, ...args) {
-    return RefraxMutableResource.from(accessor, new RefraxOptions(this._options.resource), ...args);
+    const action = this._action;
+
+    return RefraxMutableResource.from(accessor,
+      new RefraxOptions(action._options.resource),
+      action._parameters,
+      action._queryParams,
+      ...args);
   }
 
   invalidate(items, options) {
-    options = RefraxTools.extend({}, this._options.resource, options);
+    options = RefraxTools.extend({}, this._action._options.resource, options);
     items = [].concat(items || []);
 
     RefraxTools.each(items, (item) => item.invalidate(options));
   }
 }
 
-function invokeAction(emitters, method, data, options, args) {
-  var action = emitters[0]
-    , invoker = new ActionInvoker(action, options)
-    , promise, result, i;
+class ActionEntity {
+  constructor(method) {
+    this._method = method;
+    this._promises = [];
 
-  // reset errors on invocation
-  action.errors = {};
-  data = RefraxTools.extend(
-    {},
-    options.includeDefault === true ? action.getDefault() : null,
-    action.mutable,
-    data
-  );
-
-  for (i=0; i<emitters.length; i++) {
-    emitters[i].emit('start');
+    mixinSubscribable(this);
   }
 
-  promise = result = method.apply(invoker, [data].concat(args));
+  invoke(Action, args) {
+    const options = Action._options;
+    const stack = Action._stack;
+    const stackSize = stack.length;
+    const invoker = new ActionInvoker(Action);
+    const entity = stack[stackSize-1];
+    var promise, result, i;
 
-  if (!RefraxTools.isPromise(result)) {
-    promise = new Promise(function(resolve, reject) {
-      resolve(result);
-    });
-  }
+    // reset errors on invocation
+    Action.errors = {};
+    const data = RefraxTools.extend(
+      {},
+      options.includeDefault === true ? Action.getDefault() : null,
+      Action._state,
+      args.shift()
+    );
 
-  promise.catch(function(err) {
-    if (RefraxTools.isPlainObject(err.response.data)) {
-      action.errors = RefraxTools.extend({}, err.response.data);
-      action.emit('mutated', {
-        type: 'errors'
+    for (i=0; i<stackSize; i++) {
+      stack[i]._promises.push(invoker);
+    }
+    for (i=0; i<stackSize; i++) {
+      stack[i].emit('start', invoker);
+    }
+
+    promise = result = this._method.apply(invoker, [data].concat(args));
+
+    if (!RefraxTools.isPromise(result)) {
+      promise = new Promise(function(resolve, reject) {
+        resolve(result);
       });
     }
-  });
 
-  action._promises.push(promise);
-  function finalize() {
-    var i = action._promises.indexOf(promise);
-    if (i > -1) {
-      action._promises.splice(i, 1);
-    }
+    promise.catch(function(err) {
+      if (RefraxTools.isPlainObject(err.response.data)) {
+        Action.errors = RefraxTools.extend({}, err.response.data);
+        entity.emit('mutated', {
+          type: 'errors'
+        });
+      }
+    });
 
-    for (i=0; i<emitters.length; i++) {
-      emitters[i].emit('finish');
+    function finalize() {
+      for (i=0; i<stackSize; i++) {
+        const n = stack[i]._promises.indexOf(invoker);
+        if (n > -1) {
+          stack[i]._promises.splice(n, 1);
+        }
+      }
+      for (i=0; i<stackSize; i++) {
+        stack[i].emit('finish', invoker);
+      }
     }
+    promise.then(finalize, finalize);
+
+    return promise;
   }
-  promise.then(finalize, finalize);
-
-  return promise;
 }
 
-function createActionInstance(Action, method, options) {
-  function ActionInstance(data, ...args) {
-    return invokeAction([ActionInstance, Action], method, data, options, args);
-  }
-
-  ActionInstance.getDefault = function() {
-    var result = ActionInstance.default || {};
+const MixinAction = {
+  getDefault: function() {
+    var result = this._options.default || {};
 
     if (RefraxTools.isFunction(result)) {
       result = result();
@@ -101,46 +117,75 @@ function createActionInstance(Action, method, options) {
       result = result.data || {};
     }
     else if (!RefraxTools.isPlainObject(result)) {
-      throw new TypeError('ActionInstance ' + Action + ' failed to resolve default value');
+      throw new TypeError('ActionInstance ' + this + ' failed to resolve default value');
     }
 
     return result;
+  },
+  clone: function() {
+    return _createAction(this._stack, this);
+  }
+};
+
+const MixinStatus = {
+  isPending: function() {
+    return this._entity._promises.length > 0;
+  },
+  isLoading: function() {
+    var _default = this._options.default;
+    return _default && typeof(_default.isLoading) === 'function' && _default.isLoading();
+  },
+  hasData: function() {
+    var _default = this._options.default;
+    return _default && typeof(_default.hasData) === 'function' && _default.hasData()
+      || !!this.getDefault();
+  },
+  isStale: function() {
+    var _default = this._options.default;
+    return _default && typeof(_default.isStale) === 'function' && _default.isStale();
+  }
+};
+
+function _createAction(stack, from = null) {
+  const entity = stack[stack.length-1];
+
+  function Action(...args) {
+    if (this instanceof Action) {
+      return _createAction(stack.concat(new ActionEntity(entity._method)));
+    }
+    else {
+      return entity.invoke(Action, args);
+    }
+  }
+
+  // templates all share the same prototype so they can be identified above with instanceof
+  RefraxTools.setPrototypeOf(Action, prototypeAction);
+  Action.toString = function() {
+    return 'RefraxAction(' + stack.length + ') => ' + entity._method.toString();
   };
 
-  mixinSubscribable(ActionInstance);
-  mixinStatus(ActionInstance);
-  mixinMutable(ActionInstance);
+  // Method forwarding (making subscribable)
+  Action.subscribe = entity.subscribe.bind(entity);
+  Action.emit = entity.emit.bind(entity);
 
-  ActionInstance.default = options.default;
+  Object.defineProperty(Action, '_entity', {value: entity});
+  Object.defineProperty(Action, '_stack', {value: stack});
 
-  return ActionInstance;
+  RefraxTools.extend(Action, MixinAction);
+  RefraxTools.extend(Action, MixinStatus);
+
+  mixinMutable(Action);
+  mixinConfigurable(Action, from);
+
+  return Action;
 }
 
 function createAction(method) {
   if (this instanceof createAction) {
-    throw new TypeError('Cannot call createAction as a class');
+    throw new TypeError('Cannot directly instantiate createAction');
   }
 
-  /**
-   * An Action can either be globally invoked or instantiated and invoked on that
-   * particular instance.
-   */
-  function Action(arg1, ...args) {
-    if (this instanceof Action) {
-      return createActionInstance(Action, method, arg1);
-    }
-    else {
-      return invokeAction([Action], method, arg1, {}, args);
-    }
-  }
-  // templates all share the same prototype so they can be identified above with instanceof
-  RefraxTools.setPrototypeOf(Action, prototypeAction);
-
-  mixinSubscribable(Action);
-  mixinStatus(Action);
-  mixinMutable(Action);
-
-  return Action;
+  return _createAction([new ActionEntity(method)]);
 }
 
 createAction.prototype = prototypeAction;

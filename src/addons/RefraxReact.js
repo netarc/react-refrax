@@ -178,6 +178,7 @@ function attachAction(component, Action, options) {
   }, options.resource);
 
   action = new Action(options);
+  action.setOptions(options);
   component.__refrax.actions.push(action);
   // TODO: finish/mutated can cause double updates due to a request failure
   RefraxTools.each(['start', 'finish', 'mutated'], function(event) {

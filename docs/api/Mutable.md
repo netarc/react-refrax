@@ -9,7 +9,6 @@ TODO
 - [`getErrors(attribute)`](#getErrors)
 - [`set(attribute, value)`](#set)
 - [`setter(attribute)`](#setter)
-- [`setterHandler(attribute)`](#setterHandler)
 - [`unset()`](#unset)
 
 
@@ -34,12 +33,6 @@ TODO
 ---
 
 ### <a id='setter'></a>[`setter(attribute)`](#setter)
-
-TODO
-
----
-
-### <a id='setterHandler'></a>[`setterHandler(attribute)`](#setterHandler)
 
 TODO
 

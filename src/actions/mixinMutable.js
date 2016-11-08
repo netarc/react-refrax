@@ -12,17 +12,21 @@ const MixinMutable = {
   get: function(attribute) {
     var value;
 
-    if (!attribute) {
-      return null;
+    if (typeof(attribute) !== 'string') {
+      throw new TypeError('mixinMutable - get expected attribute name but found `' + attribute + '`');
     }
 
-    value = this.mutable[attribute];
+    value = this._state[attribute];
     return value !== undefined
       ? value
       : this.getDefault && this.getDefault()[attribute];
   },
   set: function(attribute, value, options = {}) {
-    this.mutable[attribute] = value;
+    if (typeof(attribute) !== 'string') {
+      throw new TypeError('mixinMutable - set expected attribute name but found `' + attribute + '`');
+    }
+
+    this._state[attribute] = value;
 
     if (options.noPropagate !== true) {
       this.emit('mutated', {
@@ -35,25 +39,16 @@ const MixinMutable = {
   setter: function(attribute, options = {}) {
     var self = this;
 
+    if (typeof(attribute) !== 'string') {
+      throw new TypeError('mixinMutable - setter expected attribute name but found `' + attribute + '`');
+    }
+
     return function(value) {
-      self.mutable[attribute] = value;
-
-      if (options.noPropagate !== true) {
-        self.emit('mutated', {
-          type: 'attribute',
-          target: attribute,
-          value: value
-        });
+      if (typeof(value) === 'object' && value.target && value.target.value) {
+        value = value.target.value;
       }
-    };
-  },
-  setterHandler: function(attribute, options = {}) {
-    var self = this;
 
-    return function(event) {
-      var value = event.target.value;
-
-      self.mutable[attribute] = value;
+      self._state[attribute] = value;
 
       if (options.noPropagate !== true) {
         self.emit('mutated', {
@@ -65,7 +60,7 @@ const MixinMutable = {
     };
   },
   unset: function(options = {}) {
-    this.mutable = {};
+    this._state = {};
 
     if (options.noPropagate !== true) {
       this.emit('mutated', {
@@ -81,7 +76,11 @@ const MixinMutable = {
 };
 
 function mixinMutable(target) {
-  Object.defineProperty(target, 'mutable', {
+  if (!target) {
+    throw new TypeError('mixinMutable - exepected non-null target');
+  }
+
+  Object.defineProperty(target, '_state', {
     value: {},
     writable: true
   });
@@ -89,16 +88,11 @@ function mixinMutable(target) {
     value: {},
     writable: true
   });
-  Object.defineProperty(target, 'default', {
-    value: null,
-    writable: true
-  });
   Object.defineProperty(target, 'data', {
     get: function() {
       var base = this.getDefault && this.getDefault() ||
-                 this.default ||
                  {};
-      return RefraxTools.setPrototypeOf(this.mutable, base);
+      return RefraxTools.setPrototypeOf(this._state, base);
     }
   });
 
