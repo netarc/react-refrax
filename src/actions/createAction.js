@@ -32,7 +32,9 @@ class ActionInvoker {
   }
 
   invalidate(items, options) {
-    options = RefraxTools.extend({}, this._action._options.resource, options);
+    options = RefraxTools.extend({
+      params: this._action._parameters
+    }, this._action._options.resource, options);
     items = [].concat(items || []);
 
     RefraxTools.each(items, (item) => item.invalidate(options));
