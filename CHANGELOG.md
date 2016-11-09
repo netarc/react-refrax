@@ -1,3 +1,11 @@
+## [v0.5.0]
+> November 9, 2016
+
+- **Major** Rewrite internal logic of Actions for an easier idiomatic approach to working with Action and changing of params/options
+- **Feature** Add ActionInvoker `invalidate` helper method
+- **Feature** Add SchemaNodeAccessor `enumerateLeafs` method
+- **Feature** Add `invalidate` boolean option `cascade` to enumerate nested schema paths
+
 ## [v0.4.10]
 > September 10, 2016
 

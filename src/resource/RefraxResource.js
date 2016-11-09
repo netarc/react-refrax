@@ -104,7 +104,7 @@ class RefraxResource extends RefraxResourceBase {
     return result;
   }
 
-  invalidate(options) {
+  invalidate(options = {}) {
     const descriptorOptions = new RefraxOptions({ errorOnInvalid: !!options.errorOnInvalid });
 
     this._generateDescriptor(null, descriptorOptions, (descriptor) => {

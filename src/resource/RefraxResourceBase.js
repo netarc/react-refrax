@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 const mixinSubscribable = require('mixinSubscribable');
+const mixinConfigurable = require('mixinConfigurable');
 const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
 const RefraxQueryParameters = require('RefraxQueryParameters');
@@ -61,33 +62,15 @@ class RefraxResourceBase {
       }
     }
 
-    mixinSubscribable(this);
-
     Object.defineProperty(this, '_accessor', {value: accessor});
     Object.defineProperty(this, '_paths', {value: paths});
-    Object.defineProperty(this, '_options', {value: options});
-    Object.defineProperty(this, '_parameters', {value: parameters});
-    Object.defineProperty(this, '_queryParams', {value: queryParams});
-  }
 
-  // helper methods for a more idiomatic chaining approach
-
-  options(options) {
-    RefraxOptions.validate(options);
-    RefraxTools.extend(this._options, options);
-    return this;
-  }
-
-  params(params) {
-    RefraxParameters.validate(params);
-    RefraxTools.extend(this._parameters, params);
-    return this;
-  }
-
-  queryParams(params) {
-    RefraxQueryParameters.validate(params);
-    RefraxTools.extend(this._queryParams, params);
-    return this;
+    mixinSubscribable(this);
+    mixinConfigurable(this, {
+      _options: options,
+      _parameters: parameters,
+      _queryParams: queryParams
+    });
   }
 
   //
