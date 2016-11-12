@@ -1,3 +1,11 @@
+## [v0.5.1]
+> November 12, 2016
+
+- **Minor** Refactor invokeDescriptor `fetch` into ResourceBase, providing it to `MutableResource`/`Action`
+- **Minor** Upgraded `bluebird` dependency version
+
+[v0.5.1]: https://github.com/netarc/refrax/compare/v0.5.0...v0.5.1
+
 ## [v0.5.0]
 > November 9, 2016
 
@@ -5,6 +13,8 @@
 - **Feature** Add ActionInvoker `invalidate` helper method
 - **Feature** Add SchemaNodeAccessor `enumerateLeafs` method
 - **Feature** Add `invalidate` boolean option `cascade` to enumerate nested schema paths
+
+[v0.5.0]: https://github.com/netarc/refrax/compare/v0.4.10...v0.5.0
 
 ## [v0.4.10]
 > September 10, 2016
