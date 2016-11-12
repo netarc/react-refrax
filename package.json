@@ -33,7 +33,7 @@
   "dependencies": {
     "eventemitter3": "^1.2.0",
     "axios": "^0.7.0",
-    "bluebird": "^3.4.0",
+    "bluebird": "^3.4.5",
     "pluralize": "1.2.1"
   },
   "devDependencies": {
