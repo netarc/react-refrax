@@ -26,17 +26,17 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   get timestamp() {
-    var result = ResourceMap.get(this) || this._fetch();
+    var result = ResourceMap.get(this) || this._fetchFragment();
     return result.timestamp;
   }
 
   get status() {
-    var result = ResourceMap.get(this) || this._fetch();
+    var result = ResourceMap.get(this) || this._fetchFragment();
     return result.status;
   }
 
   get data() {
-    var result = ResourceMap.get(this) || this._fetch();
+    var result = ResourceMap.get(this) || this._fetchFragment();
     return result.data;
   }
 
@@ -65,7 +65,7 @@ class RefraxResource extends RefraxResourceBase {
               this._options.noFetchGet = true;
             }
 
-            this._fetchCache();
+            this._updateCache();
 
             if (event.noPropagate !== true) {
               this.emit('change', this, event);
@@ -74,7 +74,7 @@ class RefraxResource extends RefraxResourceBase {
         );
       }
 
-      this._fetchCache();
+      this._updateCache();
     });
   }
 
@@ -89,19 +89,12 @@ class RefraxResource extends RefraxResourceBase {
     return this;
   }
 
-  _fetch() {
-    return this._generateDescriptor((descriptor) => {
-      return invokeDescriptor.fetch(descriptor, {
-        noFetchGet: this._options.noFetchGet
-      });
-    });
+  _fetchFragment() {
+    return this.fetch({ fragmentOnly: true });
   }
 
-  _fetchCache() {
-    var result = this._fetch();
-
-    ResourceMap.set(this, result);
-    return result;
+  _updateCache() {
+    ResourceMap.set(this, this._fetchFragment());
   }
 
   invalidate(options = {}) {

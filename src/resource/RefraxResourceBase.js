@@ -5,6 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
+const Promise = require('bluebird');
 const mixinSubscribable = require('mixinSubscribable');
 const mixinConfigurable = require('mixinConfigurable');
 const RefraxOptions = require('RefraxOptions');
@@ -15,7 +16,9 @@ const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
 const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
 const RefraxTools = require('RefraxTools');
 const RefraxConstants = require('RefraxConstants');
+const invokeDescriptor = require('invokeDescriptor');
 const ACTION_GET = RefraxConstants.action.get;
+const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
 
 
 /**
@@ -70,6 +73,36 @@ class RefraxResourceBase {
       _options: options,
       _parameters: parameters,
       _queryParams: queryParams
+    });
+  }
+
+  //
+
+  get() {
+    return this._generateDescriptor((descriptor) => {
+      return invokeDescriptor(descriptor, this._options);
+    });
+  }
+
+  fetch(options = {}) {
+    return this._generateDescriptor((descriptor) => {
+      const store = descriptor.store;
+      var result = null
+        , promise = null;
+
+      if (!store) {
+        return options.fragmentOnly === true && result ||
+          Promise.reject(new Error('No store associated with resource'));
+      }
+
+      result = store.fetchResource(descriptor);
+
+      if (this._options.noFetchGet !== true && result.timestamp < TIMESTAMP_LOADING) {
+        promise = invokeDescriptor(descriptor, this._options);
+        result = store.fetchResource(descriptor);
+      }
+
+      return options.fragmentOnly === true && result || promise || Promise.resolve(result);
     });
   }
 

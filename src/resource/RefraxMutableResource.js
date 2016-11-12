@@ -16,7 +16,7 @@ const ACTION_DELETE = RefraxConstants.action.delete;
 
 
 /**
- * RefraxMutableResource is a public facing interface class to querying a Schema Node.
+ * RefraxMutableResource is a public facing interface class to modifying through a Schema Node.
  */
 class RefraxMutableResource extends RefraxResourceBase {
   static from(accessor, ...args) {

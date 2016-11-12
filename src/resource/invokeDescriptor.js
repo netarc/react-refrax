@@ -103,7 +103,9 @@ function invokeDescriptor(resourceDescriptor, options = {}) {
     Axios(requestConfig)
       .then(function(response) {
         processRequestSuccess(resourceDescriptor, response, options);
-        resolve(response);
+        const resource = store && store.fetchResource(resourceDescriptor) || {};
+        resource.response = response;
+        resolve(resource);
       }, function(response) {
         if (store) {
           store.touchResource(resourceDescriptor, {timestamp: Date.now()}, options);
@@ -112,23 +114,5 @@ function invokeDescriptor(resourceDescriptor, options = {}) {
       });
   });
 }
-
-invokeDescriptor.fetch = function(resourceDescriptor, options = {}) {
-  var store = resourceDescriptor.store
-    , result;
-
-  if (!store) {
-    return null;
-  }
-
-  result = store.fetchResource(resourceDescriptor);
-
-  if (options.noFetchGet !== true && result.timestamp < TIMESTAMP_LOADING) {
-    invokeDescriptor(resourceDescriptor, options);
-    result = store.fetchResource(resourceDescriptor);
-  }
-
-  return result;
-};
 
 export default invokeDescriptor;
