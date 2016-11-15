@@ -1,3 +1,10 @@
+## [v0.5.2]
+> November 14, 2016
+
+- **Feature** Add `refKey` option to `RefraxReact` attach to create a shared `Action` instance reference sharing the same `refKey`
+
+[v0.5.2]: https://github.com/netarc/refrax/compare/v0.5.1...v0.5.2
+
 ## [v0.5.1]
 > November 12, 2016
 

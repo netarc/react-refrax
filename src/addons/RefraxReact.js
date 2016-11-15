@@ -12,7 +12,7 @@ const RefraxMutableResource = require('RefraxMutableResource');
 const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
 const createAction = require('createAction');
-
+const ActionRefs = {};
 
 export const Shims = {
   getComponentParams: function() {
@@ -168,17 +168,38 @@ function attachAccessor(component, accessor, options, ...args) {
 }
 
 function attachAction(component, Action, options) {
-  var action;
+  var action
+    , refLink;
 
   options = RefraxTools.extend({}, options);
-  options.resource = RefraxTools.extend({}, {
+  options.resource = RefraxTools.extend({
     paramsGenerator: function() {
       return Shims.getComponentParams.call(component);
     }
   }, options.resource);
 
-  action = new Action(options);
-  action.setOptions(options);
+  if (refLink = options.refLink) {
+    action = ActionRefs[refLink];
+
+    if (!action) {
+      action = ActionRefs[refLink] = new Action();
+      action.setOptions(options);
+      action.__keyRefs = [];
+    }
+
+    action.__keyRefs.push(component);
+    component.__refrax.disposers.push(function() {
+      action.__keyRefs.splice(action.__keyRefs.indexOf(component), 1);
+      if (action.__keyRefs.length < 1) {
+        delete ActionRefs[refLink];
+      }
+    });
+  }
+  else {
+    action = new Action();
+    action.setOptions(options);
+  }
+
   component.__refrax.actions.push(action);
   // TODO: finish/mutated can cause double updates due to a request failure
   RefraxTools.each(['start', 'finish', 'mutated'], function(event) {
