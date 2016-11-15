@@ -1,6 +1,11 @@
 ## Unreleased
 
+## [v0.5.3]
+> November 14, 2016
+
 - **Minor** Enhance `refKey` option on `RefraxReact` attach to safeguard cross action references and component detachment
+
+[v0.5.3]: https://github.com/netarc/refrax/compare/v0.5.2...v0.5.3
 
 ## [v0.5.2]
 > November 14, 2016
