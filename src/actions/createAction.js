@@ -49,6 +49,10 @@ class ActionEntity {
     mixinSubscribable(this);
   }
 
+  toString() {
+    return 'ActionEntity => ' + this._method.toString();
+  }
+
   invoke(Action, args) {
     const options = Action._options;
     const stack = Action._stack;

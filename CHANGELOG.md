@@ -1,5 +1,7 @@
 ## Unreleased
 
+- **Minor** Enhance `refKey` option on `RefraxReact` attach to safeguard cross action references and component detachment
+
 ## [v0.5.2]
 > November 14, 2016
 

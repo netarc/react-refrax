@@ -167,24 +167,49 @@ function attachAccessor(component, accessor, options, ...args) {
   return resource;
 }
 
-function attachAction(component, Action, options) {
+function compareStack(part, stack) {
+  var i
+    , len = Math.max(stack.length - part.length, 0);
+
+  for (i = 0; i < len; i++) {
+    if (stack[i] !== part[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function instantiateAction(Action, options, paramsGenerator) {
+  const action = new Action();
+
+  action.setOptions(RefraxTools.extend({}, options, {
+    resource: RefraxTools.extend({
+      paramsGenerator: paramsGenerator
+    }, options.resource)
+  }));
+
+  return action;
+}
+
+function attachAction(component, Action, options = {}) {
   var action
     , refLink;
-
-  options = RefraxTools.extend({}, options);
-  options.resource = RefraxTools.extend({
-    paramsGenerator: function() {
-      return Shims.getComponentParams.call(component);
-    }
-  }, options.resource);
 
   if (refLink = options.refLink) {
     action = ActionRefs[refLink];
 
     if (!action) {
-      action = ActionRefs[refLink] = new Action();
-      action.setOptions(options);
+      action = ActionRefs[refLink] = instantiateAction(Action, options, function() {
+        return Shims.getComponentParams.call(action.__keyRefs[0]);
+      });
       action.__keyRefs = [];
+    }
+    else if (!compareStack(Action._stack, action._stack)) {
+      throw new TypeError(
+        'attachAction cannot link actions of difference bases.\n\r' +
+        'found: ' + Action._stack[0] + '\n\r' +
+        'expected: ' + action._stack[0]
+      );
     }
 
     action.__keyRefs.push(component);
@@ -196,8 +221,9 @@ function attachAction(component, Action, options) {
     });
   }
   else {
-    action = new Action();
-    action.setOptions(options);
+    action = instantiateAction(Action, options, function() {
+      return Shims.getComponentParams.call(component);
+    });
   }
 
   component.__refrax.actions.push(action);
@@ -207,6 +233,7 @@ function attachAction(component, Action, options) {
       dispatchRender(component, event === 'start');
     }));
   });
+
   return action;
 }
 
