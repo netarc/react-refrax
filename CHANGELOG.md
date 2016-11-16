@@ -1,7 +1,12 @@
 ## Unreleased
 
+## [v0.5.4]
+> November 16, 2016
+
 - **Feature** Add `onSet` hook option to `mixinMutable` `set`/`setter`
 - **Feature** Add `set` option to `mixinMutable` `set`/`setter`
+
+[v0.5.4]: https://github.com/netarc/refrax/compare/v0.5.3...v0.5.4
 
 ## [v0.5.3]
 > November 14, 2016
