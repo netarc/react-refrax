@@ -11,8 +11,8 @@ const RefraxResource = require('RefraxResource');
 const RefraxMutableResource = require('RefraxMutableResource');
 const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
-const createAction = require('createAction');
-const ActionRefs = {};
+const RefraxActionEntity = require('RefraxActionEntity');
+const RefPool = {};
 
 export const Shims = {
   getComponentParams: function() {
@@ -167,64 +167,51 @@ function attachAccessor(component, accessor, options, ...args) {
   return resource;
 }
 
-function compareStack(part, stack) {
-  var i
-    , len = Math.max(stack.length - part.length, 0);
-
-  for (i = 0; i < len; i++) {
-    if (stack[i] !== part[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function instantiateAction(Action, options, paramsGenerator) {
-  const action = new Action();
-
-  action.setOptions(RefraxTools.extend({}, options, {
-    resource: RefraxTools.extend({
-      paramsGenerator: paramsGenerator
-    }, options.resource)
-  }));
-
-  return action;
-}
-
 function attachAction(component, Action, options = {}) {
   var action
-    , refLink;
+    , refLink
+    , refPool;
 
   if (refLink = options.refLink) {
-    action = ActionRefs[refLink];
+    refPool = RefPool[refLink];
 
-    if (!action) {
-      action = ActionRefs[refLink] = instantiateAction(Action, options, function() {
-        return Shims.getComponentParams.call(action.__keyRefs[0]);
-      });
-      action.__keyRefs = [];
+    if (!refPool) {
+      refPool = RefPool[refLink] = {
+        Action: Action,
+        action: new Action(),
+        components: []
+      };
     }
-    else if (!compareStack(Action._stack, action._stack)) {
+
+    if (Action !== refPool.Action) {
       throw new TypeError(
-        'attachAction cannot link actions of difference bases.\n\r' +
-        'found: ' + Action._stack[0] + '\n\r' +
-        'expected: ' + action._stack[0]
+        'attachAction cannot link different actions.\n\r' +
+        'found: ' + Action + '\n\r' +
+        'expected: ' + refPool.Action
       );
     }
 
-    action.__keyRefs.push(component);
-    component.__refrax.disposers.push(function() {
-      action.__keyRefs.splice(action.__keyRefs.indexOf(component), 1);
-      if (action.__keyRefs.length < 1) {
-        delete ActionRefs[refLink];
+    action = refPool.action.clone();
+
+    refPool.components.push(component);
+    component.__refrax.disposers.push(() => {
+      refPool.components.splice(refPool.components.indexOf(component), 1);
+      if (refPool.components.length < 1) {
+        delete RefPool[refLink];
       }
     });
   }
   else {
-    action = instantiateAction(Action, options, function() {
-      return Shims.getComponentParams.call(component);
-    });
+    action = new Action();
   }
+
+  action.setOptions(options, {
+    resource: RefraxTools.extend({
+      paramsGenerator: () => {
+        return Shims.getComponentParams.call(component);
+      }
+    }, options.resource)
+  });
 
   component.__refrax.actions.push(action);
   // TODO: finish/mutated can cause double updates due to a request failure
@@ -243,7 +230,7 @@ export function attach(component, target, options, ...args) {
   if (target instanceof RefraxSchemaNodeAccessor) {
     return attachAccessor(component, target, options, ...args);
   }
-  else if (target instanceof createAction) {
+  else if (target instanceof RefraxActionEntity) {
     return attachAction(component, target, options);
   }
 
