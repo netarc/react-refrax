@@ -108,10 +108,32 @@ describe('mixinMutable', function() {
     });
 
     describe('set', function() {
+      let mutable;
+      const emit_1 = {
+        type: 'attribute',
+        target: 'foo',
+        value: 111
+      };
+      const emit_2 = {
+        type: 'attribute',
+        target: 'baz',
+        value: 222
+      };
+      const expected_state = RefraxTools.extend({}, mutableState, {
+        foo: 111,
+        baz: 222
+      });
+      const expected_data = RefraxTools.extend({}, mutableDefaultState, mutableState, {
+        foo: 111,
+        baz: 222
+      });
+
+      beforeEach(function() {
+        mutable = createMutable(mutableState, mutableDefaultState);
+      });
+
       describe('when passed an invalid attribute', function() {
         it('should throw an error', function() {
-          var mutable = createMutable(mutableState);
-
           expect(function() {
             expect(mutable.set())
               .to.equal(null);
@@ -130,79 +152,138 @@ describe('mixinMutable', function() {
       });
 
       describe('when passed an attribute', function() {
-        describe('that doesnt exist', function() {
-          it('should set value in current state', function() {
-            var mutable = createMutable(mutableState, mutableDefaultState);
+        it('will correctly update state', function() {
+          mutable.set('foo', 111);
+          mutable.set('zab');
 
-            mutable.set('baz', 111);
+          expect(mutable._state)
+            .to.deep.equal(RefraxTools.extend({}, mutableState, {
+              foo: 111,
+              zab: null
+            }));
+          expect(mutable.data)
+            .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+              foo: 111,
+              zab: null
+            }));
+        });
 
-            expect(mutable._state)
-              .to.deep.equal(RefraxTools.extend({}, mutableState, {
-                baz: 111
-              }));
-            expect(mutable.data)
-              .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
-                baz: 111
-              }));
-          });
+        it('should emit', function() {
+          mutable.set('foo', 111);
+          mutable.set('zab');
 
-          it('should emit', function() {
-            var mutable = createMutable(mutableState, mutableDefaultState);
+          expect(mutable.emit.callCount).to.equal(2);
+          expect(mutable.emit.getCall(0).args[0])
+            .to.equal('mutated');
+          expect(mutable.emit.getCall(0).args[1])
+            .to.deep.equal({
+              type: 'attribute',
+              target: 'foo',
+              value: 111
+            });
+          expect(mutable.emit.getCall(1).args[0])
+            .to.equal('mutated');
+          expect(mutable.emit.getCall(1).args[1])
+            .to.deep.equal({
+              type: 'attribute',
+              target: 'zab',
+              value: null
+            });
+        });
+      });
 
-            mutable.set('baz', 111);
-
-            expect(mutable.emit.callCount).to.equal(1);
-            expect(mutable.emit.getCall(0).args[0])
-              .to.equal('mutated');
-            expect(mutable.emit.getCall(0).args[1])
-              .to.deep.equal({
-                type: 'attribute',
-                target: 'baz',
-                value: 111
-              });
+      describe('when passed a key value object', function() {
+        beforeEach(function() {
+          mutable.set({
+            'foo': 111,
+            'baz': 222
           });
         });
 
-        describe('that exists', function() {
-          it('should overide value in current state', function() {
-            var mutable = createMutable(mutableState, mutableDefaultState);
+        it('will correctly update state', function() {
+          expect(mutable._state)
+            .to.deep.equal(expected_state);
+          expect(mutable.data)
+            .to.deep.equal(expected_data);
+        });
 
-            mutable.set('foo', 111);
+        it('should emit', function() {
+          expect(mutable.emit.callCount).to.equal(2);
+          expect(mutable.emit.getCall(0).args[0])
+            .to.equal('mutated');
+          expect(mutable.emit.getCall(0).args[1])
+            .to.deep.equal(emit_1);
+          expect(mutable.emit.getCall(1).args[0])
+            .to.equal('mutated');
+          expect(mutable.emit.getCall(1).args[1])
+            .to.deep.equal(emit_2);
+        });
+      });
 
-            expect(mutable._state)
-              .to.deep.equal(RefraxTools.extend({}, mutableState, {
-                foo: 111
-              }));
-            expect(mutable.data)
-              .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
-                foo: 111
-              }));
+      describe('when passed the option', function() {
+        describe('set', function() {
+          describe('with key value object', function() {
+            beforeEach(function() {
+              mutable.set('foo', 111, { set: { 'baz': 222 }});
+            });
+
+            it('will correctly update state', function() {
+              expect(mutable._state)
+                .to.deep.equal(expected_state);
+              expect(mutable.data)
+                .to.deep.equal(expected_data);
+            });
+
+            it('should emit', function() {
+              expect(mutable.emit.callCount).to.equal(2);
+              expect(mutable.emit.getCall(0).args[0])
+                .to.equal('mutated');
+              expect(mutable.emit.getCall(0).args[1])
+                .to.deep.equal(emit_1);
+              expect(mutable.emit.getCall(1).args[0])
+                .to.equal('mutated');
+              expect(mutable.emit.getCall(1).args[1])
+                .to.deep.equal(emit_2);
+            });
           });
 
-          it('should emit', function() {
-            var mutable = createMutable(mutableState, mutableDefaultState);
+          describe('with key value object with function values', function() {
+            beforeEach(function() {
+              mutable.set('foo', 111, { set: { 'baz': () => { return 222; }}});
+            });
 
-            mutable.set('foo', 111);
+            it('will correctly update state', function() {
+              expect(mutable._state)
+                .to.deep.equal(expected_state);
+              expect(mutable.data)
+                .to.deep.equal(expected_data);
+            });
 
-            expect(mutable.emit.callCount).to.equal(1);
-            expect(mutable.emit.getCall(0).args[0])
-              .to.equal('mutated');
-            expect(mutable.emit.getCall(0).args[1])
-              .to.deep.equal({
-                type: 'attribute',
-                target: 'foo',
-                value: 111
-              });
+            it('should emit', function() {
+              expect(mutable.emit.callCount).to.equal(2);
+              expect(mutable.emit.getCall(0).args[0])
+                .to.equal('mutated');
+              expect(mutable.emit.getCall(0).args[1])
+                .to.deep.equal(emit_1);
+              expect(mutable.emit.getCall(1).args[0])
+                .to.equal('mutated');
+              expect(mutable.emit.getCall(1).args[1])
+                .to.deep.equal(emit_2);
+            });
           });
         });
       });
     });
 
     describe('setter', function() {
+      let mutable;
+
+      beforeEach(function() {
+        mutable = createMutable(mutableState, mutableDefaultState);
+      });
+
       describe('when passed an invalid attribute', function() {
         it('should throw an error', function() {
-          var mutable = createMutable(mutableState);
-
           expect(function() {
             expect(mutable.setter())
               .to.equal(null);
@@ -221,54 +302,73 @@ describe('mixinMutable', function() {
       });
 
       describe('when passed an attribute', function() {
-        describe('will return a setter', function() {
-          it('that correctly sets state', function() {
-            var mutable = createMutable(mutableState, mutableDefaultState)
-              , setter = mutable.setter('baz');
+        it('will return a setter', function() {
+          expect(mutable.setter('baz'))
+            .to.be.a('function');
+        });
 
-            expect(setter)
-              .to.be.a('function');
+        describe('will return a setter that', function() {
+          it('correctly passes through to set', function() {
+            var setter = mutable.setter('baz');
+
+            sinon.spy(mutable, 'set');
 
             setter(111);
 
-            expect(mutable._state)
-              .to.deep.equal(RefraxTools.extend({}, mutableState, {
-                baz: 111
-              }));
-            expect(mutable.data)
-              .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
-                baz: 111
-              }));
+            expect(mutable.set.callCount).to.equal(1);
+            expect(mutable.set.getCall(0).args)
+              .to.deep.equal(['baz', 111,  {}]);
           });
+        });
 
-          it('that emits', function() {
-            var mutable = createMutable(mutableState, mutableDefaultState)
-              , setter = mutable.setter('baz');
+        describe('and a method', function() {
+          it('will use method as a callback', function() {
+            var hook = sinon.spy()
+              , setter = mutable.setter('baz', hook);
 
-            expect(setter)
-              .to.be.a('function');
+            sinon.spy(mutable, 'set');
 
             setter(111);
 
-            expect(mutable.emit.callCount).to.equal(1);
-            expect(mutable.emit.getCall(0).args[0])
-              .to.equal('mutated');
-            expect(mutable.emit.getCall(0).args[1])
-              .to.deep.equal({
-                type: 'attribute',
-                target: 'baz',
-                value: 111
-              });
+            expect(hook.callCount).to.equal(1);
+            expect(hook.getCall(0).args)
+              .to.deep.equal([111, 'baz']);
 
+            expect(mutable.set.callCount).to.equal(1);
+            expect(mutable.set.getCall(0).args)
+              .to.deep.equal(['baz', 111,  { onSet: hook }]);
+          });
+        });
+
+        describe('and options', function() {
+          it('will correctly use onSet callback', function() {
+            var hook = sinon.spy()
+              , setter = mutable.setter('baz', { onSet: hook });
+
+            sinon.spy(mutable, 'set');
+
+            setter(111);
+
+            expect(hook.callCount).to.equal(1);
+            expect(hook.getCall(0).args)
+              .to.deep.equal([111, 'baz']);
+
+            expect(mutable.set.callCount).to.equal(1);
+            expect(mutable.set.getCall(0).args)
+              .to.deep.equal(['baz', 111,  { onSet: hook }]);
           });
         });
       });
     });
 
     describe('unset', function() {
-      it('should reset current state only', function() {
-        var mutable = createMutable(mutableState, mutableDefaultState);
+      let mutable;
 
+      beforeEach(function() {
+        mutable = createMutable(mutableState, mutableDefaultState);
+      });
+
+      it('should reset current state only', function() {
         mutable.unset();
 
         expect(mutable._state)
@@ -278,8 +378,6 @@ describe('mixinMutable', function() {
       });
 
       it('should emit', function() {
-        var mutable = createMutable(mutableState, mutableDefaultState);
-
         mutable.unset();
 
         expect(mutable.emit.callCount).to.equal(1);
@@ -295,9 +393,13 @@ describe('mixinMutable', function() {
     });
 
     describe('getErrors', function() {
-      it('should return all errors with invalid attribute', function() {
-        var mutable = createMutable(mutableState, mutableDefaultState);
+      let mutable;
 
+      beforeEach(function() {
+        mutable = createMutable(mutableState, mutableDefaultState);
+      });
+
+      it('should return all errors with invalid attribute', function() {
         mutable.errors = mutableErrors;
 
         expect(mutable.getErrors())
@@ -307,8 +409,6 @@ describe('mixinMutable', function() {
       });
 
       it('should return specific error with a valid attribute', function() {
-        var mutable = createMutable(mutableState, mutableDefaultState);
-
         mutable.errors = mutableErrors;
 
         expect(mutable.getErrors('foo'))

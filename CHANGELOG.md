@@ -1,5 +1,8 @@
 ## Unreleased
 
+- **Feature** Add `onSet` hook option to `mixinMutable` `set`/`setter`
+- **Feature** Add `set` option to `mixinMutable` `set`/`setter`
+
 ## [v0.5.3]
 > November 14, 2016
 

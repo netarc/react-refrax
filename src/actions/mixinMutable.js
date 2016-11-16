@@ -7,7 +7,6 @@
  */
 const RefraxTools = require('RefraxTools');
 
-
 const MixinMutable = {
   get: function(attribute) {
     var value;
@@ -21,42 +20,88 @@ const MixinMutable = {
       ? value
       : this.getDefault && this.getDefault()[attribute];
   },
-  set: function(attribute, value, options = {}) {
-    if (typeof(attribute) !== 'string') {
-      throw new TypeError('mixinMutable - set expected attribute name but found `' + attribute + '`');
+  set: function(attribute, ...args) {
+    const state = this._state;
+
+    if (attribute && typeof(attribute) === 'object') {
+      const options = args.shift() || {};
+      const emit = options.noPropagate !== true && this.emit && this.emit.bind(this);
+
+      for (const k in attribute) {
+        const v = attribute[k];
+
+        state[k] = v;
+        if (emit) {
+          emit('mutated', {
+            type: 'attribute',
+            target: k,
+            value: v
+          });
+        }
+      }
     }
+    else {
+      var value = args.shift() || null;
+      const options = args.shift() || {};
+      const canEmit = options.noPropagate !== true && this.emit;
+      const onSet = options.onSet;
+      const set = options.set;
 
-    this._state[attribute] = value;
+      if (typeof(attribute) !== 'string') {
+        throw new TypeError('mixinMutable - set expected attribute name but found `' + attribute + '`');
+      }
 
-    if (options.noPropagate !== true) {
-      this.emit('mutated', {
-        type: 'attribute',
-        target: attribute,
-        value: value
-      });
-    }
-  },
-  setter: function(attribute, options = {}) {
-    var self = this;
-
-    if (typeof(attribute) !== 'string') {
-      throw new TypeError('mixinMutable - setter expected attribute name but found `' + attribute + '`');
-    }
-
-    return function(value) {
-      if (typeof(value) === 'object' && value.target && value.target.value) {
+      // Does our value look like an Event
+      if (value && typeof(value) === 'object' && value.target && value.target.value) {
         value = value.target.value;
       }
 
-      self._state[attribute] = value;
-
-      if (options.noPropagate !== true) {
-        self.emit('mutated', {
+      state[attribute] = value;
+      if (canEmit) {
+        this.emit('mutated', {
           type: 'attribute',
           target: attribute,
           value: value
         });
       }
+
+      if (onSet) {
+        onSet(value, attribute);
+      }
+
+      if (set && typeof(set) === 'object') {
+        for (const k in set) {
+          let v = set[k];
+
+          if (typeof(v) === 'function') {
+            v = v(value);
+          }
+
+          state[k] = v;
+          if (canEmit) {
+            this.emit('mutated', {
+              type: 'attribute',
+              target: k,
+              value: v
+            });
+          }
+        }
+      }
+    }
+  },
+  setter: function(attribute, options = {}) {
+    if (typeof(attribute) !== 'string') {
+      throw new TypeError('mixinMutable - setter expected attribute name but found `' + attribute + '`');
+    }
+
+    if (typeof(options) === 'function') {
+      options = {
+        onSet: options
+      };
+    }
+
+    return (value) => {
+      this.set(attribute, value, options);
     };
   },
   unset: function(options = {}) {
