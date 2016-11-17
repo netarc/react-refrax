@@ -8,6 +8,7 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const Promise = require('bluebird');
+const RefraxResource = require('RefraxResource');
 const RefraxMutableResource = require('RefraxMutableResource');
 const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
@@ -18,16 +19,27 @@ const RefraxFragmentResult = require('RefraxFragmentResult');
 const RefraxConstants = require('RefraxConstants');
 const createSchemaCollection = require('createSchemaCollection');
 const ACTION_CREATE = RefraxConstants.action.create;
-const ACTION_UPDATE = RefraxConstants.action.update;
 const ACTION_DELETE = RefraxConstants.action.delete;
-const STRATEGY_MERGE = RefraxConstants.strategy.merge;
-const STRATEGY_REPLACE = RefraxConstants.strategy.replace;
+const ACTION_UPDATE = RefraxConstants.action.update;
 const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
+const STATUS_COMPLETE = RefraxConstants.status.complete;
+const STATUS_STALE = RefraxConstants.status.stale;
+const STRATEGY_MERGE = RefraxConstants.strategy.merge;
+const STRATEGY_REPLACE = RefraxConstants.strategy.replace;
+const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
 const expect = chai.expect;
 
-/* global mock_post mock_put mock_reset mock_delete */
+const dataElement1 = { id: 1, name: 'foo bob' };
+const dataElement2 = { id: 2, name: 'foo baz' };
+const dataCollectionUsers1 = [
+  dataElement1,
+  dataElement2
+];
+
 /* eslint-disable no-new, indent */
+/* global mock_get mock_post mock_put mock_reset mock_delete */
+/* global delay_for_resource_request */
 describe('RefraxMutableResource', () => {
   let schema;
 
@@ -65,23 +77,23 @@ describe('RefraxMutableResource', () => {
     });
 
     it('should look like a ResourceBase', () => {
-      var resource = new RefraxMutableResource(schema.users);
+      var mutableUsers = new RefraxMutableResource(schema.users);
 
-      expect(resource)
+      expect(mutableUsers)
         .to.be.instanceof(RefraxMutableResource);
-      expect(resource)
+      expect(mutableUsers)
         .to.have.property('_schemaPath')
           .that.is.an.instanceof(RefraxSchemaPath);
-      expect(resource)
+      expect(mutableUsers)
         .to.have.property('_paths')
           .that.is.an.instanceof(Array);
-      expect(resource)
+      expect(mutableUsers)
         .to.have.property('_options')
           .that.is.an.instanceof(RefraxOptions);
-      expect(resource)
+      expect(mutableUsers)
         .to.have.property('_parameters')
           .that.is.an.instanceof(RefraxParameters);
-      expect(resource)
+      expect(mutableUsers)
         .to.have.property('_queryParams')
           .that.is.an.instanceof(RefraxQueryParameters);
     });
@@ -116,14 +128,14 @@ describe('RefraxMutableResource', () => {
         type: 'user',
         valid: true
       };
-      let resource, store;
+      let mutableUsers, store;
 
       beforeEach(() => {
-        resource = new RefraxMutableResource(schema.users);
+        mutableUsers = new RefraxMutableResource(schema.users);
         store = schema.__storeMap.getOrCreate('user');
         expectedDescriptor.store = store;
 
-        sinon.spy(resource, '_generateDescriptor');
+        sinon.spy(mutableUsers, '_generateDescriptor');
         sinon.spy(store, 'touchResource');
         sinon.spy(store, 'updateResource');
         sinon.spy(store, 'destroyResource');
@@ -133,7 +145,7 @@ describe('RefraxMutableResource', () => {
       });
 
       it('returns a promise', () => {
-        const result = resource.create(sentData);
+        const result = mutableUsers.create(sentData);
 
         expect(result).to.be.instanceof(Promise);
 
@@ -141,7 +153,7 @@ describe('RefraxMutableResource', () => {
       });
 
       it('makes a request and processes response correctly', () => {
-        return resource
+        return mutableUsers
           .create(sentData)
           .then(([result, response, descriptor]) => {
             // promise results
@@ -159,7 +171,7 @@ describe('RefraxMutableResource', () => {
             expect(descriptor).to.equal(store.touchResource.getCall(0).args[0]);
 
             // hooks
-            expect(resource._generateDescriptor.callCount).to.equal(1);
+            expect(mutableUsers._generateDescriptor.callCount).to.equal(1);
             expect(store.touchResource.callCount).to.equal(1);
             expect(store.touchResource.getCall(0).args[0]).to.deep.match(expectedDescriptor);
             expect(store.updateResource.callCount).to.equal(1);
@@ -171,7 +183,7 @@ describe('RefraxMutableResource', () => {
       });
 
       it('correctly handles a void hook', () => {
-        return resource
+        return mutableUsers
           .create(sentData, (data, response, descriptor) => {
             expect(data).to.deep.equal(responseData);
             expect(descriptor).to.deep.match(expectedDescriptor);
@@ -192,7 +204,7 @@ describe('RefraxMutableResource', () => {
             expect(descriptor).to.equal(store.touchResource.getCall(0).args[0]);
 
             // hooks
-            expect(resource._generateDescriptor.callCount).to.equal(1);
+            expect(mutableUsers._generateDescriptor.callCount).to.equal(1);
             expect(store.touchResource.callCount).to.equal(1);
             expect(store.touchResource.getCall(0).args[0]).to.deep.match(expectedDescriptor);
             expect(store.updateResource.callCount).to.equal(1);
@@ -202,7 +214,7 @@ describe('RefraxMutableResource', () => {
       });
 
       it('correctly handles return value from a hook', () => {
-        return resource
+        return mutableUsers
           .create(sentData, (data, response, descriptor) => {
             return {
               id: data.id,
@@ -225,7 +237,7 @@ describe('RefraxMutableResource', () => {
             expect(descriptor).to.equal(store.touchResource.getCall(0).args[0]);
 
             // hooks
-            expect(resource._generateDescriptor.callCount).to.equal(1);
+            expect(mutableUsers._generateDescriptor.callCount).to.equal(1);
             expect(store.touchResource.callCount).to.equal(1);
             expect(store.touchResource.getCall(0).args[0]).to.deep.match(expectedDescriptor);
             expect(store.updateResource.callCount).to.equal(1);
@@ -259,13 +271,13 @@ describe('RefraxMutableResource', () => {
         type: 'user',
         valid: true
       };
-      let resource, store;
+      let mutableUsers, store;
 
       beforeEach(() => {
-        resource = new RefraxMutableResource(schema.users);
+        mutableUsers = new RefraxMutableResource(schema.users);
         store = expectedDescriptor.store = schema.__storeMap.getOrCreate('user');
 
-        sinon.spy(resource, '_generateDescriptor');
+        sinon.spy(mutableUsers, '_generateDescriptor');
         sinon.spy(store, 'touchResource');
         sinon.spy(store, 'updateResource');
         sinon.spy(store, 'destroyResource');
@@ -275,7 +287,7 @@ describe('RefraxMutableResource', () => {
       });
 
       it('returns a promise', () => {
-        const result = resource.destroy(sentData);
+        const result = mutableUsers.destroy(sentData);
 
         expect(result).to.be.instanceof(Promise);
 
@@ -283,7 +295,7 @@ describe('RefraxMutableResource', () => {
       });
 
       it('makes a request and processes response correctly', () => {
-        return resource
+        return mutableUsers
           .destroy(sentData)
           .then(([result, response, descriptor]) => {
             // promise results
@@ -301,14 +313,14 @@ describe('RefraxMutableResource', () => {
             expect(descriptor).to.equal(store.touchResource.getCall(0).args[0]);
 
             // hooks
-            expect(resource._generateDescriptor.callCount).to.equal(1);
+            expect(mutableUsers._generateDescriptor.callCount).to.equal(1);
             expect(store.touchResource.callCount).to.equal(1);
             expect(store.touchResource.getCall(0).args[0]).to.deep.match(expectedDescriptor);
             expect(store.updateResource.callCount).to.equal(0);
             expect(store.destroyResource.callCount).to.equal(1);
             expect(store.destroyResource.getCall(0).args[0]).to.equal(descriptor);
             expect(store.destroyResource.getCall(0).args[1]).to.deep.equal({
-              invoker: resource
+              invoker: mutableUsers
             });
           }, () => {
             expect.fail(null, null, 'unexpected catch');
@@ -316,7 +328,7 @@ describe('RefraxMutableResource', () => {
       });
 
       it('correctly handles a void hook', () => {
-        return resource
+        return mutableUsers
           .destroy(sentData, (data, response, descriptor) => {
             expect(data).to.deep.equal(responseData);
             expect(descriptor).to.deep.match(expectedDescriptor);
@@ -337,14 +349,14 @@ describe('RefraxMutableResource', () => {
             expect(descriptor).to.equal(store.touchResource.getCall(0).args[0]);
 
             // hooks
-            expect(resource._generateDescriptor.callCount).to.equal(1);
+            expect(mutableUsers._generateDescriptor.callCount).to.equal(1);
             expect(store.touchResource.callCount).to.equal(1);
             expect(store.touchResource.getCall(0).args[0]).to.deep.match(expectedDescriptor);
             expect(store.updateResource.callCount).to.equal(0);
             expect(store.destroyResource.callCount).to.equal(1);
             expect(store.destroyResource.getCall(0).args[0]).to.equal(descriptor);
             expect(store.destroyResource.getCall(0).args[1]).to.deep.equal({
-              invoker: resource
+              invoker: mutableUsers
             });
           }, () => {
             expect.fail(null, null, 'unexpected catch');
@@ -352,7 +364,7 @@ describe('RefraxMutableResource', () => {
       });
 
       it('correctly handles return value from a hook', () => {
-        return resource
+        return mutableUsers
           .destroy(sentData, (data, response, descriptor) => {
             return {
               id: data.id,
@@ -375,14 +387,14 @@ describe('RefraxMutableResource', () => {
             expect(descriptor).to.equal(store.touchResource.getCall(0).args[0]);
 
             // hooks
-            expect(resource._generateDescriptor.callCount).to.equal(1);
+            expect(mutableUsers._generateDescriptor.callCount).to.equal(1);
             expect(store.touchResource.callCount).to.equal(1);
             expect(store.touchResource.getCall(0).args[0]).to.deep.match(expectedDescriptor);
             expect(store.updateResource.callCount).to.equal(0);
             expect(store.destroyResource.callCount).to.equal(1);
             expect(store.destroyResource.getCall(0).args[0]).to.equal(descriptor);
             expect(store.destroyResource.getCall(0).args[1]).to.deep.equal({
-              invoker: resource
+              invoker: mutableUsers
             });
           }, () => {
             expect.fail(null, null, 'unexpected catch');
@@ -409,13 +421,13 @@ describe('RefraxMutableResource', () => {
         type: 'user',
         valid: true
       };
-      let resource, store;
+      let mutableUsers, store;
 
       beforeEach(() => {
-        resource = new RefraxMutableResource(schema.users);
+        mutableUsers = new RefraxMutableResource(schema.users);
         store = expectedDescriptor.store = schema.__storeMap.getOrCreate('user');
 
-        sinon.spy(resource, '_generateDescriptor');
+        sinon.spy(mutableUsers, '_generateDescriptor');
         sinon.spy(store, 'touchResource');
         sinon.spy(store, 'updateResource');
         sinon.spy(store, 'destroyResource');
@@ -425,7 +437,7 @@ describe('RefraxMutableResource', () => {
       });
 
       it('returns a promise', () => {
-        const result = resource.update(sentData);
+        const result = mutableUsers.update(sentData);
 
         expect(result).to.be.instanceof(Promise);
 
@@ -433,7 +445,7 @@ describe('RefraxMutableResource', () => {
       });
 
       it('makes a request and processes response correctly', () => {
-        return resource
+        return mutableUsers
           .update(sentData)
           .then(([result, response, descriptor]) => {
             // promise results
@@ -451,7 +463,7 @@ describe('RefraxMutableResource', () => {
             expect(descriptor).to.equal(store.touchResource.getCall(0).args[0]);
 
             // hooks
-            expect(resource._generateDescriptor.callCount).to.equal(1);
+            expect(mutableUsers._generateDescriptor.callCount).to.equal(1);
             expect(store.touchResource.callCount).to.equal(1);
             expect(store.touchResource.getCall(0).args[0]).to.deep.match(expectedDescriptor);
             expect(store.updateResource.callCount).to.equal(1);
@@ -463,7 +475,7 @@ describe('RefraxMutableResource', () => {
       });
 
       it('correctly handles a void hook', () => {
-        return resource
+        return mutableUsers
           .update(sentData, (data, response, descriptor) => {
             expect(data).to.deep.equal(responseData);
             expect(descriptor).to.deep.match(expectedDescriptor);
@@ -484,7 +496,7 @@ describe('RefraxMutableResource', () => {
             expect(descriptor).to.equal(store.touchResource.getCall(0).args[0]);
 
             // hooks
-            expect(resource._generateDescriptor.callCount).to.equal(1);
+            expect(mutableUsers._generateDescriptor.callCount).to.equal(1);
             expect(store.touchResource.callCount).to.equal(1);
             expect(store.touchResource.getCall(0).args[0]).to.deep.match(expectedDescriptor);
             expect(store.updateResource.callCount).to.equal(1);
@@ -496,7 +508,7 @@ describe('RefraxMutableResource', () => {
       });
 
       it('correctly handles return value from a hook', () => {
-        return resource
+        return mutableUsers
           .update(sentData, (data, response, descriptor) => {
             return {
               id: data.id,
@@ -519,7 +531,7 @@ describe('RefraxMutableResource', () => {
             expect(descriptor).to.equal(store.touchResource.getCall(0).args[0]);
 
             // hooks
-            expect(resource._generateDescriptor.callCount).to.equal(1);
+            expect(mutableUsers._generateDescriptor.callCount).to.equal(1);
             expect(store.touchResource.callCount).to.equal(1);
             expect(store.touchResource.getCall(0).args[0]).to.deep.match(expectedDescriptor);
             expect(store.updateResource.callCount).to.equal(1);
@@ -530,6 +542,61 @@ describe('RefraxMutableResource', () => {
             expect(store.destroyResource.callCount).to.equal(0);
           }, () => {
             expect.fail(null, null, 'unexpected catch');
+          });
+      });
+    });
+  });
+
+  describe('behaviors', () => {
+    beforeEach(() => {
+      mock_reset();
+    });
+
+    describe('item', () => {
+      it('properly updates collections when mutated', () => {
+        mock_get('/users', dataCollectionUsers1);
+
+        var resourceUsers = new RefraxResource(schema.users)
+          , mutableUser = new RefraxMutableResource(schema.users.user.withParams({
+          userId: 1
+        }));
+
+        expect(resourceUsers).to.deep.match({
+          data: null,
+          status: STATUS_STALE,
+          timestamp: TIMESTAMP_LOADING
+        });
+
+        return delay_for_resource_request(resourceUsers)()
+          .then(() => {
+            expect(resourceUsers).to.deep.match({
+              data: dataCollectionUsers1,
+              status: STATUS_COMPLETE,
+              timestamp: (val) => val > TIMESTAMP_LOADING
+            });
+
+            mock_put('/users/1', { id: 1, name: 'bob foo' });
+            const promiseUpdate = mutableUser.update({ name: 'bob foo' });
+
+            // The `touch` event from our `update` does not affect the collection
+            expect(resourceUsers).to.deep.match({
+              data: dataCollectionUsers1,
+              status: STATUS_COMPLETE,
+              timestamp: (val) => val > TIMESTAMP_LOADING
+            });
+
+            return promiseUpdate;
+          })
+          .then(() => {
+            // The `update` event from our `update` action should update the collection
+            expect(resourceUsers).to.deep.match({
+              data: [
+                { id: 1, name: 'bob foo' },
+                dataElement2
+              ],
+              status: STATUS_COMPLETE,
+              timestamp: (val) => val > TIMESTAMP_LOADING
+            });
           });
       });
     });

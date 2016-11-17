@@ -12,9 +12,9 @@ const STRATEGY_MERGE = RefraxConstants.strategy.merge;
 const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
-const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
-const STATUS_PARTIAL = RefraxConstants.status.PARTIAL;
-const STATUS_STALE = RefraxConstants.status.STALE;
+const STATUS_COMPLETE = RefraxConstants.status.complete;
+const STATUS_PARTIAL = RefraxConstants.status.partial;
+const STATUS_STALE = RefraxConstants.status.stale;
 const TIMESTAMP_STALE = RefraxConstants.timestamp.stale;
 
 
@@ -206,6 +206,14 @@ class RefraxFragmentCache {
         }
       }
       else if (descriptor.classify === CLASSIFY_ITEM) {
+        // When updating an item, go through all queries we may be part of a collection of
+        RefraxTools.each(this.queries, function(query, path) {
+          if ((RefraxTools.isArray(query.data) &&
+               query.data.indexOf(dataId) != -1)) {
+            touchedQueries.push(path);
+          }
+        });
+
         queryData = dataId;
       }
       else if (data) {

@@ -31,6 +31,7 @@ function Reporter(runner) {
         : color('fail', ' ' + Base.symbols.err);
       console.log(indent() + req.url + check);
     });
+    console.log();
   }
 
   runner.on('start', function() {

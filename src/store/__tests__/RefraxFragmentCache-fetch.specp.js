@@ -11,8 +11,8 @@ const RefraxConstants = require('RefraxConstants');
 const RefraxFragmentCache = require('RefraxFragmentCache');
 const RefraxFragmentResult = require('RefraxFragmentResult');
 const expect = chai.expect;
-const STATUS_STALE = RefraxConstants.status.STALE;
-const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
+const STATUS_STALE = RefraxConstants.status.stale;
+const STATUS_COMPLETE = RefraxConstants.status.complete;
 const TIMESTAMP_STALE = RefraxConstants.timestamp.stale;
 
 

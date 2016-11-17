@@ -10,7 +10,7 @@ const RefraxTools = require('RefraxTools');
 const RefraxConstants = require('RefraxConstants');
 const parseNested = require('parseNested');
 const parseUnnested = require('parseUnnested');
-const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
+const STATUS_COMPLETE = RefraxConstants.status.complete;
 const ACTION_DELETE = RefraxConstants.action.delete;
 
 

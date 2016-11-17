@@ -12,15 +12,34 @@ const RefraxTools = require('RefraxTools');
  */
 class RefraxComposableHash {
   constructor(...args) {
+    Object.defineProperty(this, '__weakHooks', {
+      enumerable: false,
+      writable: true,
+      value: []
+    });
     Object.defineProperty(this, '__hooks', {
       enumerable: false,
       writable: true,
       value: []
     });
+    Object.defineProperty(this, '__isWeak', {
+      enumerable: false,
+      writable: true,
+      value: false
+    });
 
     this.extend(...args);
   }
 }
+
+Object.defineProperty(RefraxComposableHash.prototype, 'weakify', {
+  enumerable: false,
+  writable: false,
+  value: function(...args) {
+    this.__isWeak = true;
+    return this;
+  }
+});
 
 Object.defineProperty(RefraxComposableHash.prototype, 'clone', {
   enumerable: false,
@@ -44,8 +63,19 @@ Object.defineProperty(RefraxComposableHash.prototype, 'extend', {
         this.__hooks.push(arg);
       }
       else if (arg instanceof RefraxComposableHash) {
-        RefraxTools.extend(this, arg);
-        this.__hooks = this.__hooks.concat(arg.__hooks);
+        if (arg.__isWeak) {
+          RefraxTools.each(arg, (val, key) => {
+            if (this[key] === undefined) {
+              this[key] = val;
+            }
+          });
+          this.__weakHooks = this.__weakHooks.concat(arg.__weakHooks, arg.__hooks);
+        }
+        else {
+          RefraxTools.extend(this, arg);
+          this.__weakHooks = this.__weakHooks.concat(arg.__weakHooks);
+          this.__hooks = this.__hooks.concat(arg.__hooks);
+        }
       }
       else if (arg != undefined) {
         throw new TypeError(
@@ -81,10 +111,7 @@ Object.defineProperty(RefraxComposableHash.prototype, 'compose', {
   writable: false,
   value: function(target) {
     const result = {};
-
-    RefraxTools.extend(result, this);
-
-    RefraxTools.each(this.__hooks, (hook) => {
+    const iterator = (hook) => {
       const params = hook.call(target, result, target) || {};
 
       if (!RefraxTools.isPlainObject(params)) {
@@ -95,7 +122,11 @@ Object.defineProperty(RefraxComposableHash.prototype, 'compose', {
       }
 
       RefraxTools.extend(result, params);
-    });
+    };
+
+    RefraxTools.each(this.__weakHooks, iterator);
+    RefraxTools.extend(result, this);
+    RefraxTools.each(this.__hooks, iterator);
 
     return result;
   }

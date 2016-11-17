@@ -68,6 +68,29 @@ function pluginDeepMatch(chai, utils) {
       }
     }
 
+    // @todo: Some hacks to catch instanceof matches
+    if (typeof(expect) === 'function') {
+      try {
+        if (!expect(actual)) {
+          throw 'Expected to evaulatue true but got false at path "' + path + '".';
+        }
+      }
+      catch (err) {
+        if (err.message.indexOf('Cannot call a class as a function') != -1) {
+          if (actual instanceof expect) {
+            return true;
+          }
+
+          throw 'Expected instance of at path "' + path + '".';
+        }
+        else {
+          throw err;
+        }
+      }
+
+      return true;
+    }
+
     if (actual === null) {
       throw 'Expected to have an array/object but got null at path "' + path + '".';
     }
@@ -78,6 +101,10 @@ function pluginDeepMatch(chai, utils) {
 
     // array/object description
     for (var prop in expect) {
+      // if (typeof expect[prop] === 'function') {
+      //   continue;
+      // }
+
       if (typeof actual[prop] == 'undefined' && typeof expect[prop] != 'undefined') {
         throw 'Expected "' + prop + '" field to be defined at path "' + path +  '".';
       }

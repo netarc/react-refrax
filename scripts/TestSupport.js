@@ -1,13 +1,9 @@
 const Promise = require('bluebird');
 const JSDOM = require('jsdom').JSDOM;
-const moxios = require('moxios');
+const axiosMock = require('AxiosMock.js');
 const axios = require('axios');
 const Utils = require('mocha/lib/utils.js');
 const map = Utils.map;
-const indexOf = Utils.indexOf;
-
-/* global before after */
-
 
 // IMPORTANT: We need to setup our global window/document otherwise `fbjs` will
 // fail to init canUseDOM correctly when `react` or `enzyme` is loaded at the start
@@ -19,52 +15,75 @@ global.navigator = {
   userAgent: 'node.js'
 };
 
+let fn_mount = null
+  , mounted = [];
+
+global.mount_init = () => {
+  if (!fn_mount) {
+    fn_mount = require('enzyme').mount;
+  }
+};
+
+global.mount = (component) => {
+  const wrapper = fn_mount(component);
+  mounted.push(wrapper);
+  return wrapper;
+};
+
+global.mount_cleanup = () => {
+  for (var i = 0, l = mounted.length; i < l; i++) {
+    mounted[i].unmount();
+  }
+
+  mounted = [];
+};
+
+
+
 var isHooked = false;
-function moxios_hook() {
+function axios_hook() {
   if (!isHooked) {
     isHooked = true;
-    moxios.install(axios);
+    axiosMock.install(axios);
   }
 }
 
 const host = '';
 
 global.mock_reset = () => {
-  moxios.requests.reset();
-  moxios.stubs.reset();
+  axiosMock.requests.reset();
+  axiosMock.stubs.reset();
 };
 
 global.mock_request_count = () => {
-  return moxios.requests.__items.length;
+  return axiosMock.requests.__items.length;
 };
 
 global.mock_status = () => {
-  const stubs = map(moxios.stubs.__items, item => item.url);
-
-  return map(moxios.requests.__items, item => ({
+  return map(axiosMock.requests.__items, item => ({
     url: item.url.replace(host, ''),
-    mocked: indexOf(stubs, item.url) !== -1
+    mocked: item.resolved
   }));
 };
 
 global.mock_get = function(uri, response, status = 200) {
-  moxios_hook();
-  moxios.stubRequest(`${host}${uri}`, { status, response });
+  axios_hook();
+  axiosMock.stubRequest('get', `${host}${uri}`, { status, response });
 };
 
 global.mock_post = function(uri, response, status = 200) {
-  moxios_hook();
-  moxios.stubRequest(`${host}${uri}`, { status, response });
+  axios_hook();
+  axiosMock.stubRequest('post', `${host}${uri}`, { status, response });
 };
 
 global.mock_put = function(uri, response, status = 200) {
-  moxios_hook();
-  moxios.stubRequest(`${host}${uri}`, { status, response });
+  axios_hook();
+  axiosMock.stubRequest('put', `${host}${uri}`, { status, response });
 };
 
 global.mock_delete = function(uri, response, status = 200) {
-  moxios_hook();
-  moxios.stubRequest(`${host}${uri}`, { status, response });
+  axios_hook();
+  axiosMock.stubRequest('delete', `${host}${uri}`, { status, response });
 };
 
 global.wait_for_promise = (fn) => {
@@ -93,41 +112,53 @@ global.wait_for_promise = (fn) => {
   });
 };
 
-global.delay = (fn) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const result = fn();
-      if (result instanceof Promise) {
-        result.then(resolve);
-      }
-      else {
+global.delay_for = (delay = 5) => {
+  return () => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
         resolve();
-      }
-    }, 10);
-  });
+      }, delay);
+    });
+  };
 };
 
-global.delay_for_resource_request = (resource, fn) => {
-  // pre-create our error so we can use its stack-trace when we reject
-  const err = new Error('delay timeout!');
+global.delay_for_resource_request = (resource) => {
+  return () => {
+    // pre-create our error so we can use its stack-trace when we reject
+    const err = new Error('delay timeout!');
 
-  return new Promise((resolve, reject) => {
-    let timer = null;
-    const disposer = resource.once('change', () => {
-      clearTimeout(timer);
-
-      const result = fn();
-      if (result instanceof Promise) {
-        result.then(resolve);
-      }
-      else {
+    return new Promise((resolve, reject) => {
+      let timeout = null;
+      const disposer = resource.once('change', () => {
+        clearTimeout(timeout);
         resolve();
-      }
-    });
+      });
 
-    timer = setTimeout(() => {
-      disposer();
-      reject(err);
-    }, 500);
-  });
+      timeout = setTimeout(() => {
+        disposer();
+        reject(err);
+      }, 50);
+    });
+  };
+};
+
+
+global.delay_for_action = (resource) => {
+  return () => {
+    // pre-create our error so we can use its stack-trace when we reject
+    const err = new Error('delay timeout!');
+
+    return new Promise((resolve, reject) => {
+      let timeout = null;
+      const disposer = resource.once('finish', () => {
+        clearTimeout(timeout);
+        resolve();
+      });
+
+      timeout = setTimeout(() => {
+        disposer();
+        reject(err);
+      }, 50);
+    });
+  };
 };

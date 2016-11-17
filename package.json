@@ -37,6 +37,7 @@
     "pluralize": "^5.0.0"
   },
   "devDependencies": {
+    "ansi-styles": "^3.2.0",
     "babel": "^6.23.0",
     "babel-core": "^6.25.0",
     "babel-eslint": "^7.2.3",
@@ -54,10 +55,8 @@
     "gulp-mocha": "^4.3.1",
     "gulp-sourcemaps": "1.6.0",
     "gulp-util": "^3.0.6",
-    "jsdom": "^11.0.0",
-    "jsdom-global": "^3.0.2",
+    "jsdom": "^11.1.0",
     "mocha": "~3.4.1",
-    "moxios": "^0.4.0",
     "nock": "3.5.0",
     "object-assign": "^3.0.0",
     "react": "^15.6.1",

@@ -66,7 +66,6 @@ const babelOpts = {
     'jsdom': 'jsdom',
     'jsdom/lib/old-api': 'jsdom/lib/old-api',
     'enzyme': 'enzyme',
-    'moxios': 'moxios',
     'mocha/lib/utils.js': 'mocha/lib/utils.js'
   }
 };

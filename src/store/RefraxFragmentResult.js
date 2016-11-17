@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 const RefraxConstants = require('RefraxConstants');
-const STATUS_STALE = RefraxConstants.status.STALE;
+const STATUS_STALE = RefraxConstants.status.stale;
 const TIMESTAMP_STALE = RefraxConstants.timestamp.stale;
 
 

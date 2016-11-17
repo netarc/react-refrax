@@ -15,7 +15,7 @@ const createSchemaCollection = require('createSchemaCollection');
 const processResponse = require('processResponse');
 const ACTION_GET = RefraxConstants.action.get;
 const ACTION_DELETE = RefraxConstants.action.delete;
-const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
+const STATUS_COMPLETE = RefraxConstants.status.complete;
 const expect = chai.expect;
 
 const dataCollectionUsers = [
@@ -41,7 +41,7 @@ describe('processResponse', () => {
       it('should error with an invalid handler', () => {
         RefraxTools.each([123, 'foo'], (handler) => {
           expect(function() {
-            processResponse({}, new RefraxResourceDescriptor(null, ), handler);
+            processResponse({}, new RefraxResourceDescriptor(null), handler);
           }).to.throw(TypeError, 'processResponse: expected handler `Function`');
         });
       });
