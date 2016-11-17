@@ -82,6 +82,9 @@ class RefraxActionEntity {
       });
     }
 
+    promise.then(() => {
+      this.unset();
+    });
     promise.catch(function(err) {
       if (RefraxTools.isPlainObject(err.response.data)) {
         Action.errors = RefraxTools.extend({}, err.response.data);

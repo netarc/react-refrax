@@ -1,4 +1,6 @@
 ## Unreleased
+- **Bugfix** `mixinMutable` will now correctly `unset` state on its base when used with prototypes
+- **Minor** Action invoke now will `unset` it mutable state when successful
 
 ## [v0.5.4]
 > November 16, 2016

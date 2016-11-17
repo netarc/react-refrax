@@ -105,9 +105,13 @@ const MixinMutable = {
     };
   },
   unset: function(options = {}) {
-    this._state = {};
+    const canEmit = options.noPropagate !== true && this.emit;
 
-    if (options.noPropagate !== true) {
+    // Since mixinMutable can be used on a prototype chain
+    // we need to reset state on our mutable
+    this._mutable._state = {};
+
+    if (canEmit) {
       this.emit('mutated', {
         type: 'attribute',
         target: null,
@@ -125,6 +129,10 @@ function mixinMutable(target) {
     throw new TypeError('mixinMutable - exepected non-null target');
   }
 
+  Object.defineProperty(target, '_mutable', {
+    value: target,
+    writable: false
+  });
   Object.defineProperty(target, '_state', {
     value: {},
     writable: true
