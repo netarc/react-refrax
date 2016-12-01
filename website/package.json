@@ -1,0 +1,24 @@
+{
+  "name": "refrax-docs",
+  "private": true,
+  "scripts": {
+    "start": "node serve.js",
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "handlebars": "^4.0.5",
+    "marked": "^0.3.6",
+    "metalsmith": "^2.1.0",
+    "metalsmith-collections": "^0.9.0",
+    "metalsmith-copy": "^0.3.0",
+    "metalsmith-layouts": "^1.4.1",
+    "metalsmith-less": "^2.0.0",
+    "metalsmith-markdown": "^0.2.1",
+    "metalsmith-paths": "^3.0.1",
+    "metalsmith-pug": "^2.0.0",
+    "metalsmith-serve": "0.0.7",
+    "metalsmith-static": "0.0.5",
+    "metalsmith-watch": "^1.0.3",
+    "metalsmith-writemetadata": "^0.4.5"
+  }
+}

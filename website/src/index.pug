@@ -1,0 +1,30 @@
+---
+title: My First Post
+date: 2012-08-20
+---
+extends ../layouts/default
+
+block precontent
+  div.hero
+    div.wrap
+      h1.text
+        strong Refrax
+        strong!= foo
+      h2.minitext Refrax is a JavaScript framework for building API based data-driven applications.
+
+block content
+  section.marketing-row
+    div.marketing-col
+      h3 Stuff
+      p this is some flavor text that just keeps going. this is some flavor text that just keeps going. this is some flavor text that just keeps going.
+    div.marketing-col
+      h3 Stuff
+      p this is some flavor text that just keeps going. this is some flavor text that just keeps going. this is some flavor text that just keeps going.
+    div.marketing-col
+      h3 Stuff
+      p this is some flavor text that just keeps going. this is some flavor text that just keeps going. this is some flavor text that just keeps going.
+
+  hr.home-divider
+
+  section.buttons-unit
+    a.button(href="/introduction/test") Get Started

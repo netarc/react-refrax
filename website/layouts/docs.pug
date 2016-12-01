@@ -1,0 +1,40 @@
+doctype
+html
+  block head
+    include _head
+  body
+    div.container
+      div.nav-main
+        div.wrap
+          a.nav-home(href="/")
+            img.nav-logo(src="/img/logo.svg" width="50" height="50")
+            span Refrax
+
+      div.content.wrap.documentationContent
+        div.nav-docs
+          div.nav-docs-section
+            h3 Quick Start
+            ul
+              for page in quick_starts
+                li
+                  a(class=`${(page.permalink || "").indexOf(path.dhref + path.name + ".html") === 0 ? 'active' : ''}` href=`${page.permalink}`)= page.title
+          div.nav-docs-section
+            h3 Guides
+            ul
+              for page in guides
+                li
+                  a(class=`${(page.permalink || "").indexOf(path.dhref + path.name + ".html") === 0 ? 'active' : ''}` href=`${page.permalink}`)= page.title
+
+          div.nav-docs-section
+            h3 API Reference
+            ul
+              for page in apis
+                li
+                  a(class=`${(page.permalink || "").indexOf(path.dhref + path.name + ".html") === 0 ? 'active' : ''}` href=`${page.permalink}`)= page.title
+
+        div.inner-content
+          h1= title
+          != contents
+
+      footer.wrap
+        div.right ©2016 Joshua Hollenbeck
