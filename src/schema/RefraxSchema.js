@@ -6,9 +6,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaPath = require('RefraxSchemaPath');
 
 const RootNode = new RefraxSchemaNode();
-const Schema = new RefraxSchemaNodeAccessor(RootNode);
+const Schema = new RefraxSchemaPath(RootNode);
 
 export default Schema;

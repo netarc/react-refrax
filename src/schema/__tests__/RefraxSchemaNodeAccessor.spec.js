@@ -6,40 +6,40 @@
  * LICENSE file in the root directory of this source tree.
  */
 const chai = require('chai');
-const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const expect = chai.expect;
 
 
 /* eslint-disable no-new */
-describe('RefraxSchemaNodeAccessor', function() {
+describe('RefraxSchemaPath', function() {
   describe('instantiation', function() {
     it('should throw an error when passed invalid arguments', function() {
       expect(function() {
-        new RefraxSchemaNodeAccessor();
+        new RefraxSchemaPath();
       }).to.throw(Error, 'Expected node of type RefraxSchemaNode but found');
 
       expect(function() {
-        new RefraxSchemaNodeAccessor(123);
+        new RefraxSchemaPath(123);
       }).to.throw(Error, 'Expected node of type RefraxSchemaNode but found');
 
       expect(function() {
-        new RefraxSchemaNodeAccessor('foo');
+        new RefraxSchemaPath('foo');
       }).to.throw(Error, 'Expected node of type RefraxSchemaNode but found');
 
       expect(function() {
-        new RefraxSchemaNodeAccessor({bar: 23});
+        new RefraxSchemaPath({bar: 23});
       }).to.throw(Error, 'Expected node of type RefraxSchemaNode but found');
     });
 
     it('should not throw an error when passed valid arguments', function() {
       expect(function() {
-        new RefraxSchemaNodeAccessor(new RefraxSchemaNode());
+        new RefraxSchemaPath(new RefraxSchemaNode());
       }).to.not.throw(Error);
     });
 
     it('should look like a node accessor', function() {
-      var rootAccessor = new RefraxSchemaNodeAccessor(new RefraxSchemaNode({
+      var rootAccessor = new RefraxSchemaPath(new RefraxSchemaNode({
         foo: 213
       }));
 
@@ -54,7 +54,7 @@ describe('RefraxSchemaNodeAccessor', function() {
   describe('methods', function() {
     describe('enumerateLeafs', function() {
       it('should only enumerate shallow leafs', function() {
-        var nodeAccessor = new RefraxSchemaNodeAccessor(new RefraxSchemaNode())
+        var nodeAccessor = new RefraxSchemaPath(new RefraxSchemaNode())
           , schemaNode = new RefraxSchemaNode(123)
           , schemaNodeWithLiteral = new RefraxSchemaNode(123, 'foo')
           , schemaNodeNested = new RefraxSchemaNode(123)
@@ -78,20 +78,20 @@ describe('RefraxSchemaNodeAccessor', function() {
 
     describe('addLeaf', function() {
       it('should only accept a leaf object optionally preceeded by an identifier', function() {
-        var nodeAccessor = new RefraxSchemaNodeAccessor(new RefraxSchemaNode())
+        var nodeAccessor = new RefraxSchemaPath(new RefraxSchemaNode())
           , schemaNode = new RefraxSchemaNode(123);
 
         expect(function() {
           nodeAccessor.addLeaf(123);
-        }).to.throw(Error, 'Expected leaf of type RefraxSchemaNodeAccessor or RefraxSchemaNode');
+        }).to.throw(Error, 'Expected leaf of type RefraxSchemaPath or RefraxSchemaNode');
 
         expect(function() {
           nodeAccessor.addLeaf('abc');
-        }).to.throw(Error, 'Expected leaf of type RefraxSchemaNodeAccessor or RefraxSchemaNode');
+        }).to.throw(Error, 'Expected leaf of type RefraxSchemaPath or RefraxSchemaNode');
 
         expect(function() {
           nodeAccessor.addLeaf('abc', {});
-        }).to.throw(Error, 'Expected leaf of type RefraxSchemaNodeAccessor or RefraxSchemaNode');
+        }).to.throw(Error, 'Expected leaf of type RefraxSchemaPath or RefraxSchemaNode');
 
         expect(function() {
           nodeAccessor.addLeaf(schemaNode);
@@ -99,7 +99,7 @@ describe('RefraxSchemaNodeAccessor', function() {
       });
 
       it('should not throw an error on valid arguments', function() {
-        var nodeAccessor = new RefraxSchemaNodeAccessor(new RefraxSchemaNode())
+        var nodeAccessor = new RefraxSchemaPath(new RefraxSchemaNode())
           , schemaNode = new RefraxSchemaNode(123)
           , schemaNodeWithLiteral = new RefraxSchemaNode(123, 'foo');
 
@@ -110,19 +110,19 @@ describe('RefraxSchemaNodeAccessor', function() {
       });
 
       it('should correctly add an accessible leaf', function() {
-        var rootAccessor = new RefraxSchemaNodeAccessor(new RefraxSchemaNode())
+        var rootAccessor = new RefraxSchemaPath(new RefraxSchemaNode())
           , schemaNode1 = new RefraxSchemaNode(123)
           , schemaNode2 = new RefraxSchemaNode(321);
 
         rootAccessor.addLeaf('foo', schemaNode1);
         expect(rootAccessor).to.have.property('foo')
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor);
+          .that.is.an.instanceof(RefraxSchemaPath);
         expect(rootAccessor.foo.__node).to.equal(schemaNode1);
 
         rootAccessor.foo.addLeaf('bar', schemaNode2);
         expect(rootAccessor).to.not.have.property('bar');
         expect(rootAccessor.foo).to.have.property('bar')
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor);
+          .that.is.an.instanceof(RefraxSchemaPath);
         expect(rootAccessor.foo.bar.__node).to.equal(schemaNode2);
 
         expect(rootAccessor.foo.bar).to.not.have.property('foo');

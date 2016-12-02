@@ -38,18 +38,18 @@ function createLeaf(accessor, detached, identifier, leafNode) {
     identifier = null;
   }
 
-  if (leafNode instanceof RefraxSchemaNodeAccessor) {
+  if (leafNode instanceof RefraxSchemaPath) {
     leafNode = leafNode.__node;
   }
   else if (!(leafNode instanceof RefraxSchemaNode)) {
     throw new TypeError(
-      'RefraxSchemaNodeAccessor:addLeaf - Expected leaf of type RefraxSchemaNodeAccessor or RefraxSchemaNode'
+      'RefraxSchemaPath:addLeaf - Expected leaf of type RefraxSchemaPath or RefraxSchemaNode'
     );
   }
 
   if (!identifier && !(identifier = leafNode.identifier)) {
     throw new TypeError(
-      'RefraxSchemaNodeAccessor:addLeaf - Failed to add leaf with no inherit identifier.'
+      'RefraxSchemaPath:addLeaf - Failed to add leaf with no inherit identifier.'
     );
   }
 
@@ -58,18 +58,18 @@ function createLeaf(accessor, detached, identifier, leafNode) {
 
   Object.defineProperty(accessor, identifier, {
     get: function() {
-      return new RefraxSchemaNodeAccessor(leafNode, node, stack.concat(leafNode.subject));
+      return new RefraxSchemaPath(leafNode, node, stack.concat(leafNode.subject));
     }
   });
 }
 
-class RefraxSchemaNodeAccessor {
+class RefraxSchemaPath {
   constructor(node, parent, stack) {
     var self = this;
 
     if (!(node instanceof RefraxSchemaNode)) {
       throw new TypeError(
-        'RefraxSchemaNodeAccessor - Expected node of type RefraxSchemaNode but found `' + typeof(node) + '`'
+        'RefraxSchemaPath - Expected node of type RefraxSchemaNode but found `' + typeof(node) + '`'
       );
     }
 
@@ -88,7 +88,7 @@ class RefraxSchemaNodeAccessor {
     enumerateNodeLeafs(node, stack, function(key, leafNode, leafStack) {
       Object.defineProperty(self, key, {
         get: function() {
-          return new RefraxSchemaNodeAccessor(leafNode, node, leafStack);
+          return new RefraxSchemaPath(leafNode, node, leafStack);
         }
       });
     });
@@ -99,7 +99,7 @@ class RefraxSchemaNodeAccessor {
     const stack = this.__stack;
 
     enumerateNodeLeafs(node, stack, function(key, leafNode, leafStack) {
-      const accessor = new RefraxSchemaNodeAccessor(leafNode, node, leafStack);
+      const accessor = new RefraxSchemaPath(leafNode, node, leafStack);
       iteratee(key, accessor);
     });
   }
@@ -135,6 +135,6 @@ class RefraxSchemaNodeAccessor {
   }
 }
 
-RefraxSchemaNodeAccessor.mixins = SchemaAccescessorMixins;
+RefraxSchemaPath.mixins = SchemaAccescessorMixins;
 
-export default RefraxSchemaNodeAccessor;
+export default RefraxSchemaPath;

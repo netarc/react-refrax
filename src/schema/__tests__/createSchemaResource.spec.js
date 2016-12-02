@@ -7,7 +7,7 @@
  */
 const chai = require('chai');
 const TestHelper = require('TestHelper');
-const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxStore = require('RefraxStore');
@@ -64,7 +64,7 @@ describe('createSchemaResource', function() {
             });
 
         expect(resourceSettings)
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'settings');
@@ -101,7 +101,7 @@ describe('createSchemaResource', function() {
             });
 
         expect(resourceSettings)
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'settings');
@@ -126,7 +126,7 @@ describe('createSchemaResource', function() {
             });
 
         expect(resourceSettings)
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'settings');
@@ -140,7 +140,7 @@ describe('createSchemaResource', function() {
         });
 
         expect(resourceSettings)
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'clients');
@@ -169,7 +169,7 @@ describe('createSchemaResource', function() {
         });
 
         expect(resourceSettings)
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'clients');

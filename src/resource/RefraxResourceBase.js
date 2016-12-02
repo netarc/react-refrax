@@ -13,7 +13,7 @@ const RefraxParameters = require('RefraxParameters');
 const RefraxQueryParameters = require('RefraxQueryParameters');
 const RefraxPath = require('RefraxPath');
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxTools = require('RefraxTools');
 const RefraxConstants = require('RefraxConstants');
 const invokeDescriptor = require('invokeDescriptor');
@@ -32,7 +32,7 @@ class RefraxResourceBase {
       , parameters = new RefraxParameters()
       , paths = [];
 
-    if (!(accessor instanceof RefraxSchemaNodeAccessor)) {
+    if (!(accessor instanceof RefraxSchemaPath)) {
       throw new TypeError(
         'RefraxResourceBase expected valid SchemaNodeAccessor\n\r' +
         'found: `' + accessor + '`'

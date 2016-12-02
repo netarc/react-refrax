@@ -9,7 +9,7 @@ const pluralize = require('pluralize');
 const RefraxTools = require('RefraxTools');
 const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaTools = require('RefraxSchemaTools');
 const RefraxConstants = require('RefraxConstants');
 const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
@@ -39,7 +39,7 @@ function createSchemaCollection(path, store, options) {
     classify: CLASSIFY_COLLECTION
   }, options.collection));
 
-  accessorNodeCollection = new RefraxSchemaNodeAccessor(
+  accessorNodeCollection = new RefraxSchemaPath(
     new RefraxSchemaNode([store, treeNodeCollection], identifier)
   );
 

@@ -7,7 +7,7 @@
  */
 const chai = require('chai');
 const TestHelper = require('TestHelper');
-const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxTreeNode = require('RefraxTreeNode');
 const createSchemaNamespace = require('createSchemaNamespace');
@@ -46,7 +46,7 @@ describe('createSchemaNamespace', function() {
         var namespaceAPI = createSchemaNamespace('api');
 
         expect(namespaceAPI)
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'api');

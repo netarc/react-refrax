@@ -8,7 +8,7 @@
 const RefraxTools = require('RefraxTools');
 const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaTools = require('RefraxSchemaTools');
 const RefraxConstants = require('RefraxConstants');
 const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
@@ -32,7 +32,7 @@ function createSchemaResource(path, store, options) {
     classify: CLASSIFY_RESOURCE
   }, options.resource));
 
-  accessorNode = new RefraxSchemaNodeAccessor(
+  accessorNode = new RefraxSchemaPath(
     new RefraxSchemaNode([store, treeNode], identifier)
   );
 

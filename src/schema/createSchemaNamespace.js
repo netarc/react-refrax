@@ -8,7 +8,7 @@
 const RefraxTools = require('RefraxTools');
 const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaTools = require('RefraxSchemaTools');
 
 
@@ -23,7 +23,7 @@ function createSchemaNamespace(path, options) {
     uri: path
   }, options.namespace));
 
-  accessorNode = new RefraxSchemaNodeAccessor(
+  accessorNode = new RefraxSchemaPath(
     new RefraxSchemaNode(treeNode, identifier)
   );
 

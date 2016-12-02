@@ -7,7 +7,7 @@
  */
 const chai = require('chai');
 const TestHelper = require('TestHelper');
-const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxStore = require('RefraxStore');
@@ -65,12 +65,12 @@ describe('createSchemaCollection', function() {
             });
 
         expect(collectionUsers)
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'users');
         expect(collectionUsers).to.have.property('user')
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'user');
@@ -107,12 +107,12 @@ describe('createSchemaCollection', function() {
             });
 
         expect(collectionUsers)
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'users');
         expect(collectionUsers).to.have.property('user')
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'user');
@@ -137,12 +137,12 @@ describe('createSchemaCollection', function() {
             });
 
         expect(collectionUsers)
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'users');
         expect(collectionUsers).to.have.property('user')
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'user');
@@ -156,12 +156,12 @@ describe('createSchemaCollection', function() {
         });
 
         expect(collectionUsers)
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'clients');
         expect(collectionUsers).to.have.property('client')
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'client');
@@ -207,12 +207,12 @@ describe('createSchemaCollection', function() {
         });
 
         expect(collectionUsers)
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'clients');
         expect(collectionUsers).to.have.property('client')
-          .that.is.an.instanceof(RefraxSchemaNodeAccessor)
+          .that.is.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
             .that.is.instanceof(RefraxSchemaNode)
             .to.have.property('identifier', 'client');

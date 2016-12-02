@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 const RefraxTools = require('RefraxTools');
-const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxResource = require('RefraxResource');
 const RefraxMutableResource = require('RefraxMutableResource');
 const RefraxOptions = require('RefraxOptions');
@@ -227,7 +227,7 @@ function attachAction(component, Action, options = {}) {
 export function attach(component, target, options, ...args) {
   refraxifyComponent(component);
 
-  if (target instanceof RefraxSchemaNodeAccessor) {
+  if (target instanceof RefraxSchemaPath) {
     return attachAccessor(component, target, options, ...args);
   }
   else if (target instanceof RefraxActionEntity) {

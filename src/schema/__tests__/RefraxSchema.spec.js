@@ -7,12 +7,12 @@
  */
 const chai = require('chai');
 const RefraxSchema = require('RefraxSchema');
-const RefraxSchemaNodeAccessor = require('RefraxSchemaNodeAccessor');
+const RefraxSchemaPath = require('RefraxSchemaPath');
 const expect = chai.expect;
 
 
 describe('RefraxSchema', function() {
   it('should represent the Root Schema Node', function() {
-    expect(RefraxSchema).to.be.an.instanceof(RefraxSchemaNodeAccessor);
+    expect(RefraxSchema).to.be.an.instanceof(RefraxSchemaPath);
   });
 });
