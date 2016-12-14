@@ -111,7 +111,7 @@ function refraxifyComponent(component) {
       disposer();
     });
     RefraxTools.each(component.__refrax.resources, function(resource) {
-      resource._dispose();
+      resource.dispose();
     });
     component.__refrax.disposers = [];
     component.__refrax.actions = [];

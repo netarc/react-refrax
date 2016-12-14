@@ -9,7 +9,6 @@ const RefraxTools = require('RefraxTools');
 const RefraxConstants = require('RefraxConstants');
 const RefraxOptions = require('RefraxOptions');
 const RefraxResourceBase = require('RefraxResourceBase');
-const invokeDescriptor = require('invokeDescriptor');
 const STATUS_STALE = RefraxConstants.status.STALE;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
@@ -43,9 +42,21 @@ class RefraxResource extends RefraxResourceBase {
   constructor(accessor, ...args) {
     super(accessor, ...args);
 
-    Object.defineProperty(this, '_disposers', {value: []});
+    this.onDispose(() => {
+      ResourceMap.delete(this);
+      this._disposeSubscriber && this._disposeSubscriber();
+    });
 
     this._generateDescriptor((descriptor) => {
+      this._dispatchLoad = (data) => {
+        if (data) {
+          this._dispatchLoad = null;
+          this.emit('load', this, {
+            type: descriptor.store.definition.type
+          });
+        }
+      };
+
       // NOTE: we invalidate before potentially subscribing
       if (this._options.invalidate) {
         // shortcut for no options
@@ -57,36 +68,40 @@ class RefraxResource extends RefraxResourceBase {
       }
 
       if (this._options.noSubscribe !== true && descriptor.store) {
-        this._disposers.push(
-          descriptor.store.subscribe(descriptor.event, (event) => {
-            // If we are an item resource and we encounter a destroy event, we switch on the
-            // 'no fetching' option so we can still passively poll the data but not cause a re-fetch
-            if (descriptor.classify === CLASSIFY_ITEM && event.action === 'destroy') {
-              this._options.noFetchGet = true;
-            }
-
-            this._updateCache();
-
-            if (event.noPropagate !== true) {
-              this.emit('change', this, event);
-            }
-          })
-        );
+        this._subscribeToStore(descriptor);
       }
 
       this._updateCache();
     });
   }
 
-  _dispose() {
-    ResourceMap.delete(this);
+  _subscribeToStore(descriptor) {
+    // We make use of .once instead of .subscribe so we remain weakly referenced
+    const subscriber = () => {
+      this._disposeSubscriber = descriptor.store.once(descriptor.event, onEvent);
+    };
 
-    RefraxTools.each(this._disposers, function(disposer) {
-      disposer();
-    });
-    this._disposers.length = 0;
+    const onEvent = (event) => {
+      if (this.isDisposed) {
+        return;
+      }
 
-    return this;
+      subscriber();
+
+      // If we are an item resource and we encounter a destroy event, we switch on the
+      // 'no fetching' option so we can still passively poll the data but not cause a re-fetch
+      if (descriptor.classify === CLASSIFY_ITEM && event.action === 'destroy') {
+        this._options.noFetchGet = true;
+      }
+
+      this._updateCache();
+
+      if (event.noPropagate !== true) {
+        this.emit('change', this, event);
+      }
+    };
+
+    subscriber();
   }
 
   _fetchFragment() {
@@ -94,7 +109,10 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   _updateCache() {
-    ResourceMap.set(this, this._fetchFragment());
+    const fragment = this._fetchFragment();
+
+    this._dispatchLoad && this._dispatchLoad(fragment && fragment.data);
+    ResourceMap.set(this, fragment);
   }
 
   invalidate(options = {}) {

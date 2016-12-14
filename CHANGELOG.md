@@ -1,4 +1,5 @@
 ## Unreleased
+- **Minor** ADd `Disposable` and rework Resource disposable handling
 
 ## [v0.5.5]
 > November 17, 2016
