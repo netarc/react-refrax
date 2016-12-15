@@ -55,11 +55,10 @@ class RefraxActionEntity {
     const stack = Action._stack;
     const stackSize = stack.length;
     const invoker = new ActionInvoker(Action);
-    const entity = stack[stackSize-1];
     var promise, result, i;
 
     // reset errors on invocation
-    Action.errors = {};
+    Action.setErrors({});
     const data = RefraxTools.extend(
       {},
       options.includeDefault === true ? Action.getDefault() : null,
@@ -87,10 +86,7 @@ class RefraxActionEntity {
     });
     promise.catch(function(err) {
       if (RefraxTools.isPlainObject(err.response.data)) {
-        Action.errors = RefraxTools.extend({}, err.response.data);
-        entity.emit('mutated', {
-          type: 'errors'
-        });
+        Action.setErrors(RefraxTools.extend({}, err.response.data));
       }
     });
 

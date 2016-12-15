@@ -1,5 +1,6 @@
 ## Unreleased
 - **Minor** ADd `Disposable` and rework Resource disposable handling
+- **Feature** Add `Mutable` helepr methods `unsetErrors`, `setErrors`, `isMutated`
 
 ## [v0.5.5]
 > November 17, 2016

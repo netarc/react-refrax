@@ -58,6 +58,11 @@ const MixinResourceStatus = {
     }) && !detect.call(this, this.__refrax.actions, targets, function(action) {
       return action.isStale();
     });
+  },
+  isMutated: function(...targets) {
+    return detect.call(this, this.__refrax.actions, targets, function(action) {
+      return action.isMutated();
+    });
   }
 };
 

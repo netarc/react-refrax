@@ -107,8 +107,7 @@ const MixinMutable = {
   unset: function(options = {}) {
     const canEmit = options.noPropagate !== true && this.emit;
 
-    // Since mixinMutable can be used on a prototype chain
-    // we need to reset state on our mutable
+    // mixinMutable can be used on a prototype chain so set on mutable
     this._mutable._state = {};
 
     if (canEmit) {
@@ -116,6 +115,36 @@ const MixinMutable = {
         type: 'attribute',
         target: null,
         value: null
+      });
+    }
+  },
+  isMutated: function() {
+    const state = this._state;
+
+    for (const k in state) {
+      if (state[k] !== undefined) {
+        return true;
+      }
+    }
+    return false;
+  },
+  unsetErrors: function(options = {}) {
+    this.setErrors(null, options);
+  },
+  setErrors: function(errors, options = {}) {
+    const canEmit = options.noPropagate !== true && this.emit;
+
+    if (errors && !RefraxTools.isPlainObject(errors)) {
+      throw new TypeError('mixinMutable - setErrors expected errors object');
+    }
+
+    // mixinMutable can be used on a prototype chain so set on mutable
+    this._mutable.errors = errors || {};
+
+    if (canEmit) {
+      this.emit('mutated', {
+        type: 'errors',
+        errors: errors
       });
     }
   },

@@ -417,5 +417,111 @@ describe('mixinMutable', function() {
           .to.equal(undefined);
       });
     });
+
+    describe('setErrors', function() {
+      let mutable;
+
+      beforeEach(function() {
+        mutable = createMutable(mutableState, mutableDefaultState);
+      });
+
+      describe('when passed an invalid attribute', function() {
+        it('should throw an error', function() {
+          expect(function() {
+            expect(mutable.setErrors());
+          }).to.not.throw(TypeError, 'setErrors expected errors object');
+
+          expect(function() {
+            expect(mutable.setErrors(123));
+          }).to.throw(TypeError, 'setErrors expected errors object');
+
+          expect(function() {
+            expect(mutable.setErrors(function() {}));
+          }).to.throw(TypeError, 'setErrors expected errors object');
+        });
+      });
+
+      describe('when passed an object', function() {
+        it('will correctly update state', function() {
+          mutable.setErrors(mutableErrors);
+
+          expect(mutable.getErrors())
+            .to.deep.equal(mutableErrors);
+          expect(mutable.getErrors(null))
+            .to.deep.equal(mutableErrors);
+        });
+
+        it('should emit', function() {
+          mutable.setErrors(mutableErrors);
+
+          expect(mutable.emit.callCount).to.equal(1);
+          expect(mutable.emit.getCall(0).args[0])
+            .to.equal('mutated');
+          expect(mutable.emit.getCall(0).args[1])
+            .to.deep.equal({
+              type: 'errors',
+              errors: mutableErrors
+            });
+        });
+      });
+    });
+
+    describe('unsetErrors', function() {
+      let mutable;
+
+      beforeEach(function() {
+        mutable = createMutable(mutableState, mutableDefaultState);
+        mutable.errors = mutableErrors;
+      });
+
+      describe('when invoked', function() {
+        it('will correctly update state', function() {
+          mutable.unsetErrors();
+
+          expect(mutable.getErrors())
+            .to.deep.equal({});
+          expect(mutable.getErrors(null))
+            .to.deep.equal({});
+        });
+
+        it('should emit', function() {
+          mutable.unsetErrors();
+
+          expect(mutable.emit.callCount).to.equal(1);
+          expect(mutable.emit.getCall(0).args[0])
+            .to.equal('mutated');
+          expect(mutable.emit.getCall(0).args[1])
+            .to.deep.equal({
+              type: 'errors',
+              errors: null
+            });
+        });
+      });
+    });
+
+    describe('isMutated', function() {
+      let mutable;
+
+      beforeEach(function() {
+        mutable = createMutable({}, mutableDefaultState);
+      });
+
+      describe('when invoked', function() {
+        it('will correctly update state', function() {
+          expect(mutable.isMutated())
+            .to.equal(false);
+
+          mutable.set('foo', 123);
+
+          expect(mutable.isMutated())
+            .to.equal(true);
+
+          mutable.unset();
+
+          expect(mutable.isMutated())
+            .to.equal(false);
+        });
+      });
+    });
   });
 });
