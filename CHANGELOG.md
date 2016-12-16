@@ -1,4 +1,5 @@
 ## Unreleased
+- **Bugfix** `.data` access on a `Mutable` will no longer disturb its state prototype
 
 ## [v0.5.6]
 > December 14, 2016

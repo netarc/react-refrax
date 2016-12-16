@@ -172,9 +172,10 @@ function mixinMutable(target) {
   });
   Object.defineProperty(target, 'data', {
     get: function() {
-      var base = this.getDefault && this.getDefault() ||
-                 {};
-      return RefraxTools.setPrototypeOf(this._state, base);
+      var state = RefraxTools.extend({}, target._state)
+        , defaultState = this.getDefault && this.getDefault() || {};
+
+      return RefraxTools.setPrototypeOf(state, defaultState);
     }
   });
 
