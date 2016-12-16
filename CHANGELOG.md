@@ -1,5 +1,11 @@
 ## Unreleased
+
+## [v0.5.7]
+> December 16, 2016
+
 - **Bugfix** `.data` access on a `Mutable` will no longer disturb its state prototype
+
+[v0.5.7]: https://github.com/netarc/refrax/compare/v0.5.6...v0.5.7
 
 ## [v0.5.6]
 > December 14, 2016
