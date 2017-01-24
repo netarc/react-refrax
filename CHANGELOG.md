@@ -1,5 +1,10 @@
 ## Unreleased
 
+## [v0.5.8]
+- **Major** Attaching an action to a component through `RefraxReact` will implicitly share action instances
+
+## Released
+
 ## [v0.5.7]
 > December 16, 2016
 

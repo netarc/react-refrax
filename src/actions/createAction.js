@@ -56,7 +56,15 @@ function _createAction(stack, from = null) {
 
   function Action(...args) {
     if (this instanceof Action) {
-      return _createAction(stack.concat(new RefraxActionEntity(entity._method)));
+      var options = args[0] || {};
+
+      // A Shared action only differs by the Configurable state wrapper
+      if (options.shared) {
+        return _createAction(stack, Action);
+      }
+      else {
+        return _createAction(stack.concat(new RefraxActionEntity(entity._method)));
+      }
     }
     else {
       return entity.invoke(Action, args);

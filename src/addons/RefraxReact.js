@@ -207,7 +207,8 @@ function attachAction(component, Action, options = {}) {
     });
   }
   else {
-    action = new Action();
+    action = new Action({ shared: Action.attached === true });
+    action.attached = true;
   }
 
   action.setOptions(options, {
