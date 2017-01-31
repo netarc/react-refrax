@@ -1,8 +1,14 @@
 ## Unreleased
 
-## [v0.5.9]
+## [v0.5.10]
 
 ## Released
+
+## [v0.5.9]
+> January 31, 2017
+- **Minor** Updated `axios` dependency version
+
+[v0.5.9]: https://github.com/netarc/refrax/compare/v0.5.8...v0.5.9
 
 ## [v0.5.8]
 > January 24, 2017
