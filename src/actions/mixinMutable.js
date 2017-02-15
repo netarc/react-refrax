@@ -15,13 +15,13 @@ const MixinMutable = {
       throw new TypeError('mixinMutable - get expected attribute name but found `' + attribute + '`');
     }
 
-    value = this._state[attribute];
+    value = this._mutable._state[attribute];
     return value !== undefined
       ? value
       : this.getDefault && this.getDefault()[attribute];
   },
   set: function(attribute, ...args) {
-    const state = this._state;
+    const state = this._mutable._state;
 
     if (attribute && typeof(attribute) === 'object') {
       const options = args.shift() || {};
@@ -119,7 +119,7 @@ const MixinMutable = {
     }
   },
   isMutated: function() {
-    const state = this._state;
+    const state = this._mutable._state;
 
     for (const k in state) {
       if (state[k] !== undefined) {

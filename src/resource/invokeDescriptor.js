@@ -25,11 +25,11 @@ Promise.onPossiblyUnhandledRejection(function(err, promise) {
   throw err;
 });
 
-function RequestError(message, response) {
+function RequestError(response) {
   if (Error.captureStackTrace) {
     Error.captureStackTrace(this);
   }
-  this.message = '' + message;
+  this.message = '' + response.statusText;
   this.response = response;
   this.name = 'RequestError';
 }
@@ -106,11 +106,11 @@ function invokeDescriptor(resourceDescriptor, options = {}) {
         const resource = store && store.fetchResource(resourceDescriptor) || {};
         resource.response = response;
         resolve(resource);
-      }, function(response) {
+      }, function(err) {
         if (store) {
           store.touchResource(resourceDescriptor, {timestamp: Date.now()}, options);
         }
-        reject(new RequestError(response.statusText, response));
+        reject(new RequestError(err.response));
       });
   });
 }

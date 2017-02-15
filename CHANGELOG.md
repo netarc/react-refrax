@@ -1,6 +1,8 @@
 ## Unreleased
 
 ## [v0.5.10]
+- **Bugfix** Handling of `axios` request error to properly fetch response object
+- **Minor** Updated `._state` access in `mixinMutable` to be off `this._mutable` reference
 
 ## Released
 
@@ -26,7 +28,7 @@
 ## [v0.5.6]
 > December 14, 2016
 
-- **Minor** ADd `Disposable` and rework Resource disposable handling
+- **Minor** Add `Disposable` and rework Resource disposable handling
 - **Feature** Add `Mutable` helepr methods `unsetErrors`, `setErrors`, `isMutated`
 
 [v0.5.6]: https://github.com/netarc/refrax/compare/v0.5.5...v0.5.6
