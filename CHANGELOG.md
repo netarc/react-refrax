@@ -1,10 +1,15 @@
 ## Unreleased
 
+## [v0.5.11]
+
+## Released
+
 ## [v0.5.10]
+> February 15, 2017
 - **Bugfix** Handling of `axios` request error to properly fetch response object
 - **Minor** Updated `._state` access in `mixinMutable` to be off `this._mutable` reference
 
-## Released
+[v0.5.10]: https://github.com/netarc/refrax/compare/v0.5.9...v0.5.10
 
 ## [v0.5.9]
 > January 31, 2017
