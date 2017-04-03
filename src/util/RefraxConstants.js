@@ -26,7 +26,8 @@ export default {
   classify: {
     collection: 'collection',
     item: 'item',
-    resource: 'resource'
+    resource: 'resource',
+    namespace: 'namespace'
   },
   strategy: {
     replace: 'replace',

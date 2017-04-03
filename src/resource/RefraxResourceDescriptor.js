@@ -138,6 +138,8 @@ function processStack(resourceDescriptor, stack) {
       resourceDescriptor.fragments = [];
     }
     else if (item instanceof RefraxTreeNode) {
+      resourceDescriptor.classify = item.type;
+
       if (definition.paramMap) {
         resolvedParamMap = RefraxTools.extend(resolvedParamMap, definition.paramMap);
       }
@@ -148,9 +150,6 @@ function processStack(resourceDescriptor, stack) {
 
       resourceDescriptor.partial = definition.partial || FRAGMENT_DEFAULT;
       resourceDescriptor.fragments = definition.fragments || [];
-      if (definition.classify) {
-        resourceDescriptor.classify = definition.classify;
-      }
     }
     else if (item instanceof RefraxOptions) {
       if (item.cacheStrategy) {

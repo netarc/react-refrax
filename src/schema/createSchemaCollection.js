@@ -34,9 +34,8 @@ function createSchemaCollection(path, store, options) {
 
   // Collection Node
 
-  treeNodeCollection = new RefraxTreeNode(RefraxTools.extend({
-    uri: path,
-    classify: CLASSIFY_COLLECTION
+  treeNodeCollection = new RefraxTreeNode(CLASSIFY_COLLECTION, RefraxTools.extend({
+    uri: path
   }, options.collection));
 
   accessorNodeCollection = new RefraxSchemaPath(
@@ -54,9 +53,8 @@ function createSchemaCollection(path, store, options) {
     memberId = memberIdentifier + 'Id';
   }
 
-  treeNodeMember = new RefraxTreeNode(RefraxTools.extend({
-    paramId: memberId,
-    classify: CLASSIFY_ITEM
+  treeNodeMember = new RefraxTreeNode(CLASSIFY_ITEM, RefraxTools.extend({
+    paramId: memberId
   }, options.member));
 
   accessorNodeCollection.addLeaf(

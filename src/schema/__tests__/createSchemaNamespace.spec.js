@@ -11,6 +11,8 @@ const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxTreeNode = require('RefraxTreeNode');
 const createSchemaNamespace = require('createSchemaNamespace');
+const RefraxConstants = require('RefraxConstants');
+const CLASSIFY_NAMESPACE = RefraxConstants.classify.namespace;
 const expect = chai.expect;
 
 
@@ -70,11 +72,13 @@ describe('createSchemaNamespace', function() {
 
         expect(namespaceAPI.__node.subject).with.deep.property('[0]')
           .that.is.an.instanceof(RefraxTreeNode)
-          .to.have.property('definition')
-            .that.deep.equals({
+          .that.deep.equals({
+            type: CLASSIFY_NAMESPACE,
+            definition: {
               uri: 'api',
               partial: 'bar'
-            });
+            }
+          });
       });
     });
   });

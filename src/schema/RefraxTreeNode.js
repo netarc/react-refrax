@@ -6,15 +6,22 @@
  * LICENSE file in the root directory of this source tree.
  */
 const RefraxTools = require('RefraxTools');
+const RefraxConstants = require('RefraxConstants');
 
-
-var validDefinitionKeys = [
+const validDefinitionKeys = [
   'partial',
   'fragments',
   'uri',
-  'paramId',
-  'classify'
+  'paramId'
 ];
+
+function validateType(type) {
+  if (RefraxConstants.classify[type] === undefined) {
+    throw new TypeError(
+      'RefraxTreeNode - Invalid type `' + type + '`.'
+    );
+  }
+}
 
 function validateDefinition(definition) {
   if (!RefraxTools.isPlainObject(definition)) {
@@ -75,9 +82,14 @@ function validateDefinition(definition) {
  * A RefraxTreeNode
  */
 class RefraxTreeNode {
-  constructor(definition) {
+  constructor(type, definition) {
+    validateType(type);
     validateDefinition(definition);
 
+    Object.defineProperty(this, 'type', {
+      value: type,
+      enumerable: true
+    });
     Object.defineProperty(this, 'definition', {
       value: definition,
       enumerable: true

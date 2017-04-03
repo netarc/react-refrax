@@ -1,6 +1,7 @@
 ## Unreleased
 
 ## [v0.5.11]
+- **Minor** Added `RefraxTreeNode` type and removed `classify` from `RefraxTreeNode` definitions
 
 ## Released
 

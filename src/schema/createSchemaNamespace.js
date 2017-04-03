@@ -10,6 +10,8 @@ const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaTools = require('RefraxSchemaTools');
+const RefraxConstants = require('RefraxConstants');
+const CLASSIFY_NAMESPACE = RefraxConstants.classify.namespace;
 
 
 function createSchemaNamespace(path, options) {
@@ -19,7 +21,7 @@ function createSchemaNamespace(path, options) {
   options = options || {};
   identifier = RefraxTools.cleanIdentifier(path);
 
-  treeNode = new RefraxTreeNode(RefraxTools.extend({
+  treeNode = new RefraxTreeNode(CLASSIFY_NAMESPACE, RefraxTools.extend({
     uri: path
   }, options.namespace));
 

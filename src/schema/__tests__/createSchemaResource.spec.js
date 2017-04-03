@@ -57,11 +57,12 @@ describe('createSchemaResource', function() {
 
         expect(resourceSettings.__node.subject).with.deep.property('[1]')
           .that.is.an.instanceof(RefraxTreeNode)
-          .to.have.property('definition')
-            .that.deep.equals({
-              classify: CLASSIFY_RESOURCE,
+          .that.deep.equals({
+            type: CLASSIFY_RESOURCE,
+            definition: {
               uri: 'settings'
-            });
+            }
+          });
 
         expect(resourceSettings)
           .that.is.an.instanceof(RefraxSchemaPath)
@@ -94,11 +95,12 @@ describe('createSchemaResource', function() {
 
         expect(resourceSettings.__node.subject).with.deep.property('[1]')
           .that.is.an.instanceof(RefraxTreeNode)
-          .to.have.property('definition')
-            .that.deep.equals({
-              classify: CLASSIFY_RESOURCE,
+          .that.deep.equals({
+            type: CLASSIFY_RESOURCE,
+            definition: {
               uri: 'settings'
-            });
+            }
+          });
 
         expect(resourceSettings)
           .that.is.an.instanceof(RefraxSchemaPath)
@@ -119,11 +121,12 @@ describe('createSchemaResource', function() {
 
         expect(resourceSettings.__node.subject).with.deep.property('[1]')
           .that.is.an.instanceof(RefraxTreeNode)
-          .to.have.property('definition')
-            .that.deep.equals({
-              classify: CLASSIFY_RESOURCE,
+          .that.deep.equals({
+            type: CLASSIFY_RESOURCE,
+            definition: {
               uri: 'settings'
-            });
+            }
+          });
 
         expect(resourceSettings)
           .that.is.an.instanceof(RefraxSchemaPath)
@@ -155,12 +158,13 @@ describe('createSchemaResource', function() {
 
         expect(resourceSettings.__node.subject).with.deep.property('[1]')
           .that.is.an.instanceof(RefraxTreeNode)
-          .to.have.property('definition')
-            .that.deep.equals({
-              classify: CLASSIFY_RESOURCE,
+          .that.deep.equals({
+            type: CLASSIFY_RESOURCE,
+            definition: {
               uri: 'settings',
               partial: 'bar'
-            });
+            }
+          });
       });
 
       it('should accept an options argument as the second', function() {

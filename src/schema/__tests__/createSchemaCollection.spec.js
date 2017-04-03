@@ -58,11 +58,12 @@ describe('createSchemaCollection', function() {
 
         expect(collectionUsers.__node.subject).with.deep.property('[1]')
           .that.is.an.instanceof(RefraxTreeNode)
-          .to.have.property('definition')
-            .that.deep.equals({
-              classify: CLASSIFY_COLLECTION,
+          .that.deep.equals({
+            type: CLASSIFY_COLLECTION,
+            definition: {
               uri: 'users'
-            });
+            }
+          });
 
         expect(collectionUsers)
           .that.is.an.instanceof(RefraxSchemaPath)
@@ -100,11 +101,12 @@ describe('createSchemaCollection', function() {
 
         expect(collectionUsers.__node.subject).with.deep.property('[1]')
           .that.is.an.instanceof(RefraxTreeNode)
-          .to.have.property('definition')
-            .that.deep.equals({
-              classify: CLASSIFY_COLLECTION,
+          .that.deep.equals({
+            type: CLASSIFY_COLLECTION,
+            definition: {
               uri: 'users'
-            });
+            }
+          });
 
         expect(collectionUsers)
           .that.is.an.instanceof(RefraxSchemaPath)
@@ -130,11 +132,12 @@ describe('createSchemaCollection', function() {
 
         expect(collectionUsers.__node.subject).with.deep.property('[1]')
           .that.is.an.instanceof(RefraxTreeNode)
-          .to.have.property('definition')
-            .that.deep.equals({
-              classify: CLASSIFY_COLLECTION,
+          .that.deep.equals({
+            type: CLASSIFY_COLLECTION,
+            definition: {
               uri: 'users'
-            });
+            }
+          });
 
         expect(collectionUsers)
           .that.is.an.instanceof(RefraxSchemaPath)
@@ -176,12 +179,13 @@ describe('createSchemaCollection', function() {
 
         expect(collectionUsers.__node.subject).with.deep.property('[1]')
           .that.is.an.instanceof(RefraxTreeNode)
-          .to.have.property('definition')
-            .that.deep.equals({
-              classify: CLASSIFY_COLLECTION,
+          .that.deep.equals({
+            type: CLASSIFY_COLLECTION,
+            definition: {
               uri: 'users',
               partial: 'bar'
-            });
+            }
+          });
       });
 
       it('should pass options to member', function() {
@@ -193,12 +197,13 @@ describe('createSchemaCollection', function() {
 
         expect(collectionUsers.user.__node.subject).with.deep.property('[0]')
           .that.is.an.instanceof(RefraxTreeNode)
-          .to.have.property('definition')
-            .that.deep.equals({
-              classify: CLASSIFY_ITEM,
+          .that.deep.equals({
+            type: CLASSIFY_ITEM,
+            definition: {
               paramId: 'userId',
               partial: 'bar'
-            });
+            }
+          });
       });
 
       it('should accept an options argument as the second', function() {
