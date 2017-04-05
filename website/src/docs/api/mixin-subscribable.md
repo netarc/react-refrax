@@ -11,7 +11,7 @@ A subscribable is similar to an `EventEmitter` pattern except that it offers a s
 
 *Methods*
 
-<ul class="apiIndex">
+<ul class="list-methods">
   <li>
     <a href="/docs/api/mixin-subscribable.html#subscribe">
       <pre>subscribe(event, listener[, context])</pre>

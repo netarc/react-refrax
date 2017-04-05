@@ -24,7 +24,8 @@ const type_links = {
   action: '/docs/api/refrax-action.html',
   resource: '/docs/api/refrax-resource.html',
   mutable_resource: '/docs/api/refrax-mutable-resource.html',
-  schema_path: '/docs/api/refrax-schema-path.html'
+  schema_path: '/docs/api/refrax-schema-path.html',
+  subscribable: '/docs/api/mixin-subscribable.html'
 };
 
 function generate_slug(string) {
@@ -52,15 +53,67 @@ function generate_slug(string) {
     .replace(/^-|-$/g, '');
 }
 
+function generate_resource_link(href, text, title) {
+  var out = null
+    , external = false
+    , classes = [];
+
+  if (href[0] === ':' || href[0] === '+') {
+    const slug = href.toLowerCase().substr(1);
+    const wrapped = href[0] === '+';
+    href = type_links[slug];
+
+    if (!text) {
+      text = slug
+        .replace(/[-_]/g, ' ')
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join('');
+    }
+    if (wrapped) {
+      text = `&lt;${text}&gt;`;
+    }
+
+    if (href) {
+      classes.push('typeref');
+    }
+    else {
+      return text;
+    }
+  }
+
+  if (href[0] === '!') {
+    href = href.substr(1);
+    external = true;
+  }
+
+  out = `<a href="${href}"`;
+  if (classes.length > 0) {
+    out += ` class="${classes.join(' ')}"`;
+  }
+  if (title) {
+    out += ` title="${title}"`;
+  }
+  if (external) {
+    out += ' target="_blank"';
+  }
+
+  out += `>${text}</a>`;
+  return out;
+};
+
+
 renderer.heading = function(text, level) {
   const slug = generate_slug(text);
+  const hclass = level === 3 ? ' class="detail-name"' : '';
+
   // Drop slug modifiers
   text = text.replace(/{[^}]*}/g, '');
   const inner = level >= 4
     ? text
     : `<a class="anchor" name="${slug}"></a>${text}<a class="hash-link" href="#${slug}">#</a>`;
 
-  return `<h${level}>${inner}</h${level}>`;
+  return `<h${level}${hclass}>${inner}</h${level}>`;
 };
 
 renderer.link = function(href, title, text) {
@@ -150,7 +203,8 @@ metalsmith(__dirname)
   .use(
     watch({
       paths: {
-        '${source}/**/*': true,
+        '${source}/docs/**/*': true,
+        '${source}/*': true,
         'templates/**/*': '**/*'
       }
     })
@@ -158,17 +212,17 @@ metalsmith(__dirname)
   .clean(true)
   .use(collections({
     guides: {
-      pattern: 'docs/guides/**/*.md',
+      pattern: 'docs/guides/**/*.*',
       refer: false,
       sortBy: sortDoc
     },
     apis: {
-      pattern: 'docs/api/*.md',
+      pattern: 'docs/api/*.*',
       refer: false,
       sortBy: sortDoc
     },
     quick_starts: {
-      pattern: 'docs/*.md',
+      pattern: 'docs/*.*',
       refer: false
     }
   }))
@@ -188,7 +242,10 @@ metalsmith(__dirname)
     renderer: renderer
   }))
   .use(pug({
-    useMetadata: true
+    useMetadata: true,
+    locals: {
+      generate_resource_link
+    }
   }))
   .use(less({
     pattern: '**/*.less'

@@ -11,7 +11,7 @@ layout: docs.pug
 
 *Properties*
 
-<ul class="apiIndex">
+<ul class="list-methods">
   <li>
     <a href="#hostname">
       <pre>hostname</pre>

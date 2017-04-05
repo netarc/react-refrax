@@ -21,7 +21,7 @@ layout: docs.pug
 
 *Methods*
 
-<ul class="apiIndex">
+<ul class="list-methods">
   <li>
     <a href="#static-from">
       <pre>from(accessor[, ...])</pre>

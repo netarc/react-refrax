@@ -23,7 +23,7 @@ Refrax actions are created using <a href="/docs/api/refrax.html#createAction">Re
 
 *Events*
 
-<ul class="apiIndex">
+<ul class="list-methods">
   <li>
     <a href="#event-mutated">
       <pre>mutated</pre>
@@ -46,7 +46,7 @@ Refrax actions are created using <a href="/docs/api/refrax.html#createAction">Re
 
 *Methods*
 
-<ul class="apiIndex">
+<ul class="list-methods">
   <li>
     <a href="#get">
       <pre>get(attribute)</pre>

@@ -5,22 +5,22 @@ group: 1
 layout: docs.pug
 ---
 
-Not to be confused with a database `Schema`, the `Schema` in `Refrax` refers to how data relates to api end-points.
+The `Schema` in Refrax describes how to access your data/end-points. It also describes what the proper name of that data is (IE `User` or `Project`) and if it should be treated as a collection / resource or simple namespace.
 
-When defining the Schema for your site you will typically use the following helper methods imported from [Refrax](/docs/api/refrax.html):
+When defining the overall Schema you will typically use the following helper methods imported from [Refrax](/docs/api/refrax.html):
 
-- [createSchemaCollection](/docs/api/refrax.html#static-createschemacollection)
-- [createSchemaResource](/docs/api/refrax.html#static-createschemaresource)
-- [createSchemaNamespace](/docs/api/refrax.html#static-createschemanamespace)
+- [defineSchemaCollection](/docs/api/refrax.html#static-defineschemacollection)
+- [defineSchemaResource](/docs/api/refrax.html#static-defineschemaresource)
+- [defineSchemaNamespace](/docs/api/refrax.html#static-defineschemanamespace)
 
-These all return a [:schema_path]() object that represent a path in the Schema as well as nodes defining what type of information they represent and how to treat it.
+These all return a [:schema_path]() object that simply represents an idomatic path/location in the Schema (IE `/projects`) as well as any child paths (trails). They also represent how the data should be treated when being interacted with (such as a collection or resource).
 
-Let's take the typical todo app, we might have a collection of todo accessable via some end-points:
+Let's take the typical TODO app, from our server we might expect to have a collection and its associated item end-points:
 
 - `GET /todos`
 - `GET /todos/:id`
 
-For this we would make use of the [createSchemaCollection](/docs/api/refrax.html#static-createschemacollection) method that defines a collection.
+We can make use of the [defineSchemaCollection](/docs/api/refrax.html#static-defineschemacollection) method that defines a collection.
 
 #### Example
 
@@ -52,7 +52,9 @@ Todos.inspect();
 }
 ```
 
-We need to let `Refrax` know what to do with these paths, so we need to be explicit and reference the root [Schema](/docs/api/refrax.html) object and use the [addLeaf([identifier, ]leaf)](/docs/api/refrax-schema-path.html#addleaf) method available on any [:schema_path]() object.
+We can see that collection assumed some details such as taking the `todos` identifier and using that for its type name and pathing. This is configurable via [:schema_path]() options but for most this works as-is just fine.
+
+Next, we need to let `Refrax` know what to do with these paths, so we need to be explicit and reference the root [Schema](/docs/api/refrax.html) object and use the [addLeaf([identifier, ]leaf)](/docs/api/refrax-schema-path.html#addleaf) method available on any [:schema_path]() object.
 
 #### Example
 
@@ -62,7 +64,9 @@ import {createSchemaCollection, Schema} from 'Refrax';
 Schema.addLeaf(createSchemaCollection("todos"));
 ```
 
-This combines the definition of the `todos` collection into the root [Schema](/docs/api/refrax.html). As you define the Schema, it also becomes walkable.
+This combines the definition of the `todos` collection into the root [Schema](/docs/api/refrax.html).
+
+As you define the Schema, it also provides an idiomatic approach to describing/acessing a particualr path and in itself becomes walkable.
 
 Using a real world example, let's say we want to add a collection of users to a collection of projects.
 
@@ -77,7 +81,7 @@ Schema.addLeaf(createSchemaCollection("projects"));
 Schema.projects.project.addLeaf(createSchemaCollection("users"));
 ```
 
-As you would expect this gives the following from inspection:
+And just to look under the hood again, as you would expect this gives the following from inspection:
 
 ```javascript
 Schema.inspect();

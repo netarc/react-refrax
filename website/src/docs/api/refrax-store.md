@@ -21,7 +21,7 @@ A Store holds a cached state of data and all its different representations for a
 
 *Events*
 
-<ul class="apiIndex">
+<ul class="list-methods">
   <li>
     <a href="#event-change">
       <pre>change</pre>
@@ -38,7 +38,7 @@ A Store holds a cached state of data and all its different representations for a
 
 *Methods*
 
-<ul class="apiIndex">
+<ul class="list-methods">
   <li>
     <a href="#get">
       <pre>static get([type])</pre>

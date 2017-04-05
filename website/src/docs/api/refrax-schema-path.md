@@ -11,7 +11,7 @@ layout: docs.pug
 
 *Methods*
 
-<ul class="apiIndex">
+<ul class="list-methods">
   <li>
     <a href="#static-createschemacollection">
       <pre>static createSchemaCollection(path[, store][, options])</pre>

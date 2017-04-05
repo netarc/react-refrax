@@ -3,16 +3,16 @@ html
   block head
     include _head
   body
-    div(class="container")
-      div(class="nav-main")
-        div(class="wrap")
-          a(class="nav-home" href="/")
-            img(class="nav-logo" src="/img/logo.svg" width="50" height="50")
+    div.container
+      div.nav-main
+        div.wrapper
+          a.nav-home(href="/")
+            img.nav-logo(src="/img/logo.svg" width="50" height="50")
             span Refrax
 
       block precontent
-      div.content.wrap
+      div.content.wrapper
         block content
 
-      footer.wrap
+      footer.wrapper
         div.right ©2016 Joshua Hollenbeck
