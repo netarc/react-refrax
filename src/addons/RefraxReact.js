@@ -124,7 +124,7 @@ function refraxifyComponent(component) {
     component.__refrax.disposed = true;
 
     if (_componentWillUnmount) {
-      _componentWillUnmount();
+      _componentWillUnmount.call(component);
     }
   };
 }

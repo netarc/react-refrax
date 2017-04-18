@@ -2,6 +2,7 @@
 
 ## [v0.5.11]
 - **Minor** Added `RefraxTreeNode` type and removed `classify` from `RefraxTreeNode` definitions
+- **Bugfix** RefraxReact components `componentWillUnmount` will no longer lose itself via `this`
 
 ## Released
 
