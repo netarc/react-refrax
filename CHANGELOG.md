@@ -1,10 +1,15 @@
 ## Unreleased
 
+## [v0.5.12]
+
+## Released
+
 ## [v0.5.11]
+> April 18, 2017
 - **Minor** Added `RefraxTreeNode` type and removed `classify` from `RefraxTreeNode` definitions
 - **Bugfix** RefraxReact components `componentWillUnmount` will no longer lose itself via `this`
 
-## Released
+[v0.5.11]: https://github.com/netarc/refrax/compare/v0.5.10...v0.5.11
 
 ## [v0.5.10]
 > February 15, 2017
