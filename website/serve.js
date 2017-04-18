@@ -2,6 +2,7 @@ const metalsmith    = require('metalsmith');
 const serve         = require('metalsmith-serve');
 const paths         = require('metalsmith-paths');
 const watch         = require('metalsmith-watch');
+const ignore        = require('metalsmith-ignore');
 const pug           = require('metalsmith-pug');
 const less          = require('metalsmith-less');
 const markdown      = require('metalsmith-markdown');
@@ -201,9 +202,15 @@ metalsmith(__dirname)
   .source('./src')
   .destination('./build')
   .use(
+    ignore([
+      'mixins/**'
+    ])
+  )
+  .use(
     watch({
       paths: {
         '${source}/docs/**/*': true,
+        '${source}/mixins/*': true,
         '${source}/*': true,
         'templates/**/*': '**/*'
       }
@@ -242,8 +249,10 @@ metalsmith(__dirname)
     renderer: renderer
   }))
   .use(pug({
+    basedir: './src',
     useMetadata: true,
     locals: {
+      generate_slug,
       generate_resource_link
     }
   }))
@@ -258,7 +267,9 @@ metalsmith(__dirname)
     engine: 'pug'
   }))
   .use(writemetadata({
-    pattern: ['**/*']
+    pattern: [
+      '**/*.html'
+    ]
   }))
   .use(serve())
   .build(function(err) {

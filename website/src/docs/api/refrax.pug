@@ -4,190 +4,278 @@ permalink: /docs/api/refrax.html
 group: 1
 layout: docs.pug
 ---
+include /mixins/doc_templates.pug
 
 p `RefraxAction` is a mechanism to functionally represent a mutation to be performed on data.
 
 p Refrax actions are created using <a href="/docs/api/refrax.html#createAction">Refrax.createAction</a>.
 
-h2 Overview
+h2.header-section Overview
 
-p *Properties*
+h3.header-section-sub Properties
 
-<ul class="list-properties">
-  <li>
-    <a href="/docs/api/refrax-config.html">
-      <pre>
+ul.list-properties
+  li
+    a(href="/docs/api/refrax-config.html")
+      span.anchor-link(href="#"+slug name=slug aria-hidden="true")
+        span.fa.fa-link
+      pre
         span Config
-        <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
-      </pre>
-    </a>
-  </li>
-  <li>
-    <a href="/docs/api/refrax-mutable-resource.html">
-      <pre>
+  li
+    a(href="/docs/api/refrax-mutable-resource.html")
+      span.anchor-link(href="#"+slug name=slug aria-hidden="true")
+        span.fa.fa-link
+      pre
         span MutableResource
-        <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
-      </pre>
-    </a>
-  </li>
-  <li>
-    <a href="/docs/api/refrax-resource.html">
-      <pre>
+        i.fa.fa-long-arrow-right(aria-hidden="true")
+  li
+    a(href="/docs/api/refrax-resource.html")
+      span.anchor-link(href="#"+slug name=slug aria-hidden="true")
+        span.fa.fa-link
+      pre
         span Resource
-        <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
-      </pre>
-    </a>
-  </li>
-  <li>
-    <a href="/docs/api/refrax-schema-path.html">
-      <pre>
+        i.fa.fa-long-arrow-right(aria-hidden="true")
+  li
+    a(href="/docs/api/refrax-schema-path.html")
+      span.anchor-link(href="#"+slug name=slug aria-hidden="true")
+        span.fa.fa-link
+      pre
         span Schema
-        <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
-      </pre>
+        i.fa.fa-long-arrow-right(aria-hidden="true")
       Root SchemaPath
-    </a>
-  </li>
-  <li>
-    <a href="/docs/api/refrax-store.html">
-      <pre>
+  li
+    a(href="/docs/api/refrax-store.html")
+      span.anchor-link(href="#"+slug name=slug aria-hidden="true")
+        span.fa.fa-link
+      pre
         span Store
-        <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
-      </pre>
-    </a>
-  </li>
-</ul>
+        i.fa.fa-long-arrow-right(aria-hidden="true")
 
-p *Methods*
+h3.header-section-sub Methods
 
 ul.list-methods
   li
     a(href="#static-createaction")
-      pre static createAction(method)
+      pre.prism.language-javascript.inline
+        code static createAction(method)
       Create an Action wrapper around a given method.
   li
     a(href="#static-defineschemacollection")
-      pre static defineSchemaCollection(path[, store][, options])
+      pre.prism.language-javascript.inline
+        code static defineSchemaCollection(path[, store][, options])
   li
     a(href="#static-defineschemaresource")
-      pre static defineSchemaResource(path[, store][, options])
+      pre.prism.language-javascript.inline
+        code static defineSchemaResource(path[, store][, options])
   li
     a(href="#static-defineschemanamespace")
-      pre static defineSchemaNamespace(path[, options])
+      pre.prism.language-javascript.inline
+        code static defineSchemaNamespace(path[, options])
   li
     a(href="#static-processresponse")
-      pre static processResponse(data, resourceDescriptor[, handler])
+      pre.prism.language-javascript.inline
+        code static processResponse(data, resourceDescriptor[, handler])
 
-h2.overview-methods Methods
+h2.header-section Methods
 
-dl
-  dt.detail-method
-    a.icon-anchor(href="#static-createaction" aria-hidden="true")
-      i.fa.fa-link
-    h3 static createAction(method)
-  dd.detail-method-details
-    p Create an [:action]() wrapper around a given method.
+dl.method-definitions
+  +method_header("createAction(method)", "static")
+  dd.method-definition-details
+    p Create an !{generate_resource_link("+action")} wrapper around a given method that provides mutability, publish and subscribe tools.
     
     aside
       h4 Parameters
-      dl.detail-method-parameters
-        dt.detail-method-parameter-name
-          dfn.property-name method
-          span.tag.tag-property
+      dl.identifier-list.method-arguments
+        dt.method-argument
+          dfn.identifier method
+          span.tag.tag-type
             != generate_resource_link(":function")
-        dd.detail-method-description
-          | The function to call upon action invocation with local context to an <code>!{generate_resource_link("+action")}</code>
+        dd.method-argument-details
+          | The function to call upon invocation of the !{generate_resource_link("+action")} binded to an internal action context.
     aside
       h4 Returns
       table.detail-table-parameters
         thead
           tr
-            th.type Type
+            th Type
             th Description
         tbody
           tr
-            td.type <a href="esri-geometry-ScreenPoint.html">ScreenPoint</a>
-            td.description The screen point corresponding to the given map point.
+            td!= generate_resource_link(":action")
+            td The action wrapping supplied method.
             
-  dt.detail-method
-    a.icon-anchor(href="#static-defineschemacollection" aria-hidden="true")
-      i.fa.fa-link
-    h3 static defineSchemaCollection(path[, store][, options])
-  dd.detail-method-details
+  +method_header("defineSchemaCollection(path[, store][, options])", "static")
+  dd.method-definition-details
     p Create an [:action]() wrapper around a given method.
     
     aside
       h4 Parameters
-      dl.detail-method-parameters
-        dt.detail-method-parameter-name
-          dfn.property-name path
-          span.tag.tag-property
+      dl.identifier-list.method-arguments
+        dt.method-argument
+          dfn.identifier path
+          span.tag.tag-type
             != generate_resource_link(":function")
-        dd.detail-method-description
+        dd.method-argument-details
           p The function to call upon action invocation with local context to an <code>ActionInvoker</code>
-        dt.detail-method-parameter-name
-          dfn.property-name store
+        dt.method-argument
+          dfn.identifier store
           span.tag.tag-optional optional
-          span.tag.tag-property
-            != generate_resource_link(":function")
-        dd.detail-method-description
+          span.tag.tag-type
+            != generate_resource_link(":store")
+        dd.method-argument-details
           p The function to call upon action invocation with local context to an <code>ActionInvoker</code>
-        dt.detail-method-parameter-name
-          dfn.property-name options
+        dt.method-argument
+          dfn.identifier options
           span.tag.tag-optional optional
-          span.tag.tag-property
+          span.tag.tag-type
             != generate_resource_link(":object")
-        dd.detail-method-description
-          p The function to call upon action invocation with local context to an <code>ActionInvoker</code>
+        dd.method-argument-details
+          p Definition configuration options for the collection. See properties below for specifications.
+          table.detail-table-parameters
+            thead
+              tr
+                th Property
+                th Type
+                th Description
+            tbody
+              tr
+                td
+                  span.identifier identifier
+                  span.tag.tag-optional optional
+                td.type!= generate_resource_link(":string")
+                td The identifier to be used in the walking of a !{generate_resource_link("+schema_path")} as well as the base for the default <code>paramId</code> generation.
+              tr
+                td
+                  span.identifier collection
+                  span.tag.tag-optional optional
+                td.type!= generate_resource_link(":object")
+                td
+                  p Configuration options for the collection specific node path.
+                  table.detail-table-parameters
+                    thead
+                      tr
+                        th Property
+                        th Type
+                        th Description
+                    tbody
+                      tr
+                        td.identifier partial
+                        td.type!= generate_resource_link(":string")
+                        td The screen point corresponding to the given map point.
+                      tr
+                        td.identifier uri
+                        td.type!= generate_resource_link(":object")
+                        td The screen point corresponding to the given map point.
+              tr
+                td
+                  span.identifier member
+                  span.tag.tag-optional optional
+                td!= generate_resource_link(":object")
+                td
+                  p Configuration options for the member specific node path.
+                  table.detail-table-parameters
+                    thead
+                      tr
+                        th Property
+                        th Type
+                        th Description
+                    tbody
+                      tr
+                        td.identifier partial
+                        td.type!= generate_resource_link(":string")
+                        td The screen point corresponding to the given map point.
+                      tr
+                        td.identifier uri
+                        td.type!= generate_resource_link(":object")
+                        td The screen point corresponding to the given map point.
+                      tr
+                        td.identifier fragments
+                        td.type!= generate_resource_link(":object")
+                        td The screen point corresponding to the given map point.
+                      tr
+                        td.identifier paramId
+                        td.type!= generate_resource_link(":object")
+                        td The screen point corresponding to the given map point.
     aside
       h4 Returns
       table.detail-table-parameters
         thead
           tr
-            th.type Type
+            th Type
             th Description
         tbody
           tr
-            td.type <a href="esri-geometry-ScreenPoint.html">ScreenPoint</a>
-            td.description The screen point corresponding to the given map point.
+            td <a href="esri-geometry-ScreenPoint.html">ScreenPoint</a>
+            td The screen point corresponding to the given map point.
       
-  dt.detail-method
-    a.icon-anchor(href="#static-defineschemaresource" aria-hidden="true")
-      i.fa.fa-link
-    h3 static defineSchemaResource(path[, store][, options])
-  dd.detail-method-details
+  +method_header("defineSchemaResource(path[, store][, options])", "static")
+  dd.method-definition-details
     p Create an [:action]() wrapper around a given method.
     
     aside
       h4 Parameters
-      dl.detail-method-parameters
-        dt.detail-method-parameter-name
+      dl.identifier-list.method-arguments
+        dt.method-argument
           dfn.parameter-name path
           span.tag.tag-parameter
             != generate_resource_link(":function")
-        dd.detail-method-description
+        dd.method-argument-details
           p The function to call upon action invocation with local context to an <code>ActionInvoker</code>
-        dt.detail-method-parameter-name
+        dt.method-argument
           dfn.parameter-name store
           span.tag.tag-optional optional
           span.tag.tag-parameter
             != generate_resource_link(":function")
-        dd.detail-method-description
+        dd.method-argument-details
+          p The function to call upon action invocation with local context to an <code>ActionInvoker</code>
+    aside
+      h4 Returns
+      p Returns [:action]().
+      
+  +method_header("defineSchemaNamespace(path[, options])", "static")
+  dd.method-definition-details
+    p Create an [:action]() wrapper around a given method.
+    
+    aside
+      h4 Parameters
+      dl.identifier-list.method-arguments
+        dt.method-argument
+          dfn.parameter-name path
+          span.tag.tag-parameter
+            != generate_resource_link(":function")
+        dd.method-argument-details
+          p The function to call upon action invocation with local context to an <code>ActionInvoker</code>
+        dt.method-argument
+          dfn.parameter-name store
+          span.tag.tag-optional optional
+          span.tag.tag-parameter
+            != generate_resource_link(":function")
+        dd.method-argument-details
           p The function to call upon action invocation with local context to an <code>ActionInvoker</code>
     aside
       h4 Returns
       p Returns [:action]().
 
-
-h3 static defineSchemaResource(path[, store][, options])
-
-p - `[method]` [:function]() A method to define a [:action]() surrounding.
-
-p Returns [:action]().
-
-h3 static defineSchemaNamespace(path[, options])
-
-p - `[method]` [:function]() A method to define a [:action]() surrounding.
-
-p Returns [:action]().
-
-h3 processResponse(data[, resourceDescriptor][, handler])
+  +method_header("processResponse(data[, resourceDescriptor][, handler])")
+  dd.method-definition-details
+    p Create an [:action]() wrapper around a given method.
+    
+    aside
+      h4 Parameters
+      dl.identifier-list.method-arguments
+        dt.method-argument
+          dfn.parameter-name path
+          span.tag.tag-parameter
+            != generate_resource_link(":function")
+        dd.method-argument-details
+          p The function to call upon action invocation with local context to an <code>ActionInvoker</code>
+        dt.method-argument
+          dfn.parameter-name store
+          span.tag.tag-optional optional
+          span.tag.tag-parameter
+            != generate_resource_link(":function")
+        dd.method-argument-details
+          p The function to call upon action invocation with local context to an <code>ActionInvoker</code>
+    aside
+      h4 Returns
+      p Returns [:action]().

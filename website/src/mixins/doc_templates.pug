@@ -1,0 +1,11 @@
+mixin method_header(title, prefix)
+  -
+    prefix = prefix ? prefix + " " : ""
+    var slug = generate_slug(prefix + title)
+  dt.method-definition-header
+    a.anchor-target(href="#" name=slug aria-hidden="true")
+    a.anchor-link(href="#"+slug name=slug aria-hidden="true")
+      span.fa.fa-link
+    h3
+      pre.prism.language-javascript.inline
+        code= title
