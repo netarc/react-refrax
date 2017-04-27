@@ -1,9 +1,14 @@
 ## Unreleased
 
-## [v0.5.12]
-- **Minor** Updated `FragmentCache` to match param stripped query path so generic descriptors will aggressively match
+## [v0.5.13]
 
 ## Released
+
+## [v0.5.12]
+> April 27, 2017
+- **Minor** Updated `FragmentCache` to match param stripped query path so generic descriptors will aggressively match
+
+[v0.5.12]: https://github.com/netarc/refrax/compare/v0.5.11...v0.5.12
 
 ## [v0.5.11]
 > April 18, 2017
