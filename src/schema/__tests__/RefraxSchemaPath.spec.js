@@ -37,18 +37,6 @@ describe('RefraxSchemaPath', function() {
         new RefraxSchemaPath(new RefraxSchemaNode());
       }).to.not.throw(Error);
     });
-
-    it('should look like a node accessor', function() {
-      var rootAccessor = new RefraxSchemaPath(new RefraxSchemaNode({
-        foo: 213
-      }));
-
-      expect(rootAccessor).to.have.property('__node')
-        .that.is.an.instanceof(RefraxSchemaNode)
-        .to.have.property('subject')
-          .that.is.an.instanceof(Array)
-          .that.deep.equals([{foo: 213}]);
-    });
   });
 
   describe('methods', function() {

@@ -7,7 +7,6 @@
  */
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
 const RefraxConstants = require('RefraxConstants');
-const RefraxStore = require('RefraxStore');
 const parseNested = require('parseNested');
 const parseUnnested = require('parseUnnested');
 const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
@@ -17,15 +16,13 @@ const ACTION_GET = RefraxConstants.action.get;
 function processResponse(data, resourceDescriptor, handler) {
   var result = (handler || processResponse.defaultHandler)(data, resourceDescriptor)
     , type = resourceDescriptor && resourceDescriptor.type || result.type
-    , store;
+    , store = resourceDescriptor.store;
 
   if (!type) {
     throw new TypeError(
       'processResponse: Failed to resolve data type.'
     );
   }
-
-  store = RefraxStore.get(type);
 
   if (!resourceDescriptor) {
     resourceDescriptor = new RefraxResourceDescriptor(ACTION_GET, [store]);

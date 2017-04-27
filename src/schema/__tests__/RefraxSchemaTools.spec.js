@@ -77,7 +77,7 @@ describe('RefraxSchemaTools', function() {
         });
 
         it('should use a store instance', function() {
-          var result = RefraxSchemaTools.defaultStore('', 'bar', RefraxStore.get('users'));
+          var result = RefraxSchemaTools.defaultStore('', 'bar', new RefraxStore('users'));
 
           expect(result)
             .that.is.instanceof(RefraxStore)

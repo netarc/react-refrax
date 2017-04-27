@@ -11,8 +11,9 @@ const RefraxOptions = require('RefraxOptions');
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
 const RefraxConstants = require('RefraxConstants');
 const ACTION_INSPECT = RefraxConstants.action.inspect;
+const ACTION_GET = RefraxConstants.action.get;
 const SchemaAccescessorMixins = [];
-var RefraxResource = null;
+// var RefraxResource = null;
 
 
 // Determine if a stack matches the ending of another
@@ -24,7 +25,7 @@ function compareStack(part, stack) {
 function enumerateNodeLeafs(node, stack, action) {
   RefraxTools.each(node.leafs, function(leaf, key) {
     if (!leaf.stack || compareStack(leaf.stack, stack)) {
-      action(key, leaf.node, stack.concat(leaf.node.subject));
+      action(key, leaf.node, stack.concat(leaf.node));
     }
   });
 }
@@ -58,13 +59,13 @@ function createLeaf(accessor, detached, identifier, leafNode) {
 
   Object.defineProperty(accessor, identifier, {
     get: function() {
-      return new RefraxSchemaPath(leafNode, node, stack.concat(leafNode.subject));
+      return new RefraxSchemaPath(leafNode, stack.concat(leafNode));
     }
   });
 }
 
 class RefraxSchemaPath {
-  constructor(node, parent, stack) {
+  constructor(node, stack) {
     var self = this;
 
     if (!(node instanceof RefraxSchemaNode)) {
@@ -74,11 +75,10 @@ class RefraxSchemaPath {
     }
 
     if (!stack) {
-      stack = [].concat(node.subject);
+      stack = [].concat(node);
     }
 
     Object.defineProperty(this, '__node', {value: node});
-    Object.defineProperty(this, '__parent', {value: parent});
     Object.defineProperty(this, '__stack', {value: stack});
 
     RefraxTools.each(SchemaAccescessorMixins, function(mixin) {
@@ -88,18 +88,19 @@ class RefraxSchemaPath {
     enumerateNodeLeafs(node, stack, function(key, leafNode, leafStack) {
       Object.defineProperty(self, key, {
         get: function() {
-          return new RefraxSchemaPath(leafNode, node, leafStack);
+          return new RefraxSchemaPath(leafNode, leafStack);
         }
       });
     });
   }
 
-  enumerateLeafs(iteratee) {
-    const node = this.__node;
-    const stack = this.__stack;
+  toString() {
+    return 'RefraxSchemaPath';
+  }
 
-    enumerateNodeLeafs(node, stack, function(key, leafNode, leafStack) {
-      const accessor = new RefraxSchemaPath(leafNode, node, leafStack);
+  enumerateLeafs(iteratee) {
+    enumerateNodeLeafs(this.__node, this.__stack, (key, leafNode, leafStack) => {
+      const accessor = new RefraxSchemaPath(leafNode, leafStack);
       iteratee(key, accessor);
     });
   }
@@ -115,13 +116,68 @@ class RefraxSchemaPath {
   }
 
   invalidate(options = {}) {
-    // circular dependency workaround
-    (RefraxResource || (RefraxResource = require('RefraxResource')))
-      .from(this, new RefraxOptions(options, {
-        noFetchGet: true,
-        noSubscribe: true
-      }))
-      .invalidate(options);
+    // // circular dependency workaround
+    // (RefraxResource || (RefraxResource = require('RefraxResource')))
+    //   .from(this, new RefraxOptions(options, {
+    //     noFetchGet: true,
+    //     noSubscribe: true
+    //   }))
+    //   .invalidate(options);
+
+
+    if (!RefraxTools.isPlainObject(options)) {
+      throw new TypeError(
+        `invalidate expected argument of type \`Object\` but found ${options}`
+      );
+    }
+
+    const opts = new RefraxOptions({
+      params: options.params,
+      paramsGenerator: options.paramsGenerator
+    });
+    const stack = this.__stack.concat(new RefraxOptions(opts));
+    const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+
+    if (descriptor.valid) {
+      if (descriptor.store) {
+        descriptor.store.invalidate(descriptor, options);
+      }
+
+      if (options.cascade === true) {
+        this.invalidateLeafs(RefraxTools.extend({}, options, {
+          errorOnInvalid: false
+        }));
+      }
+    }
+  }
+
+  invalidateLeafs(options = {}) {
+    if (!RefraxTools.isPlainObject(options)) {
+      throw new TypeError(
+        `invalidateLeafs expected argument of type \`Object\` but found ${options}`
+      );
+    }
+
+    const opts = new RefraxOptions({
+      params: options.params,
+      paramsGenerator: options.paramsGenerator,
+      errorOnInvalid: !!options.errorOnInvalid
+    });
+
+    this.enumerateLeafs(function(key, accessor) {
+      var stack = [].concat(accessor.__stack, opts)
+        , descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+
+      if (descriptor.valid) {
+        if (descriptor.store) {
+          descriptor.store.invalidate(descriptor, options);
+        }
+
+        if (options.cascade === true) {
+          accessor.invalidateLeafs(options);
+        }
+      }
+    });
   }
 
   addLeaf(identifier, leaf) {

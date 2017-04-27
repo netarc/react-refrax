@@ -19,11 +19,11 @@ const ACTION_DELETE = RefraxConstants.action.delete;
  * RefraxMutableResource is a public facing interface class to modifying through a Schema Node.
  */
 class RefraxMutableResource extends RefraxResourceBase {
-  static from(accessor, ...args) {
-    return new RefraxMutableResource(accessor, ...args);
+  static from(schemaPath, ...args) {
+    return new RefraxMutableResource(schemaPath, ...args);
   }
 
-  constructor(accessor, ...args) {
+  constructor(schemaPath, ...args) {
     // Mutable path modifiers do not count as the basePath
     args = RefraxTools.map(args, function(arg) {
       if (typeof(arg) === 'string') {
@@ -32,7 +32,7 @@ class RefraxMutableResource extends RefraxResourceBase {
       return arg;
     });
 
-    super(accessor, ...args);
+    super(schemaPath, ...args);
   }
 
   create(...data) {

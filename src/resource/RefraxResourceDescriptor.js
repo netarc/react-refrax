@@ -8,7 +8,8 @@
 const RefraxTools = require('RefraxTools');
 const RefraxConfig = require('RefraxConfig');
 const RefraxStore = require('RefraxStore');
-const RefraxTreeNode = require('RefraxTreeNode');
+const RefraxStoreMap = require('RefraxStoreMap');
+const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxParameters = require('RefraxParameters');
 const RefraxQueryParameters = require('RefraxQueryParameters');
 const RefraxPath = require('RefraxPath');
@@ -20,6 +21,7 @@ const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
 const STRATEGY_MERGE = RefraxConstants.strategy.merge;
 const STRATEGY_REPLACE = RefraxConstants.strategy.replace;
 const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
+const CLASSIFY_ITEM = RefraxConstants.classify.item;
 const CLASSIFY_INVALID = RefraxConstants.classify.invalid;
 
 
@@ -98,84 +100,123 @@ function encodeURIData(data) {
     : '';
 }
 
+function resetScope(resourceDescriptor, resolver) {
+  resourceDescriptor.store = null;
+  resourceDescriptor.type = null;
+  resourceDescriptor.classify = CLASSIFY_RESOURCE;
+  resourceDescriptor.partial = FRAGMENT_DEFAULT;
+  resourceDescriptor.fragments = [];
+
+  resolver.paramId = null;
+}
+
+function resolveOptions(resourceDescriptor, resolver, options) {
+  if (options.store) {
+    resourceDescriptor.store = options.store;
+  }
+
+  if (options.paramMap) {
+    RefraxTools.extend(resolver.paramMap, options.paramMap);
+  }
+
+  if (options.paramId) {
+    resolver.paramId = resolver.paramId;
+  }
+
+  resourceDescriptor.partial = options.partial || FRAGMENT_DEFAULT;
+  resourceDescriptor.fragments = options.fragments || [];
+
+  if (options.cacheStrategy) {
+    resourceDescriptor.cacheStrategy = options.cacheStrategy;
+  }
+
+  if (options.collectionStrategy) {
+    resourceDescriptor.collectionStrategy = options.collectionStrategy;
+  }
+
+  if (typeof(options.errorOnInvalid) === 'boolean') {
+    resolver.errorOnInvalid = options.errorOnInvalid;
+  }
+
+  if (RefraxTools.isFunction(options.paramsGenerator)) {
+    RefraxTools.extend(resourceDescriptor.params, options.paramsGenerator());
+  }
+
+  if (RefraxTools.isObject(options.params)) {
+    RefraxTools.extend(resourceDescriptor.params, options.params);
+  }
+}
+
 /**
  * Given a stack representing a path in our Schema tree and options affecting it, we
  * reduce and resolve it down to a descriptor describing a resource.
  */
 function processStack(resourceDescriptor, stack) {
   var action = resourceDescriptor.action
-    , errorOnInvalid = action !== 'inspect'
-    , resolvedParamMap = {}
-    , resolvedPath = []
-    , resolvedParamId = null
-    , resolvedQueryParams = {}
-    , resolvedAppendPaths = []
+    , resolver = {
+      errorOnInvalid: action !== 'inspect',
+      paramMap: {},
+      path: [],
+      paramId: null,
+      queryParams: {},
+      appendPaths: [],
+      storeMap: null
+    }
     , pathErrors = []
     , i, item, definition
     , lastURIParamId = null
     , key, result;
 
-  if (!stack) {
-    throw new TypeError('generateDescriptor: expected non-null stack');
-  }
-
   // Pass 1
   for (i = 0; i < stack.length; i++) {
     item = stack[i];
     if (!item) {
-      throw new TypeError('generateDescriptor: Found null stack element at index ' + i + ' from stack ' + JSON.stringify(stack));
+      throw new TypeError('processStack: Found null stack element at index ' + i + ' from stack ' + JSON.stringify(stack));
     }
 
-    definition = item.definition;
+    if (item instanceof RefraxSchemaNode) {
+      if (item.type !== CLASSIFY_ITEM) {
+        resetScope(resourceDescriptor, resolver);
+      }
 
-    if (item instanceof RefraxStore) {
-      // every store encounter is considered a hard scope change
-      resourceDescriptor.store = item;
-      resolvedParamId = definition.paramId || null;
-      resourceDescriptor.type = definition.type;
-      resourceDescriptor.classify = CLASSIFY_RESOURCE;
-      resourceDescriptor.partial = FRAGMENT_DEFAULT;
-      resourceDescriptor.fragments = [];
-    }
-    else if (item instanceof RefraxTreeNode) {
       resourceDescriptor.classify = item.type;
 
-      if (definition.paramMap) {
-        resolvedParamMap = RefraxTools.extend(resolvedParamMap, definition.paramMap);
+      if (item.definition.storeMap) {
+        resolver.storeMap = item.definition.storeMap;
       }
 
-      if (definition.paramId) {
-        resolvedParamId = resolvedParamId;
-      }
-
-      resourceDescriptor.partial = definition.partial || FRAGMENT_DEFAULT;
-      resourceDescriptor.fragments = definition.fragments || [];
+      resolveOptions(resourceDescriptor, resolver, item.definition);
     }
     else if (item instanceof RefraxOptions) {
-      if (item.cacheStrategy) {
-        resourceDescriptor.cacheStrategy = item.cacheStrategy;
-      }
-
-      if (item.collectionStrategy) {
-        resourceDescriptor.collectionStrategy = item.collectionStrategy;
-      }
-
-      if (typeof(item.errorOnInvalid) === 'boolean') {
-        errorOnInvalid = item.errorOnInvalid;
-      }
+      resolveOptions(resourceDescriptor, resolver, item);
     }
     else if (item instanceof RefraxParameters) {
       RefraxTools.extend(resourceDescriptor.params, item);
     }
     else if (item instanceof RefraxQueryParameters) {
-      resolvedQueryParams = RefraxTools.extend(resolvedQueryParams, item);
+      RefraxTools.extend(resolver.queryParams, item);
     }
     else if (item instanceof RefraxPath) {
-      resolvedAppendPaths.push(item);
+      resolver.appendPaths.push(item);
     }
     else if (RefraxTools.isPlainObject(item)) {
       RefraxTools.extend(resourceDescriptor.payload, item);
     }
+    else {
+      throw new TypeError('processStack: Uknown stack object `' + item + '`');
+    }
+  }
+
+  if (typeof(resourceDescriptor.store) === 'string' &&
+      resolver.storeMap instanceof RefraxStoreMap) {
+    resourceDescriptor.store = resolver.storeMap.getOrCreate(resourceDescriptor.store);
+  }
+
+  if (resourceDescriptor.store instanceof RefraxStore) {
+    resourceDescriptor.type = resourceDescriptor.store.definition.type;
+  }
+  else {
+    resourceDescriptor.store = null;
   }
 
   // Pass 2 - Since URI uses resolved params we need to do it separately
@@ -183,63 +224,63 @@ function processStack(resourceDescriptor, stack) {
     item = stack[i];
     definition = item.definition;
 
-    if (item instanceof RefraxTreeNode) {
+    if (item instanceof RefraxSchemaNode) {
       result = null;
 
       if (definition.uri) {
-        result = fillURI(definition.uri, resourceDescriptor.params, resolvedParamMap);
+        result = fillURI(definition.uri, resourceDescriptor.params, resolver.paramMap);
       }
       else if (definition.paramId) {
-        result = fillURI(':'+definition.paramId, resourceDescriptor.params, resolvedParamMap);
+        result = fillURI(':'+definition.paramId, resourceDescriptor.params, resolver.paramMap);
       }
 
       if (result) {
         pathErrors = pathErrors.concat(result.errors);
-        resolvedPath.push(result.uri);
+        resolver.path.push(result.uri);
         lastURIParamId = result.lastParamKey;
       }
     }
   }
 
-  resolvedAppendPaths = RefraxTools.map(RefraxTools.select(resolvedAppendPaths, function(rPath) {
-    return rPath.isModifier || resolvedPath.push(rPath.path);
+  resolver.appendPaths = RefraxTools.map(RefraxTools.select(resolver.appendPaths, function(rPath) {
+    return rPath.isModifier || (resolver.path.push(rPath.path) && false);
   }), function(rPath) {
     return rPath.path;
   });
 
   // If we have no base path's ignore pathing all together
-  if (resolvedPath.length > 0) {
+  if (resolver.path.length > 0) {
     resourceDescriptor.basePath =
-      resourceDescriptor.path = RefraxConfig.hostname + '/' + resolvedPath.join('/');
+      resourceDescriptor.path = RefraxConfig.hostname + '/' + resolver.path.join('/');
 
-    if (resolvedAppendPaths.length > 0) {
-      resourceDescriptor.path+= '/' + resolvedAppendPaths.join('/');
+    if (resolver.appendPaths.length > 0) {
+      resourceDescriptor.path+= '/' + resolver.appendPaths.join('/');
     }
 
     if (action === ACTION_GET) {
       // NOTE: we append QueryParams to both basePath & path since basePath is typically used
       //  for cache query reference and path is used as the actual request path
-      resolvedQueryParams = encodeURIData(resolvedQueryParams);
-      resourceDescriptor.basePath+= resolvedQueryParams;
-      resourceDescriptor.path+= resolvedQueryParams;
+      resolver.queryParams = encodeURIData(resolver.queryParams);
+      resourceDescriptor.basePath+= resolver.queryParams;
+      resourceDescriptor.path+= resolver.queryParams;
     }
   }
 
-  key = resolvedParamId || lastURIParamId || 'id';
-  if (resolvedParamMap[key]) {
-    key = resolvedParamMap[key];
+  key = resolver.paramId || lastURIParamId || 'id';
+  if (resolver.paramMap[key]) {
+    key = resolver.paramMap[key];
   }
-  resolvedParamId = (resolvedParamId = resourceDescriptor.params[key]) &&
-                    ('' + resolvedParamId);
+  resolver.paramId = (resolver.paramId = resourceDescriptor.params[key]) &&
+                     ('' + resolver.paramId) || null;
 
-  resourceDescriptor.event = ['change'].concat(resolvedParamId || []).join(':');
-  resourceDescriptor.id = resolvedParamId;
+  resourceDescriptor.event = ['change'].concat(resolver.paramId || []).join(':');
+  resourceDescriptor.id = resolver.paramId;
   resourceDescriptor.fragments = resourceDescriptor.fragments.reverse();
 
   if (pathErrors.length > 0) {
     resourceDescriptor.valid = false;
 
-    if (errorOnInvalid) {
+    if (resolver.errorOnInvalid) {
       throw new TypeError(
         'Failed to map path: `' + resourceDescriptor.path + '` using params: ' +
         JSON.stringify(resourceDescriptor.params, serializer())

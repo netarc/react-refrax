@@ -8,6 +8,7 @@
 const Promise = require('bluebird');
 const mixinSubscribable = require('mixinSubscribable');
 const mixinMutable = require('mixinMutable');
+const RequestError = require('RequestError');
 const RefraxMutableResource = require('RefraxMutableResource');
 const RefraxOptions = require('RefraxOptions');
 const RefraxTools = require('RefraxTools');
@@ -85,8 +86,11 @@ class RefraxActionEntity {
       this.unset();
     });
     promise.catch(function(err) {
-      if (RefraxTools.isPlainObject(err.response.data)) {
-        Action.setErrors(RefraxTools.extend({}, err.response.data));
+      // we are only looking for a Refrax RequestError
+      if (err instanceof RequestError) {
+        if (RefraxTools.isPlainObject(err.response.data)) {
+          Action.setErrors(RefraxTools.extend({}, err.response.data));
+        }
       }
     });
 

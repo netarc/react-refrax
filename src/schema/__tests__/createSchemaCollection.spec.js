@@ -6,10 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 const chai = require('chai');
-const TestHelper = require('TestHelper');
 const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxStore = require('RefraxStore');
 const createSchemaCollection = require('createSchemaCollection');
 const RefraxConstants = require('RefraxConstants');
@@ -20,8 +18,6 @@ const expect = chai.expect;
 
 /* eslint-disable no-new */
 describe('createSchemaCollection', function() {
-  afterEach(TestHelper.deleteStores);
-
   describe('invocation', function() {
     describe('with no arguments', function() {
       it('should throw an error', function() {
@@ -49,32 +45,32 @@ describe('createSchemaCollection', function() {
       it('should use a default store based off the path in singular form', function() {
         var collectionUsers = createSchemaCollection('users');
 
-        expect(collectionUsers.__node.subject).with.deep.property('[0]')
-          .that.is.an.instanceof(RefraxStore)
-          .to.have.property('definition')
-          .that.deep.equals({
-            type: 'user'
-          });
-
-        expect(collectionUsers.__node.subject).with.deep.property('[1]')
-          .that.is.an.instanceof(RefraxTreeNode)
-          .that.deep.equals({
-            type: CLASSIFY_COLLECTION,
-            definition: {
-              uri: 'users'
-            }
-          });
-
         expect(collectionUsers)
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'users');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(collectionUsers.__node)
+          .to.have.property('identifier', 'users');
+        expect(collectionUsers.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_COLLECTION,
+              store: 'user',
+              uri: 'users'
+            });
+
         expect(collectionUsers).to.have.property('user')
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'user');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(collectionUsers.user.__node)
+          .to.have.property('identifier', 'user');
+        expect(collectionUsers.user.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_ITEM,
+              paramId: 'userId'
+            });
       });
     });
 
@@ -92,63 +88,64 @@ describe('createSchemaCollection', function() {
       it('should use a specified string for a store type', function() {
         var collectionUsers = createSchemaCollection('users', 'foo_user');
 
-        expect(collectionUsers.__node.subject).with.deep.property('[0]')
-          .that.is.an.instanceof(RefraxStore)
-          .to.have.property('definition')
-          .that.deep.equals({
-            type: 'foo_user'
-          });
-
-        expect(collectionUsers.__node.subject).with.deep.property('[1]')
-          .that.is.an.instanceof(RefraxTreeNode)
-          .that.deep.equals({
-            type: CLASSIFY_COLLECTION,
-            definition: {
-              uri: 'users'
-            }
-          });
-
         expect(collectionUsers)
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'users');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(collectionUsers.__node)
+          .to.have.property('identifier', 'users');
+        expect(collectionUsers.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_COLLECTION,
+              store: 'foo_user',
+              uri: 'users'
+            });
+
         expect(collectionUsers).to.have.property('user')
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'user');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(collectionUsers.user.__node)
+          .to.have.property('identifier', 'user');
+        expect(collectionUsers.user.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_ITEM,
+              paramId: 'userId'
+            });
       });
 
       it('should use a store instance', function() {
-        var collectionUsers = createSchemaCollection('users', RefraxStore.get('foo_user'));
-
-        expect(collectionUsers.__node.subject).with.deep.property('[0]')
-          .that.is.an.instanceof(RefraxStore)
-          .to.have.property('definition')
-          .that.deep.equals({
-            type: 'foo_user'
-          });
-
-        expect(collectionUsers.__node.subject).with.deep.property('[1]')
-          .that.is.an.instanceof(RefraxTreeNode)
-          .that.deep.equals({
-            type: CLASSIFY_COLLECTION,
-            definition: {
-              uri: 'users'
-            }
-          });
+        var store = new RefraxStore('foo_user')
+          , collectionUsers = createSchemaCollection('users', store);
 
         expect(collectionUsers)
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'users');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(collectionUsers.__node)
+          .to.have.property('identifier', 'users');
+        expect(collectionUsers.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_COLLECTION,
+              store: store,
+              uri: 'users'
+            });
+
         expect(collectionUsers).to.have.property('user')
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'user');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(collectionUsers.user.__node)
+          .to.have.property('identifier', 'user');
+        expect(collectionUsers.user.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_ITEM,
+              paramId: 'userId'
+            });
       });
     });
 
@@ -159,15 +156,31 @@ describe('createSchemaCollection', function() {
         });
 
         expect(collectionUsers)
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'clients');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(collectionUsers.__node)
+          .to.have.property('identifier', 'clients');
+        expect(collectionUsers.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_COLLECTION,
+              store: 'user',
+              uri: 'users'
+            });
+
         expect(collectionUsers).to.have.property('client')
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'client');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(collectionUsers.client.__node)
+          .to.have.property('identifier', 'client');
+        expect(collectionUsers.client.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_ITEM,
+              paramId: 'clientId'
+            });
       });
 
       it('should pass options to collection', function() {
@@ -177,15 +190,33 @@ describe('createSchemaCollection', function() {
           }
         });
 
-        expect(collectionUsers.__node.subject).with.deep.property('[1]')
-          .that.is.an.instanceof(RefraxTreeNode)
-          .that.deep.equals({
-            type: CLASSIFY_COLLECTION,
-            definition: {
+        expect(collectionUsers)
+          .to.be.an.instanceof(RefraxSchemaPath)
+          .to.have.property('__node')
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(collectionUsers.__node)
+          .to.have.property('identifier', 'users');
+        expect(collectionUsers.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_COLLECTION,
+              store: 'user',
               uri: 'users',
               partial: 'bar'
-            }
-          });
+            });
+
+        expect(collectionUsers).to.have.property('user')
+          .to.be.an.instanceof(RefraxSchemaPath)
+          .to.have.property('__node')
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(collectionUsers.user.__node)
+          .to.have.property('identifier', 'user');
+        expect(collectionUsers.user.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_ITEM,
+              paramId: 'userId'
+            });
       });
 
       it('should pass options to member', function() {
@@ -195,15 +226,33 @@ describe('createSchemaCollection', function() {
           }
         });
 
-        expect(collectionUsers.user.__node.subject).with.deep.property('[0]')
-          .that.is.an.instanceof(RefraxTreeNode)
-          .that.deep.equals({
-            type: CLASSIFY_ITEM,
-            definition: {
+        expect(collectionUsers)
+          .to.be.an.instanceof(RefraxSchemaPath)
+          .to.have.property('__node')
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(collectionUsers.__node)
+          .to.have.property('identifier', 'users');
+        expect(collectionUsers.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_COLLECTION,
+              store: 'user',
+              uri: 'users'
+            });
+
+        expect(collectionUsers).to.have.property('user')
+          .to.be.an.instanceof(RefraxSchemaPath)
+          .to.have.property('__node')
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(collectionUsers.user.__node)
+          .to.have.property('identifier', 'user');
+        expect(collectionUsers.user.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_ITEM,
               paramId: 'userId',
               partial: 'bar'
-            }
-          });
+            });
       });
 
       it('should accept an options argument as the second', function() {

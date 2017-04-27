@@ -125,9 +125,9 @@ var paths = {
     '!src/.legacy'
   ],
   srcTest: [
+    '*scripts/**/*.js',
     '*src/**/*.js',
     '*src/**/__tests__/**/*.js',
-    '*scripts/**/*.js',
     '!src/.legacy'
   ]
 };
@@ -188,8 +188,18 @@ gulp.task('dist:min', ['modules'], function() {
 });
 
 gulp.task('testMocha', ['modules-test'], function() {
-  return gulp.src(['*test/**/*.spec.js'], {read: false})
-		.pipe(mocha());
+  return gulp.src([
+    'test/ChaiDeepMatch.js',
+    '*test/**/*.spec.js'
+  ], {read: false})
+	.pipe(
+    mocha({
+      reporter: 'nyan'
+    })
+    .on('error', function(error) {
+      this.emit('end');
+    })
+  );
 });
 
 gulp.task('watch', function() {

@@ -8,6 +8,7 @@
 const Promise = require('bluebird');
 const Axios = require('axios');
 const RefraxTools = require('RefraxTools');
+const RequestError = require('RequestError');
 const RefraxConstants = require('RefraxConstants');
 const processResponse = require('processResponse');
 const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
@@ -25,16 +26,6 @@ Promise.onPossiblyUnhandledRejection(function(err, promise) {
   }
   throw err;
 });
-
-function RequestError(response) {
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(this);
-  }
-  this.message = '' + response.statusText;
-  this.response = response;
-  this.name = 'RequestError';
-}
-RequestError.prototype = Object.create(Error.prototype);
 
 /**
  * Given a known Store update a resource descriptors data and repeat with

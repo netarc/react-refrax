@@ -7,7 +7,6 @@
  */
 const pluralize = require('pluralize');
 const RefraxTools = require('RefraxTools');
-const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaTools = require('RefraxSchemaTools');
@@ -17,8 +16,7 @@ const CLASSIFY_ITEM = RefraxConstants.classify.item;
 
 
 function createSchemaCollection(path, store, options) {
-  var treeNodeCollection, accessorNodeCollection
-    , treeNodeMember
+  var collectionPath
     , memberIdentifier, memberId
     , identifier;
 
@@ -30,16 +28,15 @@ function createSchemaCollection(path, store, options) {
   path = RefraxSchemaTools.validatePath('createSchemaCollection', path);
   options = options || {};
   identifier = options.identifier || RefraxTools.cleanIdentifier(path);
-  store = RefraxSchemaTools.defaultStore('createSchemaCollection', identifier, store);
 
   // Collection Node
 
-  treeNodeCollection = new RefraxTreeNode(CLASSIFY_COLLECTION, RefraxTools.extend({
-    uri: path
-  }, options.collection));
-
-  accessorNodeCollection = new RefraxSchemaPath(
-    new RefraxSchemaNode([store, treeNodeCollection], identifier)
+  collectionPath = new RefraxSchemaPath(
+    new RefraxSchemaNode(CLASSIFY_COLLECTION, identifier, RefraxTools.extend({
+      store: RefraxSchemaTools.storeReference('createSchemaCollection', identifier, store),
+      classify: CLASSIFY_COLLECTION,
+      uri: path
+    }, options.collection))
   );
 
   // Member Node
@@ -53,15 +50,14 @@ function createSchemaCollection(path, store, options) {
     memberId = memberIdentifier + 'Id';
   }
 
-  treeNodeMember = new RefraxTreeNode(CLASSIFY_ITEM, RefraxTools.extend({
-    paramId: memberId
-  }, options.member));
-
-  accessorNodeCollection.addLeaf(
-    new RefraxSchemaNode(treeNodeMember, memberIdentifier)
+  collectionPath.addLeaf(
+    new RefraxSchemaNode(CLASSIFY_ITEM, memberIdentifier, RefraxTools.extend({
+      classify: CLASSIFY_ITEM,
+      paramId: memberId
+    }, options.member))
   );
 
-  return accessorNodeCollection;
+  return collectionPath;
 }
 
 export default createSchemaCollection;

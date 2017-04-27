@@ -6,10 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 const chai = require('chai');
-const TestHelper = require('TestHelper');
 const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxStore = require('RefraxStore');
 const createSchemaResource = require('createSchemaResource');
 const RefraxConstants = require('RefraxConstants');
@@ -19,8 +17,6 @@ const expect = chai.expect;
 
 /* eslint-disable no-new */
 describe('createSchemaResource', function() {
-  afterEach(TestHelper.deleteStores);
-
   describe('invocation', function() {
     describe('with no arguments', function() {
       it('should throw an error', function() {
@@ -48,27 +44,19 @@ describe('createSchemaResource', function() {
       it('should use a default store based off the path in singular form', function() {
         var resourceSettings = createSchemaResource('settings');
 
-        expect(resourceSettings.__node.subject).with.deep.property('[0]')
-          .that.is.an.instanceof(RefraxStore)
-          .to.have.property('definition')
-          .that.deep.equals({
-            type: 'setting'
-          });
-
-        expect(resourceSettings.__node.subject).with.deep.property('[1]')
-          .that.is.an.instanceof(RefraxTreeNode)
-          .that.deep.equals({
-            type: CLASSIFY_RESOURCE,
-            definition: {
-              uri: 'settings'
-            }
-          });
-
         expect(resourceSettings)
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'settings');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(resourceSettings.__node)
+          .to.have.property('identifier', 'settings');
+        expect(resourceSettings.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_RESOURCE,
+              store: 'setting',
+              uri: 'settings'
+            });
       });
     });
 
@@ -86,53 +74,38 @@ describe('createSchemaResource', function() {
       it('should use a specified string for a store type', function() {
         var resourceSettings = createSchemaResource('settings', 'settings_foo');
 
-        expect(resourceSettings.__node.subject).with.deep.property('[0]')
-          .that.is.an.instanceof(RefraxStore)
-          .to.have.property('definition')
-          .that.deep.equals({
-            type: 'settings_foo'
-          });
-
-        expect(resourceSettings.__node.subject).with.deep.property('[1]')
-          .that.is.an.instanceof(RefraxTreeNode)
-          .that.deep.equals({
-            type: CLASSIFY_RESOURCE,
-            definition: {
-              uri: 'settings'
-            }
-          });
-
         expect(resourceSettings)
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'settings');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(resourceSettings.__node)
+          .to.have.property('identifier', 'settings');
+        expect(resourceSettings.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_RESOURCE,
+              store: 'settings_foo',
+              uri: 'settings'
+            });
       });
 
       it('should use a store instance', function() {
-        var resourceSettings = createSchemaResource('settings', RefraxStore.get('settings_foo'));
-
-        expect(resourceSettings.__node.subject).with.deep.property('[0]')
-          .that.is.an.instanceof(RefraxStore)
-          .to.have.property('definition')
-          .that.deep.equals({
-            type: 'settings_foo'
-          });
-
-        expect(resourceSettings.__node.subject).with.deep.property('[1]')
-          .that.is.an.instanceof(RefraxTreeNode)
-          .that.deep.equals({
-            type: CLASSIFY_RESOURCE,
-            definition: {
-              uri: 'settings'
-            }
-          });
+        var store = new RefraxStore('settings_foo')
+          , resourceSettings = createSchemaResource('settings', store);
 
         expect(resourceSettings)
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'settings');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(resourceSettings.__node)
+          .to.have.property('identifier', 'settings');
+        expect(resourceSettings.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_RESOURCE,
+              store: store,
+              uri: 'settings'
+            });
       });
     });
 
@@ -143,10 +116,18 @@ describe('createSchemaResource', function() {
         });
 
         expect(resourceSettings)
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'clients');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(resourceSettings.__node)
+          .to.have.property('identifier', 'clients');
+        expect(resourceSettings.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_RESOURCE,
+              store: 'user',
+              uri: 'settings'
+            });
       });
 
       it('should pass options to resource', function() {
@@ -156,15 +137,20 @@ describe('createSchemaResource', function() {
           }
         });
 
-        expect(resourceSettings.__node.subject).with.deep.property('[1]')
-          .that.is.an.instanceof(RefraxTreeNode)
-          .that.deep.equals({
-            type: CLASSIFY_RESOURCE,
-            definition: {
+        expect(resourceSettings)
+          .to.be.an.instanceof(RefraxSchemaPath)
+          .to.have.property('__node')
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(resourceSettings.__node)
+          .to.have.property('identifier', 'settings');
+        expect(resourceSettings.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_RESOURCE,
+              store: 'user',
               uri: 'settings',
               partial: 'bar'
-            }
-          });
+            });
       });
 
       it('should accept an options argument as the second', function() {
@@ -173,10 +159,18 @@ describe('createSchemaResource', function() {
         });
 
         expect(resourceSettings)
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'clients');
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(resourceSettings.__node)
+          .to.have.property('identifier', 'clients');
+        expect(resourceSettings.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_RESOURCE,
+              store: 'client',
+              uri: 'settings'
+            });
       });
     });
   });

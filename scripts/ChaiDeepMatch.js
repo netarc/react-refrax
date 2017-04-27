@@ -1,3 +1,5 @@
+const chai = require('chai');
+
 function pluginDeepMatch(chai, utils) {
   function deepMatchObject(expect, actual, path) {
     path = path || '';
@@ -87,8 +89,8 @@ function pluginDeepMatch(chai, utils) {
           deepMatchObject(expect, this._obj);
         }
         catch (msg) {
-          throw new chai.AssertionError(msg);
-          // this.assert(false, msg, msg, expect, this._obj);
+          // throw new chai.AssertionError(msg);
+          this.assert(false, msg, undefined, expect, this._obj, true);
         }
       }
       else {
@@ -98,5 +100,6 @@ function pluginDeepMatch(chai, utils) {
   });
 };
 
-exports['default'] = pluginDeepMatch;
-module.exports = exports['default'];
+chai.use(pluginDeepMatch);
+// exports['default'] = pluginDeepMatch;
+// module.exports = exports['default'];
