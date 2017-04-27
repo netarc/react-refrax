@@ -297,7 +297,13 @@ class RefraxFragmentCache {
     if (descriptor) {
       if (options.noQueries !== true) {
         RefraxTools.each(this.queries, function(query, path) {
-          if (path === descriptor.basePath ||
+          const queryUrl = path.split('?')[0];
+
+          // We compare descriptor base path against a query param stripped cache path
+          // This will allow us to invalidate a root path and catch all queries but if our
+          // descriptor was more specific and had query params then it wouldn't match
+          if (path == descriptor.basePath ||
+              queryUrl === descriptor.basePath ||
               (descriptor.id &&
                  RefraxTools.isArray(query.data) &&
                  query.data.indexOf(descriptor.id) != -1)) {

@@ -27,6 +27,11 @@ const dataSegmentFull__ID_2 = {
   title: 'Bar Project',
   description: 'This is the Bar project on wheels'
 };
+const dataSegmentFull__ID_3 = {
+  id: 3,
+  title: 'Zoo Project',
+  description: 'This is the Zoo project on wheels'
+};
 
 const dataSegmentPartial__ID_1 = {
   id: 1,
@@ -35,6 +40,10 @@ const dataSegmentPartial__ID_1 = {
 const dataSegmentPartial__ID_2 = {
   id: 2,
   title: 'Bar Project'
+};
+const dataSegmentPartial__ID_3 = {
+  id: 3,
+  title: 'Zoo Project'
 };
 
 export default function() {
@@ -48,12 +57,20 @@ export default function() {
         path: '/projects',
         partial: MinimalPartial
       }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_2], STATUS_COMPLETE);
+      fragmentCache.update(TestHelper.descriptorCollection({
+        path: '/projects?filter=123',
+        partial: MinimalPartial
+      }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_3], STATUS_COMPLETE);
+
       fragmentCache.update(TestHelper.descriptorCollectionItem({
         path: '/projects/1'
       }), dataSegmentFull__ID_1, STATUS_COMPLETE);
       fragmentCache.update(TestHelper.descriptorCollectionItem({
         path: '/projects/2'
       }), dataSegmentFull__ID_2, STATUS_COMPLETE);
+      fragmentCache.update(TestHelper.descriptorCollectionItem({
+        path: '/projects/3'
+      }), dataSegmentFull__ID_3, STATUS_COMPLETE);
 
       expectedFragments = JSON.parse(JSON.stringify(fragmentCache.fragments));
       expectedQueries = JSON.parse(JSON.stringify(fragmentCache.queries));
@@ -109,6 +126,8 @@ export default function() {
 
           expectedQueries['/projects'].timestamp = TIMESTAMP_STALE;
           expectedQueries['/projects'].status = STATUS_STALE;
+          expectedQueries['/projects?filter=123'].timestamp = TIMESTAMP_STALE;
+          expectedQueries['/projects?filter=123'].status = STATUS_STALE;
 
           expect(fragmentCache).to.have.property('fragments')
             .that.deep.equals(expectedFragments);
@@ -124,6 +143,8 @@ export default function() {
 
             expectedQueries['/projects'].timestamp = TIMESTAMP_STALE;
             expectedQueries['/projects'].status = STATUS_STALE;
+            expectedQueries['/projects?filter=123'].timestamp = TIMESTAMP_STALE;
+            expectedQueries['/projects?filter=123'].status = STATUS_STALE;
 
             expect(fragmentCache).to.have.property('fragments')
               .that.deep.equals(expectedFragments);
@@ -198,35 +219,77 @@ export default function() {
           id: '1'
         });
 
-        it('should update cache', function() {
-          fragmentCache.invalidate(descriptor);
-
-          expectedFragments[DefaultPartial]['1'].timestamp = TIMESTAMP_STALE;
-          expectedFragments[DefaultPartial]['1'].status = STATUS_STALE;
-          expectedFragments[MinimalPartial]['1'].timestamp = TIMESTAMP_STALE;
-          expectedFragments[MinimalPartial]['1'].status = STATUS_STALE;
-          expectedQueries['/projects'].timestamp = TIMESTAMP_STALE;
-          expectedQueries['/projects'].status = STATUS_STALE;
-
-          expect(fragmentCache).to.have.property('fragments')
-            .that.deep.equals(expectedFragments);
-          expect(fragmentCache).to.have.property('queries')
-            .that.deep.equals(expectedQueries);
+        const descriptor2 = TestHelper.descriptorCollectionItem({
+          id: '2'
         });
 
-        describe('with noFragments option specified', function() {
-          it('should correctly invalidate cache', function() {
-            fragmentCache.invalidate(descriptor, {
-              noFragments: true
-            });
+        describe('should update cache', function() {
+          it('with a common id', function() {
+            fragmentCache.invalidate(descriptor);
 
+            expectedFragments[DefaultPartial]['1'].timestamp = TIMESTAMP_STALE;
+            expectedFragments[DefaultPartial]['1'].status = STATUS_STALE;
+            expectedFragments[MinimalPartial]['1'].timestamp = TIMESTAMP_STALE;
+            expectedFragments[MinimalPartial]['1'].status = STATUS_STALE;
+            expectedQueries['/projects'].timestamp = TIMESTAMP_STALE;
+            expectedQueries['/projects'].status = STATUS_STALE;
+            expectedQueries['/projects?filter=123'].timestamp = TIMESTAMP_STALE;
+            expectedQueries['/projects?filter=123'].status = STATUS_STALE;
+
+            expect(fragmentCache).to.have.property('fragments')
+            .that.deep.equals(expectedFragments);
+            expect(fragmentCache).to.have.property('queries')
+            .that.deep.equals(expectedQueries);
+          });
+
+          it('with a un-common id', function() {
+            fragmentCache.invalidate(descriptor2);
+
+            expectedFragments[DefaultPartial]['2'].timestamp = TIMESTAMP_STALE;
+            expectedFragments[DefaultPartial]['2'].status = STATUS_STALE;
+            expectedFragments[MinimalPartial]['2'].timestamp = TIMESTAMP_STALE;
+            expectedFragments[MinimalPartial]['2'].status = STATUS_STALE;
             expectedQueries['/projects'].timestamp = TIMESTAMP_STALE;
             expectedQueries['/projects'].status = STATUS_STALE;
 
             expect(fragmentCache).to.have.property('fragments')
-              .that.deep.equals(expectedFragments);
+            .that.deep.equals(expectedFragments);
             expect(fragmentCache).to.have.property('queries')
-              .that.deep.equals(expectedQueries);
+            .that.deep.equals(expectedQueries);
+          });
+        });
+
+        describe('with noFragments option specified', function() {
+          describe('should correctly invalidate cache', function() {
+            it('with a common id', function() {
+              fragmentCache.invalidate(descriptor, {
+                noFragments: true
+              });
+
+              expectedQueries['/projects'].timestamp = TIMESTAMP_STALE;
+              expectedQueries['/projects'].status = STATUS_STALE;
+              expectedQueries['/projects?filter=123'].timestamp = TIMESTAMP_STALE;
+              expectedQueries['/projects?filter=123'].status = STATUS_STALE;
+
+              expect(fragmentCache).to.have.property('fragments')
+                .that.deep.equals(expectedFragments);
+              expect(fragmentCache).to.have.property('queries')
+                .that.deep.equals(expectedQueries);
+            });
+
+            it('with a un-common id', function() {
+              fragmentCache.invalidate(descriptor2, {
+                noFragments: true
+              });
+
+              expectedQueries['/projects'].timestamp = TIMESTAMP_STALE;
+              expectedQueries['/projects'].status = STATUS_STALE;
+
+              expect(fragmentCache).to.have.property('fragments')
+                .that.deep.equals(expectedFragments);
+              expect(fragmentCache).to.have.property('queries')
+                .that.deep.equals(expectedQueries);
+            });
           });
         });
 
@@ -385,12 +448,20 @@ export default function() {
         expectedFragments[DefaultPartial]['2'].status = STATUS_STALE;
         expectedFragments[MinimalPartial]['2'].timestamp = TIMESTAMP_STALE;
         expectedFragments[MinimalPartial]['2'].status = STATUS_STALE;
+        expectedFragments[DefaultPartial]['3'].timestamp = TIMESTAMP_STALE;
+        expectedFragments[DefaultPartial]['3'].status = STATUS_STALE;
+        expectedFragments[MinimalPartial]['3'].timestamp = TIMESTAMP_STALE;
+        expectedFragments[MinimalPartial]['3'].status = STATUS_STALE;
         expectedQueries['/projects'].timestamp = TIMESTAMP_STALE;
         expectedQueries['/projects'].status = STATUS_STALE;
+        expectedQueries['/projects?filter=123'].timestamp = TIMESTAMP_STALE;
+        expectedQueries['/projects?filter=123'].status = STATUS_STALE;
         expectedQueries['/projects/1'].timestamp = TIMESTAMP_STALE;
         expectedQueries['/projects/1'].status = STATUS_STALE;
         expectedQueries['/projects/2'].timestamp = TIMESTAMP_STALE;
         expectedQueries['/projects/2'].status = STATUS_STALE;
+        expectedQueries['/projects/3'].timestamp = TIMESTAMP_STALE;
+        expectedQueries['/projects/3'].status = STATUS_STALE;
 
         expect(fragmentCache).to.have.property('fragments')
           .that.deep.equals(expectedFragments);
@@ -406,10 +477,14 @@ export default function() {
 
           expectedQueries['/projects'].timestamp = TIMESTAMP_STALE;
           expectedQueries['/projects'].status = STATUS_STALE;
+          expectedQueries['/projects?filter=123'].timestamp = TIMESTAMP_STALE;
+          expectedQueries['/projects?filter=123'].status = STATUS_STALE;
           expectedQueries['/projects/1'].timestamp = TIMESTAMP_STALE;
           expectedQueries['/projects/1'].status = STATUS_STALE;
           expectedQueries['/projects/2'].timestamp = TIMESTAMP_STALE;
           expectedQueries['/projects/2'].status = STATUS_STALE;
+          expectedQueries['/projects/3'].timestamp = TIMESTAMP_STALE;
+          expectedQueries['/projects/3'].status = STATUS_STALE;
 
           expect(fragmentCache).to.have.property('fragments')
             .that.deep.equals(expectedFragments);
@@ -432,6 +507,10 @@ export default function() {
           expectedFragments[DefaultPartial]['2'].status = STATUS_STALE;
           expectedFragments[MinimalPartial]['2'].timestamp = TIMESTAMP_STALE;
           expectedFragments[MinimalPartial]['2'].status = STATUS_STALE;
+          expectedFragments[DefaultPartial]['3'].timestamp = TIMESTAMP_STALE;
+          expectedFragments[DefaultPartial]['3'].status = STATUS_STALE;
+          expectedFragments[MinimalPartial]['3'].timestamp = TIMESTAMP_STALE;
+          expectedFragments[MinimalPartial]['3'].status = STATUS_STALE;
 
           expect(fragmentCache).to.have.property('fragments')
             .that.deep.equals(expectedFragments);

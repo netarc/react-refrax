@@ -1,6 +1,7 @@
 ## Unreleased
 
 ## [v0.5.12]
+- **Minor** Updated `FragmentCache` to match param stripped query path so generic descriptors will aggressively match
 
 ## Released
 
