@@ -1,10 +1,15 @@
 ## Unreleased
 
+## [v0.5.14]
+
+## Released
+
 ## [v0.5.13]
+> May 8, 2017
 - **Minor** Updated `isPlainObject` to check falseyness first to prevent null call
 - **Minor** `processRequestSuccess` will now default falsey data to an empty value based on its classification
 
-## Released
+[v0.5.13]: https://github.com/netarc/refrax/compare/v0.5.12...v0.5.13
 
 ## [v0.5.12]
 > April 27, 2017
