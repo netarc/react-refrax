@@ -15,6 +15,7 @@ const STATUS_STALE = RefraxConstants.status.STALE;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
 const ACTION_GET = RefraxConstants.action.get;
 const ACTION_DELETE = RefraxConstants.action.delete;
+const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 
 
 // We only quietly consume RequestError's
@@ -39,21 +40,31 @@ RequestError.prototype = Object.create(Error.prototype);
  * Given a known Store update a resource descriptors data and repeat with
  * any embedded data.
  */
-function processRequestSuccess(resourceDescriptor, response, options) {
+function processRequestSuccess(descriptor, response, options) {
   var data = response && response.data;
 
-  if (!resourceDescriptor.store) {
+  if (!descriptor.store) {
     return;
   }
 
-  if (resourceDescriptor.action === ACTION_GET) {
-    processResponse(data, resourceDescriptor);
+  // Successfull response but no data.. so lets default to an empty value accordingly
+  if (!data) {
+    if (descriptor.classify === CLASSIFY_COLLECTION) {
+      data = [];
+    }
+    else {
+      data = {};
+    }
   }
-  else if (resourceDescriptor.action === ACTION_DELETE) {
-    resourceDescriptor.store.destroyResource(resourceDescriptor, options);
+
+  if (descriptor.action === ACTION_GET) {
+    processResponse(data, descriptor);
+  }
+  else if (descriptor.action === ACTION_DELETE) {
+    descriptor.store.destroyResource(descriptor, options);
   }
   else {
-    resourceDescriptor.store.updateResource(resourceDescriptor, data, STATUS_COMPLETE, options);
+    descriptor.store.updateResource(descriptor, data, STATUS_COMPLETE, options);
   }
 }
 
@@ -73,21 +84,21 @@ function composeFormData(data) {
   return result;
 }
 
-function invokeDescriptor(resourceDescriptor, options = {}) {
-  var store = resourceDescriptor.store
+function invokeDescriptor(descriptor, options = {}) {
+  var store = descriptor.store
     , touchParams = {
       timestamp: TIMESTAMP_LOADING
     }
     , requestConfig = {
-      method: resourceDescriptor.action,
-      url: resourceDescriptor.path
+      method: descriptor.action,
+      url: descriptor.path
     };
 
-  if (resourceDescriptor.action === ACTION_GET) {
+  if (descriptor.action === ACTION_GET) {
     touchParams.status = STATUS_STALE;
   }
   else {
-    requestConfig.data = resourceDescriptor.payload;
+    requestConfig.data = descriptor.payload;
 
     if (containsMultipart(requestConfig.data)) {
       requestConfig.data = composeFormData(requestConfig.data);
@@ -95,20 +106,20 @@ function invokeDescriptor(resourceDescriptor, options = {}) {
   }
 
   if (store) {
-    store.touchResource(resourceDescriptor, touchParams, options);
+    store.touchResource(descriptor, touchParams, options);
   }
 
   return new Promise(function(resolve, reject) {
     // eslint-disable-next-line new-cap
     Axios(requestConfig)
       .then(function(response) {
-        processRequestSuccess(resourceDescriptor, response, options);
-        const resource = store && store.fetchResource(resourceDescriptor) || {};
+        processRequestSuccess(descriptor, response, options);
+        const resource = store && store.fetchResource(descriptor) || {};
         resource.response = response;
         resolve(resource);
       }, function(err) {
         if (store) {
-          store.touchResource(resourceDescriptor, {timestamp: Date.now()}, options);
+          store.touchResource(descriptor, {timestamp: Date.now()}, options);
         }
         reject(new RequestError(err.response));
       });

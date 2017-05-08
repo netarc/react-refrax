@@ -1,6 +1,8 @@
 ## Unreleased
 
 ## [v0.5.13]
+- **Minor** Updated `isPlainObject` to check falseyness first to prevent null call
+- **Minor** `processRequestSuccess` will now default falsey data to an empty value based on its classification
 
 ## Released
 

@@ -14,7 +14,8 @@ function parseObject(object) {
 
   if (!RefraxTools.isPlainObject(object)) {
     throw new TypeError(
-      'parseNested:parseObject: expected object type but found `' + typeof(object) + '`.'
+      'parseNested:parseObject: expected object type but found `' +
+      RefraxTools.objToString.call(object) + '`.'
     );
   }
 

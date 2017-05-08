@@ -62,7 +62,7 @@ export const isArray = Array.isArray || function(obj) {
 };
 
 export function isPlainObject(obj) {
-  return typeof(obj) === 'object' &&
+  return !!obj && typeof(obj) === 'object' &&
          getPrototypeOf(obj) === Object.prototype;
 }
 
