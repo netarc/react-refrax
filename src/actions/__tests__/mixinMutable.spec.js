@@ -159,12 +159,12 @@ describe('mixinMutable', function() {
           expect(mutable._state)
             .to.deep.equal(RefraxTools.extend({}, mutableState, {
               foo: 111,
-              zab: null
+              zab: undefined
             }));
           expect(mutable.data)
             .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
               foo: 111,
-              zab: null
+              zab: undefined
             }));
         });
 
@@ -187,7 +187,7 @@ describe('mixinMutable', function() {
             .to.deep.equal({
               type: 'attribute',
               target: 'zab',
-              value: null
+              value: undefined
             });
         });
       });

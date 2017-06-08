@@ -41,7 +41,7 @@ const MixinMutable = {
       }
     }
     else {
-      var value = args.shift() || null;
+      var value = args.shift();
       const options = args.shift() || {};
       const canEmit = options.noPropagate !== true && this.emit;
       const onSet = options.onSet;
@@ -52,8 +52,9 @@ const MixinMutable = {
       }
 
       // Does our value look like an Event
-      if (value && typeof(value) === 'object' && value.target && value.target.value) {
-        value = value.target.value;
+      const target = value && typeof(value) === 'object' && (value.target || value.srcElement);
+      if (target && 'value' in target) {
+        value = target.value;
       }
 
       state[attribute] = value;
