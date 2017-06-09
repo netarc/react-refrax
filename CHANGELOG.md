@@ -1,11 +1,16 @@
 ## Unreleased
 
+## [v0.5.15]
+
+## Released
+
 ## [v0.5.14]
+> June 9, 2017
 - **Bugfix** Mutable `set` no longer converts falsey strings to `null`
 - **Bugfix** Mutable `set` accepts IE formatted events
 - **Feature** Mutable `set` / `setter` now support deep attributes (cancellable with `option.shallow = true`)
 
-## Released
+[v0.5.13]: https://github.com/netarc/refrax/compare/v0.5.13...v0.5.14
 
 ## [v0.5.13]
 > May 8, 2017
