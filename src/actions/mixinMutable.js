@@ -7,32 +7,85 @@
  */
 const RefraxTools = require('RefraxTools');
 
+const setState = (state, attribute, value, options, emit) => {
+  const attributes = options.shallow === true ? [attribute] : attribute.split('.');
+
+  for (let attr_count = attributes.length, i = 0; i < attr_count; i++) {
+    const attr = attributes[i];
+
+    // If we are the last attribute then just set the value
+    if (i + 1 >= attr_count) {
+      state[attr] = value;
+    }
+    else {
+      if (state[attr] === undefined) {
+        state[attr] = {};
+      }
+
+      state = state[attr];
+      if (!RefraxTools.isPlainObject(state)) {
+        throw new TypeError(`mixinMutable - set expected deep attribute \`${attributes.slice(0, i + 1).join('.')}\` to be an object but found \`${state}\``);
+      }
+    }
+  }
+
+  if (emit) {
+    emit.call(this, 'mutated', {
+      type: 'attribute',
+      target: attribute,
+      value: value
+    });
+  }
+};
+
+const getState = (state, attribute, options) => {
+  const attributes = options.shallow === true ? [attribute] : attribute.split('.');
+
+  for (let attr_count = attributes.length, i = 0; i < attr_count; i++) {
+    const attr = attributes[i];
+
+    // If we are the last attribute then just set the value
+    if (i + 1 >= attr_count) {
+      return state[attr];
+    }
+    else {
+      state = state[attr];
+
+      if (!RefraxTools.isPlainObject(state)) {
+        break;
+      }
+    }
+  }
+
+  return undefined;
+};
+
 const MixinMutable = {
-  get: function(attribute) {
+  get: function(attribute, options = {}) {
     var value;
 
     if (typeof(attribute) !== 'string') {
       throw new TypeError('mixinMutable - get expected attribute name but found `' + attribute + '`');
     }
 
-    value = this._mutable._state[attribute];
+    value = getState(this._mutable._state, attribute, options);
     return value !== undefined
       ? value
-      : this.getDefault && this.getDefault()[attribute];
+      : this.getDefault && getState(this.getDefault(), attribute, options);
   },
   set: function(attribute, ...args) {
     const state = this._mutable._state;
 
     if (attribute && typeof(attribute) === 'object') {
       const options = args.shift() || {};
-      const emit = options.noPropagate !== true && this.emit && this.emit.bind(this);
+      const emit = options.noPropagate !== true && this.emit;
 
       for (const k in attribute) {
         const v = attribute[k];
 
         state[k] = v;
         if (emit) {
-          emit('mutated', {
+          emit.call(this, 'mutated', {
             type: 'attribute',
             target: k,
             value: v
@@ -41,9 +94,9 @@ const MixinMutable = {
       }
     }
     else {
-      var value = args.shift();
+      let value = args.shift();
       const options = args.shift() || {};
-      const canEmit = options.noPropagate !== true && this.emit;
+      const emit = options.noPropagate !== true && this.emit;
       const onSet = options.onSet;
       const set = options.set;
 
@@ -57,14 +110,7 @@ const MixinMutable = {
         value = target.value;
       }
 
-      state[attribute] = value;
-      if (canEmit) {
-        this.emit('mutated', {
-          type: 'attribute',
-          target: attribute,
-          value: value
-        });
-      }
+      setState.call(this, state, attribute, value, options, emit);
 
       if (onSet) {
         onSet(value, attribute);
@@ -78,14 +124,7 @@ const MixinMutable = {
             v = v(value);
           }
 
-          state[k] = v;
-          if (canEmit) {
-            this.emit('mutated', {
-              type: 'attribute',
-              target: k,
-              value: v
-            });
-          }
+          setState.call(this, state, k, v, options, emit);
         }
       }
     }
@@ -106,13 +145,13 @@ const MixinMutable = {
     };
   },
   unset: function(options = {}) {
-    const canEmit = options.noPropagate !== true && this.emit;
+    const emit = options.noPropagate !== true && this.emit;
 
     // mixinMutable can be used on a prototype chain so set on mutable
     this._mutable._state = {};
 
-    if (canEmit) {
-      this.emit('mutated', {
+    if (emit) {
+      emit.call(this, 'mutated', {
         type: 'attribute',
         target: null,
         value: null

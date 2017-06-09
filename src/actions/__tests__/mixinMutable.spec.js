@@ -14,7 +14,10 @@ const expect = chai.expect;
 
 const mutableState = {
   foo: 123,
-  bar: 'baz'
+  bar: 'baz',
+  zap: {
+    foo: 321
+  }
 };
 
 const mutableDefaultState = {
@@ -105,28 +108,54 @@ describe('mixinMutable', function() {
           });
         });
       });
+
+      describe('when passed a deep attribute', function() {
+        describe('that doesnt exist', function() {
+          it('should return undefined', function() {
+            var mutable = createMutable(mutableState, mutableDefaultState);
+
+            expect(mutable.get('zap.fooz'))
+              .to.equal(undefined);
+          });
+        });
+
+        describe('that exists', function() {
+          it('should return correct value', function() {
+            var mutable = createMutable(mutableState, mutableDefaultState);
+
+            expect(mutable.get('zap.foo'))
+              .to.equal(321);
+          });
+        });
+      });
+
+      describe('when passed the option', function() {
+        describe('shallow', function() {
+          describe('when passed a deep attribute', function() {
+            describe('that doesnt exist', function() {
+              it('should return undefined', function() {
+                var mutable = createMutable(mutableState, mutableDefaultState);
+
+                expect(mutable.get('zap.fooz', { shallow: true }))
+                  .to.equal(undefined);
+              });
+            });
+
+            describe('that exists', function() {
+              it('should return correct value', function() {
+                var mutable = createMutable(mutableState, mutableDefaultState);
+
+                expect(mutable.get('zap.foo', { shallow: true }))
+                  .to.equal(undefined);
+              });
+            });
+          });
+        });
+      });
     });
 
     describe('set', function() {
       let mutable;
-      const emit_1 = {
-        type: 'attribute',
-        target: 'foo',
-        value: 111
-      };
-      const emit_2 = {
-        type: 'attribute',
-        target: 'baz',
-        value: 222
-      };
-      const expected_state = RefraxTools.extend({}, mutableState, {
-        foo: 111,
-        baz: 222
-      });
-      const expected_data = RefraxTools.extend({}, mutableDefaultState, mutableState, {
-        foo: 111,
-        baz: 222
-      });
 
       beforeEach(function() {
         mutable = createMutable(mutableState, mutableDefaultState);
@@ -192,6 +221,69 @@ describe('mixinMutable', function() {
         });
       });
 
+      describe('when passed a deep attribute', function() {
+        it('will correctly update state', function() {
+          mutable.set('nested.foo', 111);
+          mutable.set('nested.fooz.bar', 321);
+          mutable.set('nested.zab');
+
+          expect(mutable._state)
+            .to.deep.equal(RefraxTools.extend({}, mutableState, {
+              nested: {
+                foo: 111,
+                fooz: {
+                  bar: 321
+                },
+                zab: undefined
+              }
+            }));
+          expect(mutable.data)
+            .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+              nested: {
+                foo: 111,
+                fooz: {
+                  bar: 321
+                },
+                zab: undefined
+              }
+            }));
+        });
+
+        it('should emit', function() {
+          mutable.set('nested.foo', 111);
+          mutable.set('nested.zab');
+
+          expect(mutable.emit.callCount).to.equal(2);
+          expect(mutable.emit.getCall(0).args[0])
+            .to.equal('mutated');
+          expect(mutable.emit.getCall(0).args[1])
+            .to.deep.equal({
+              type: 'attribute',
+              target: 'nested.foo',
+              value: 111
+            });
+          expect(mutable.emit.getCall(1).args[0])
+            .to.equal('mutated');
+          expect(mutable.emit.getCall(1).args[1])
+            .to.deep.equal({
+              type: 'attribute',
+              target: 'nested.zab',
+              value: undefined
+            });
+        });
+
+        it('should error when attempting to set non object', function() {
+          expect(function() {
+            mutable.set('foo.bar', 111);
+          }).to.throw(TypeError, 'set expected deep attribute `foo` to be an object');
+
+          expect(function() {
+            mutable.set('nested.foo', 111);
+            mutable.set('nested.foo.bar', 111);
+          }).to.throw(TypeError, 'set expected deep attribute `nested.foo` to be an object');
+        });
+      });
+
       describe('when passed a key value object', function() {
         beforeEach(function() {
           mutable.set({
@@ -202,9 +294,15 @@ describe('mixinMutable', function() {
 
         it('will correctly update state', function() {
           expect(mutable._state)
-            .to.deep.equal(expected_state);
+            .to.deep.equal(RefraxTools.extend({}, mutableState, {
+              foo: 111,
+              baz: 222
+            }));
           expect(mutable.data)
-            .to.deep.equal(expected_data);
+            .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+              foo: 111,
+              baz: 222
+            }));
         });
 
         it('should emit', function() {
@@ -212,15 +310,80 @@ describe('mixinMutable', function() {
           expect(mutable.emit.getCall(0).args[0])
             .to.equal('mutated');
           expect(mutable.emit.getCall(0).args[1])
-            .to.deep.equal(emit_1);
+            .to.deep.equal({
+              type: 'attribute',
+              target: 'foo',
+              value: 111
+            });
           expect(mutable.emit.getCall(1).args[0])
             .to.equal('mutated');
           expect(mutable.emit.getCall(1).args[1])
-            .to.deep.equal(emit_2);
+            .to.deep.equal({
+              type: 'attribute',
+              target: 'baz',
+              value: 222
+            });
         });
       });
 
       describe('when passed the option', function() {
+        describe('shallow', function() {
+          describe('when passed a deep attribute', function() {
+            it('will correctly update state', function() {
+              mutable.set('nested.foo', 111, { shallow: true });
+              mutable.set('nested.fooz.bar', 321, { shallow: true });
+              mutable.set('nested.zab', undefined, { shallow: true });
+
+              expect(mutable._state)
+                .to.deep.equal(RefraxTools.extend({}, mutableState, {
+                  'nested.foo': 111,
+                  'nested.fooz.bar': 321,
+                  'nested.zab': undefined
+                }));
+              expect(mutable.data)
+                .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+                  'nested.foo': 111,
+                  'nested.fooz.bar': 321,
+                  'nested.zab': undefined
+                }));
+            });
+
+            it('should emit', function() {
+              mutable.set('nested.foo', 111, { shallow: true });
+              mutable.set('nested.zab', undefined, { shallow: true });
+
+              expect(mutable.emit.callCount).to.equal(2);
+              expect(mutable.emit.getCall(0).args[0])
+                .to.equal('mutated');
+              expect(mutable.emit.getCall(0).args[1])
+                .to.deep.equal({
+                  type: 'attribute',
+                  target: 'nested.foo',
+                  value: 111
+                });
+              expect(mutable.emit.getCall(1).args[0])
+                .to.equal('mutated');
+              expect(mutable.emit.getCall(1).args[1])
+                .to.deep.equal({
+                  type: 'attribute',
+                  target: 'nested.zab',
+                  value: undefined
+                });
+            });
+
+            it('should not error when attempting to set non objects', function() {
+              expect(function() {
+                mutable.set('foo.bar', 111, { shallow: true });
+              }).to.not.throw(TypeError);
+
+              expect(function() {
+                mutable.set('nested.foo', 111, { shallow: true });
+                mutable.set('nested.foo.bar', 111, { shallow: true });
+              }).to.not.throw(TypeError);
+            });
+          });
+        });
+
         describe('set', function() {
           describe('with key value object', function() {
             beforeEach(function() {
@@ -229,9 +392,15 @@ describe('mixinMutable', function() {
 
             it('will correctly update state', function() {
               expect(mutable._state)
-                .to.deep.equal(expected_state);
+                .to.deep.equal(RefraxTools.extend({}, mutableState, {
+                  foo: 111,
+                  baz: 222
+                }));
               expect(mutable.data)
-                .to.deep.equal(expected_data);
+                .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+                  foo: 111,
+                  baz: 222
+                }));
             });
 
             it('should emit', function() {
@@ -239,11 +408,19 @@ describe('mixinMutable', function() {
               expect(mutable.emit.getCall(0).args[0])
                 .to.equal('mutated');
               expect(mutable.emit.getCall(0).args[1])
-                .to.deep.equal(emit_1);
+                .to.deep.equal({
+                  type: 'attribute',
+                  target: 'foo',
+                  value: 111
+                });
               expect(mutable.emit.getCall(1).args[0])
                 .to.equal('mutated');
               expect(mutable.emit.getCall(1).args[1])
-                .to.deep.equal(emit_2);
+                .to.deep.equal({
+                  type: 'attribute',
+                  target: 'baz',
+                  value: 222
+                });
             });
           });
 
@@ -254,9 +431,15 @@ describe('mixinMutable', function() {
 
             it('will correctly update state', function() {
               expect(mutable._state)
-                .to.deep.equal(expected_state);
+                .to.deep.equal(RefraxTools.extend({}, mutableState, {
+                  foo: 111,
+                  baz: 222
+                }));
               expect(mutable.data)
-                .to.deep.equal(expected_data);
+                .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+                  foo: 111,
+                  baz: 222
+                }));
             });
 
             it('should emit', function() {
@@ -264,11 +447,62 @@ describe('mixinMutable', function() {
               expect(mutable.emit.getCall(0).args[0])
                 .to.equal('mutated');
               expect(mutable.emit.getCall(0).args[1])
-                .to.deep.equal(emit_1);
+                .to.deep.equal({
+                  type: 'attribute',
+                  target: 'foo',
+                  value: 111
+                });
               expect(mutable.emit.getCall(1).args[0])
                 .to.equal('mutated');
               expect(mutable.emit.getCall(1).args[1])
-                .to.deep.equal(emit_2);
+                .to.deep.equal({
+                  type: 'attribute',
+                  target: 'baz',
+                  value: 222
+                });
+            });
+          });
+
+          describe('with deep key value object', function() {
+            beforeEach(function() {
+              mutable.set('foo', 111, { set: { 'baz.bar': 222 }});
+            });
+
+            it('will correctly update state', function() {
+              expect(mutable._state)
+                .to.deep.equal(RefraxTools.extend({}, mutableState, {
+                  foo: 111,
+                  baz: {
+                    bar: 222
+                  }
+                }));
+              expect(mutable.data)
+                .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+                  foo: 111,
+                  baz: {
+                    bar: 222
+                  }
+                }));
+            });
+
+            it('should emit', function() {
+              expect(mutable.emit.callCount).to.equal(2);
+              expect(mutable.emit.getCall(0).args[0])
+                .to.equal('mutated');
+              expect(mutable.emit.getCall(0).args[1])
+                .to.deep.equal({
+                  type: 'attribute',
+                  target: 'foo',
+                  value: 111
+                });
+              expect(mutable.emit.getCall(1).args[0])
+                .to.equal('mutated');
+              expect(mutable.emit.getCall(1).args[1])
+                .to.deep.equal({
+                  type: 'attribute',
+                  target: 'baz.bar',
+                  value: 222
+                });
             });
           });
         });

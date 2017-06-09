@@ -3,6 +3,7 @@
 ## [v0.5.14]
 - **Bugfix** Mutable `set` no longer converts falsey strings to `null`
 - **Bugfix** Mutable `set` accepts IE formatted events
+- **Feature** Mutable `set` / `setter` now support deep attributes (cancellable with `option.shallow = true`)
 
 ## Released
 
