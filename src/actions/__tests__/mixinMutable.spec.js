@@ -26,7 +26,10 @@ const mutableDefaultState = {
 };
 
 const mutableErrors = {
-  foo: 'foo error'
+  foo: 'foo error',
+  zap: {
+    foo: 'zap.foo error'
+  }
 };
 
 function createMutable(data, defaultState) {
@@ -648,6 +651,10 @@ describe('mixinMutable', function() {
         expect(mutable.getErrors('foo'))
           .to.equal('foo error');
         expect(mutable.getErrors('baz'))
+          .to.equal(undefined);
+        expect(mutable.getErrors('zap.foo'))
+          .to.equal('zap.foo error');
+        expect(mutable.getErrors('foo.foo'))
           .to.equal(undefined);
       });
     });

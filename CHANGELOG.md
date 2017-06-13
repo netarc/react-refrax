@@ -1,6 +1,7 @@
 ## Unreleased
 
 ## [v0.5.15]
+- **Feature** Mutable `getErrors` support deep attributes
 
 ## Released
 

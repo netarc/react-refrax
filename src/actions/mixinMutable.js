@@ -189,7 +189,8 @@ const MixinMutable = {
     }
   },
   getErrors: function(attribute) {
-    return attribute ? this.errors[attribute] : this.errors;
+    return typeof(attribute) === 'string' ? getState(this.errors, attribute, {})
+                                          : this.errors;
   }
 };
 
