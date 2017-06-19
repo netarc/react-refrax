@@ -34,8 +34,7 @@ function createSchemaCollection(path, store, options) {
   collectionPath = new RefraxSchemaPath(
     new RefraxSchemaNode(CLASSIFY_COLLECTION, identifier, RefraxTools.extend({
       store: RefraxSchemaTools.storeReference('createSchemaCollection', identifier, store),
-      classify: CLASSIFY_COLLECTION,
-      uri: path
+      path: path
     }, options.collection))
   );
 
@@ -52,7 +51,6 @@ function createSchemaCollection(path, store, options) {
 
   collectionPath.addLeaf(
     new RefraxSchemaNode(CLASSIFY_ITEM, memberIdentifier, RefraxTools.extend({
-      classify: CLASSIFY_ITEM,
       paramId: memberId
     }, options.member))
   );

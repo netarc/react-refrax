@@ -7,18 +7,56 @@
  */
 const RefraxTools = require('RefraxTools');
 const RefraxStore = require('RefraxStore');
-const validDefinitionKeys = [
-  'classify',
-  'partial',
-  'fragments',
-  'uri',
-  'store',
-  'paramId',
-  'paramMap',
+const RefraxConstants = require('RefraxConstants');
+const RefraxStoreMap = require('RefraxStoreMap');
+const CLASSIFY_SCHEMA = RefraxConstants.classify.schema;
+const CLASSIFY_NAMESPACE = RefraxConstants.classify.namespace;
+const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
+const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
+const CLASSIFY_ITEM = RefraxConstants.classify.item;
+const validDefinitionKeys = {};
+
+validDefinitionKeys[CLASSIFY_SCHEMA] = [
   'storeMap'
 ];
 
-function validateDefinition(definition) {
+validDefinitionKeys[CLASSIFY_NAMESPACE] = [
+  'path'
+];
+
+validDefinitionKeys[CLASSIFY_RESOURCE] = [
+  'partial',
+  'fragments',
+  'path',
+  'store'
+];
+
+validDefinitionKeys[CLASSIFY_COLLECTION] = [
+  'partial',
+  'fragments',
+  'path',
+  'store',
+  'paramId',
+  'paramMap'
+];
+
+validDefinitionKeys[CLASSIFY_ITEM] = [
+  'partial',
+  'fragments',
+  'path',
+  'store',
+  'paramId',
+  'paramMap'
+];
+
+function validateDefinition(type, definition) {
+  const definitionKeys = validDefinitionKeys[type];
+  if (!definitionKeys) {
+    throw new TypeError(
+      'RefraxSchemaNode - Invalid type `' + type + '`.'
+    );
+  }
+
   if (!RefraxTools.isPlainObject(definition)) {
     throw new TypeError(
       'RefraxSchemaNode - You\'re attempting to pass an invalid definition of type `' + typeof(definition) + '`. ' +
@@ -27,25 +65,32 @@ function validateDefinition(definition) {
   }
 
   RefraxTools.each(definition, function(value, key) {
-    if (validDefinitionKeys.indexOf(key) === -1) {
+    if (definitionKeys.indexOf(key) === -1) {
       throw new TypeError(
         'RefraxSchemaNode - Invalid definition option `' + key + '`.'
       );
     }
   });
 
-  if (definition.partial !== undefined && typeof(definition.partial) !== 'string') {
+  if ('storeMap' in definition && !(definition.storeMap instanceof RefraxStoreMap)) {
+    throw new TypeError(
+      'RefraxSchemaNode - Option `storeMap` can only be of type RefraxStoreMap but found ' +
+      'type `' + typeof(definition.storeMap) + '`.'
+    );
+  }
+
+  if ('partial' in definition && typeof(definition.partial) !== 'string') {
     throw new TypeError(
       'RefraxSchemaNode - Option `partial` can only be of type String but found ' +
       'type `' + typeof(definition.partial) + '`.'
     );
   }
 
-  if (definition.fragments) {
+  if ('fragments' in definition) {
     var fragments = definition.fragments;
     if (!RefraxTools.isArray(fragments)) {
       throw new TypeError(
-        'RefraxSchemaNode - Option `fragments` can only be of type String but found type `' + typeof(fragments) + '`.'
+        'RefraxSchemaNode - Option `fragments` can only be of type Array but found type `' + typeof(fragments) + '`.'
       );
     }
 
@@ -58,26 +103,26 @@ function validateDefinition(definition) {
     });
   }
 
-  if (definition.classify !== undefined && typeof(definition.classify) !== 'string') {
+  if ('path' in definition && typeof(definition.path) !== 'string') {
     throw new TypeError(
-      'RefraxSchemaNode - Option `classify` can only be of type String but found type `' + typeof(definition.classify) + '`.'
+      'RefraxSchemaNode - Option `path` can only be of type String but found type `' + typeof(definition.path) + '`.'
     );
   }
 
-  if (definition.uri !== undefined && typeof(definition.uri) !== 'string') {
-    throw new TypeError(
-      'RefraxSchemaNode - Option `uri` can only be of type String but found type `' + typeof(definition.uri) + '`.'
-    );
-  }
-
-  if (definition.paramId !== undefined && typeof(definition.paramId) !== 'string') {
+  if ('paramId' in definition && typeof(definition.paramId) !== 'string') {
     throw new TypeError(
       'RefraxSchemaNode - Option `paramId` can only be of type String but found type `' + typeof(definition.paramId) + '`.'
     );
   }
 
-  if (definition.store !== undefined && !(typeof(definition.store) === 'string' ||
-                                          (definition.store instanceof RefraxStore))) {
+  if ('paramMap' in definition && !RefraxTools.isPlainObject(definition.paramMap)) {
+    throw new TypeError(
+      'RefraxSchemaNode - Option `paramMap` can only be of type Object but found type `' + typeof(definition.paramMap) + '`.'
+    );
+  }
+
+  if ('store' in definition && !(typeof(definition.store) === 'string' ||
+                                (definition.store instanceof RefraxStore))) {
     throw new TypeError(
       'RefraxSchemaNode - Option `store` can only be of type String/Store but found type `' + typeof(definition.store) + '`.'
     );
@@ -88,7 +133,20 @@ function validateDefinition(definition) {
 
 
 class RefraxSchemaNode {
-  constructor(type, identifier, definition = {}) {
+  constructor(type = CLASSIFY_NAMESPACE, identifier = null, definition = null) {
+    if (RefraxTools.isPlainObject(identifier) && !definition) {
+      definition = identifier;
+      identifier = null;
+    }
+
+    if (!definition) {
+      definition = {};
+    }
+    else {
+      // shallow copy since we mutate below
+      definition = RefraxTools.extend({}, definition);
+    }
+
     if (identifier && typeof(identifier) !== 'string') {
       throw new TypeError(
         'RefraxSchemaNode - A identifier argument can only be of type `String`, ' +
@@ -96,7 +154,10 @@ class RefraxSchemaNode {
       );
     }
 
-    validateDefinition(definition);
+    validateDefinition(type, definition);
+
+    // TODO: Do we need to classify this anymore?
+    definition.classify = type;
 
     Object.defineProperty(this, 'type', {value: type});
     Object.defineProperty(this, 'identifier', {value: identifier});

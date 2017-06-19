@@ -8,13 +8,15 @@
 const RefraxStoreMap = require('RefraxStoreMap');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaPath = require('RefraxSchemaPath');
+const RefraxConstants = require('RefraxConstants');
+const CLASSIFY_SCHEMA = RefraxConstants.classify.schema;
 
 
 class RefraxSchema extends RefraxSchemaPath {
   constructor() {
     const storeMap = new RefraxStoreMap();
     // TODO: store our map/self in SchemaNode?
-    super(new RefraxSchemaNode(null, null, {
+    super(new RefraxSchemaNode(CLASSIFY_SCHEMA, null, {
       storeMap: storeMap
     }));
 

@@ -55,7 +55,7 @@ describe('createSchemaResource', function() {
             .that.deep.equals({
               classify: CLASSIFY_RESOURCE,
               store: 'setting',
-              uri: 'settings'
+              path: 'settings'
             });
       });
     });
@@ -85,7 +85,7 @@ describe('createSchemaResource', function() {
             .that.deep.equals({
               classify: CLASSIFY_RESOURCE,
               store: 'settings_foo',
-              uri: 'settings'
+              path: 'settings'
             });
       });
 
@@ -104,7 +104,7 @@ describe('createSchemaResource', function() {
             .that.deep.equals({
               classify: CLASSIFY_RESOURCE,
               store: store,
-              uri: 'settings'
+              path: 'settings'
             });
       });
     });
@@ -126,7 +126,7 @@ describe('createSchemaResource', function() {
             .that.deep.equals({
               classify: CLASSIFY_RESOURCE,
               store: 'user',
-              uri: 'settings'
+              path: 'settings'
             });
       });
 
@@ -148,7 +148,7 @@ describe('createSchemaResource', function() {
             .that.deep.equals({
               classify: CLASSIFY_RESOURCE,
               store: 'user',
-              uri: 'settings',
+              path: 'settings',
               partial: 'bar'
             });
       });
@@ -169,7 +169,7 @@ describe('createSchemaResource', function() {
             .that.deep.equals({
               classify: CLASSIFY_RESOURCE,
               store: 'client',
-              uri: 'settings'
+              path: 'settings'
             });
       });
     });

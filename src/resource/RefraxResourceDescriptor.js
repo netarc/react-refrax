@@ -227,8 +227,8 @@ function processStack(resourceDescriptor, stack) {
     if (item instanceof RefraxSchemaNode) {
       result = null;
 
-      if (definition.uri) {
-        result = fillURI(definition.uri, resourceDescriptor.params, resolver.paramMap);
+      if (definition.path) {
+        result = fillURI(definition.path, resourceDescriptor.params, resolver.paramMap);
       }
       else if (definition.paramId) {
         result = fillURI(':'+definition.paramId, resourceDescriptor.params, resolver.paramMap);

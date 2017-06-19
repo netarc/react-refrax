@@ -53,7 +53,7 @@ describe('createSchemaNamespace', function() {
           .to.have.property('definition')
             .that.deep.equals({
               classify: CLASSIFY_NAMESPACE,
-              uri: 'api'
+              path: 'api'
             });
       });
     });
@@ -62,7 +62,7 @@ describe('createSchemaNamespace', function() {
       it('should pass options to namespace', function() {
         var namespaceAPI = createSchemaNamespace('api', {
           namespace: {
-            partial: 'bar'
+            path: 'barz'
           }
         });
 
@@ -76,8 +76,7 @@ describe('createSchemaNamespace', function() {
           .to.have.property('definition')
             .that.deep.equals({
               classify: CLASSIFY_NAMESPACE,
-              uri: 'api',
-              partial: 'bar'
+              path: 'barz'
             });
       });
     });

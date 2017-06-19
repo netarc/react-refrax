@@ -56,7 +56,7 @@ describe('createSchemaCollection', function() {
             .that.deep.equals({
               classify: CLASSIFY_COLLECTION,
               store: 'user',
-              uri: 'users'
+              path: 'users'
             });
 
         expect(collectionUsers).to.have.property('user')
@@ -99,7 +99,7 @@ describe('createSchemaCollection', function() {
             .that.deep.equals({
               classify: CLASSIFY_COLLECTION,
               store: 'foo_user',
-              uri: 'users'
+              path: 'users'
             });
 
         expect(collectionUsers).to.have.property('user')
@@ -131,7 +131,7 @@ describe('createSchemaCollection', function() {
             .that.deep.equals({
               classify: CLASSIFY_COLLECTION,
               store: store,
-              uri: 'users'
+              path: 'users'
             });
 
         expect(collectionUsers).to.have.property('user')
@@ -166,7 +166,7 @@ describe('createSchemaCollection', function() {
             .that.deep.equals({
               classify: CLASSIFY_COLLECTION,
               store: 'user',
-              uri: 'users'
+              path: 'users'
             });
 
         expect(collectionUsers).to.have.property('client')
@@ -201,7 +201,7 @@ describe('createSchemaCollection', function() {
             .that.deep.equals({
               classify: CLASSIFY_COLLECTION,
               store: 'user',
-              uri: 'users',
+              path: 'users',
               partial: 'bar'
             });
 
@@ -237,7 +237,7 @@ describe('createSchemaCollection', function() {
             .that.deep.equals({
               classify: CLASSIFY_COLLECTION,
               store: 'user',
-              uri: 'users'
+              path: 'users'
             });
 
         expect(collectionUsers).to.have.property('user')

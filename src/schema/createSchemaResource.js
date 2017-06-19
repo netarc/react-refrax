@@ -28,8 +28,7 @@ function createSchemaResource(path, store, options) {
   accessorNode = new RefraxSchemaPath(
     new RefraxSchemaNode(CLASSIFY_RESOURCE, identifier, RefraxTools.extend({
       store: RefraxSchemaTools.storeReference('createSchemaCollection', identifier, store),
-      classify: CLASSIFY_RESOURCE,
-      uri: path
+      path: path
     }, options.resource))
   );
 

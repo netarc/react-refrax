@@ -22,8 +22,7 @@ function createSchemaNamespace(path, options) {
 
   accessorNode = new RefraxSchemaPath(
     new RefraxSchemaNode(CLASSIFY_NAMESPACE, identifier, RefraxTools.extend({
-      classify: CLASSIFY_NAMESPACE,
-      uri: path
+      path: path
     }, options.namespace))
   );
 
