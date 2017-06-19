@@ -101,5 +101,3 @@ function pluginDeepMatch(chai, utils) {
 };
 
 chai.use(pluginDeepMatch);
-// exports['default'] = pluginDeepMatch;
-// module.exports = exports['default'];

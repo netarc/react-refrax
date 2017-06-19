@@ -1,6 +1,18 @@
 # Unreleased
 
-## [v0.5.16]
+## [v0.6.0]
+> June 19, 2017
+- **Feature** Added Schema class
+- **Major** Refactor Schema to be instance based instead of a singleton
+- **Major** Schema Collection/Resource no longer creates a Store when not supplied and instead delegates that responsibility to the Schema
+- **Minor** Rename SchemaPath `uri` option to `path`
+- **Minor** Cleanup SchemaPath tests
+- **Bugfix** ActionEntity no longer attempts to process caught exceptions that are not RequestError's
+- **Minor** Cleanup ResourceDescriptor logic
+- **Minor** Rework SchemPath `invalidate` and added `invalidateLeafs`
+- **Minor** Removed TreeNode and consolidated into SchemaNode
+- **Major** Removed Store managing a global list of stores (now managed by a Schema StoreMap)
+- **Major** Store no longer has `get` / `reset`, these are now on the Schema
 
 # Released
 

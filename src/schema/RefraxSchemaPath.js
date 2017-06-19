@@ -13,7 +13,6 @@ const RefraxConstants = require('RefraxConstants');
 const ACTION_INSPECT = RefraxConstants.action.inspect;
 const ACTION_GET = RefraxConstants.action.get;
 const SchemaAccescessorMixins = [];
-// var RefraxResource = null;
 
 
 // Determine if a stack matches the ending of another
@@ -116,15 +115,6 @@ class RefraxSchemaPath {
   }
 
   invalidate(options = {}) {
-    // // circular dependency workaround
-    // (RefraxResource || (RefraxResource = require('RefraxResource')))
-    //   .from(this, new RefraxOptions(options, {
-    //     noFetchGet: true,
-    //     noSubscribe: true
-    //   }))
-    //   .invalidate(options);
-
-
     if (!RefraxTools.isPlainObject(options)) {
       throw new TypeError(
         `invalidate expected argument of type \`Object\` but found ${options}`
