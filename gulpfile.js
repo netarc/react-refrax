@@ -193,9 +193,7 @@ gulp.task('testMocha', ['modules-test'], function() {
     '*test/**/*.spec.js'
   ], {read: false})
 	.pipe(
-    mocha({
-      reporter: 'nyan'
-    })
+    mocha()
     .on('error', function(error) {
       this.emit('end');
     })
