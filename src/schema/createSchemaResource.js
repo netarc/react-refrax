@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 const RefraxTools = require('RefraxTools');
-const RefraxTreeNode = require('RefraxTreeNode');
 const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaTools = require('RefraxSchemaTools');
@@ -15,7 +14,7 @@ const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
 
 
 function createSchemaResource(path, store, options) {
-  var treeNode, accessorNode, identifier;
+  var accessorNode, identifier;
 
   if (RefraxTools.isPlainObject(store)) {
     options = store;
@@ -25,14 +24,12 @@ function createSchemaResource(path, store, options) {
   path = RefraxSchemaTools.validatePath('createSchemaResource', path);
   options = options || {};
   identifier = options.identifier || RefraxTools.cleanIdentifier(path);
-  store = RefraxSchemaTools.defaultStore('createCollection', identifier, store);
-
-  treeNode = new RefraxTreeNode(CLASSIFY_RESOURCE, RefraxTools.extend({
-    uri: path
-  }, options.resource));
 
   accessorNode = new RefraxSchemaPath(
-    new RefraxSchemaNode([store, treeNode], identifier)
+    new RefraxSchemaNode(CLASSIFY_RESOURCE, identifier, RefraxTools.extend({
+      store: RefraxSchemaTools.storeReference('createSchemaCollection', identifier, store),
+      path: path
+    }, options.resource))
   );
 
   return accessorNode;

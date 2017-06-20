@@ -6,13 +6,32 @@
  * LICENSE file in the root directory of this source tree.
  */
 const chai = require('chai');
+const sinon = require('sinon');
 const RefraxSchema = require('RefraxSchema');
-const RefraxSchemaPath = require('RefraxSchemaPath');
 const expect = chai.expect;
 
 
+/* eslint-disable no-new */
 describe('RefraxSchema', function() {
-  it('should represent the Root Schema Node', function() {
-    expect(RefraxSchema).to.be.an.instanceof(RefraxSchemaPath);
+  describe('instance method', function() {
+    describe('reset', function() {
+      it('correctly forwards to storeMap', function() {
+        var schema = new RefraxSchema();
+        sinon.spy(schema.__storeMap, 'reset');
+
+        schema.reset();
+        expect(schema.__storeMap.reset.callCount).to.equal(1);
+      });
+    });
+
+    describe('invalidate', function() {
+      it('correctly forwards to storeMap', function() {
+        var schema = new RefraxSchema();
+        sinon.spy(schema.__storeMap, 'invalidate');
+
+        schema.invalidate();
+        expect(schema.__storeMap.invalidate.callCount).to.equal(1);
+      });
+    });
   });
 });

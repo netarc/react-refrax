@@ -8,7 +8,6 @@
 const mixinSubscribable = require('mixinSubscribable');
 const RefraxFragmentCache = require('RefraxFragmentCache');
 const RefraxTools = require('RefraxTools');
-const StoreMap = {};
 var RefraxResourceDescriptor = null;
 
 
@@ -18,7 +17,7 @@ function getResourceDescriptor() {
     (RefraxResourceDescriptor = require('RefraxResourceDescriptor'));
 }
 
-function validateDefinition(definition) {
+function validateDefinition(definition = {}) {
   if (typeof(definition) === 'string') {
     definition = {
       type: definition
@@ -38,12 +37,6 @@ function validateDefinition(definition) {
     );
   }
 
-  if (StoreMap[definition.type]) {
-    throw new TypeError(
-      'RefraxStore - cannot create new store for type `' + definition.type + '` as it already has been defined.'
-    );
-  }
-
   return definition;
 }
 
@@ -52,37 +45,13 @@ function validateDefinition(definition) {
  * a Subscribable interface to resource mutations.
  */
 class RefraxStore {
-  static get(type) {
-    var store;
-
-    if (type) {
-      if (typeof(type) !== 'string') {
-        throw new TypeError(
-          'RefraxStore.get - `type` can only be of type String but found type `' + typeof(type) + '`.'
-        );
-      }
-
-      store = StoreMap[type];
-      if (!store) {
-        store = StoreMap[type] = new RefraxStore({type: type});
-      }
-    }
-    else {
-      // an anonymous store still has a type for reference
-      while (StoreMap[(type = RefraxTools.randomString(12))]) {}
-      store = StoreMap[type] = new RefraxStore({type: type});
-    }
-
-    return store;
-  }
-
-  static reset() {
-    RefraxTools.each(StoreMap, function(store) {
-      store.reset();
-    });
-  }
-
   constructor(definition) {
+    if (!definition) {
+      // We accept no definitions and just use an anonymous type name
+      definition = {
+        type: RefraxTools.randomString(12)
+      };
+    }
     definition = validateDefinition(definition);
 
     mixinSubscribable(this);
@@ -98,6 +67,10 @@ class RefraxStore {
     });
 
     this.reset();
+  }
+
+  toString() {
+    return 'RefraxStore(`' + this.definition.type + '`)';
   }
 
   reset() {
@@ -171,7 +144,5 @@ class RefraxStore {
     }
   }
 }
-
-Object.defineProperty(RefraxStore, 'all', {value: StoreMap});
 
 export default RefraxStore;

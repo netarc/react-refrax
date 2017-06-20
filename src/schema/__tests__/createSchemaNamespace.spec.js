@@ -6,10 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 const chai = require('chai');
-const TestHelper = require('TestHelper');
 const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxTreeNode = require('RefraxTreeNode');
 const createSchemaNamespace = require('createSchemaNamespace');
 const RefraxConstants = require('RefraxConstants');
 const CLASSIFY_NAMESPACE = RefraxConstants.classify.namespace;
@@ -18,8 +16,6 @@ const expect = chai.expect;
 
 /* eslint-disable no-new */
 describe('createSchemaNamespace', function() {
-  afterEach(TestHelper.deleteStores);
-
   describe('invocation', function() {
     describe('with no arguments', function() {
       it('should throw an error', function() {
@@ -48,16 +44,16 @@ describe('createSchemaNamespace', function() {
         var namespaceAPI = createSchemaNamespace('api');
 
         expect(namespaceAPI)
-          .that.is.an.instanceof(RefraxSchemaPath)
+          .to.be.an.instanceof(RefraxSchemaPath)
           .to.have.property('__node')
-            .that.is.instanceof(RefraxSchemaNode)
-            .to.have.property('identifier', 'api');
-
-        expect(namespaceAPI.__node.subject).with.deep.property('[0]')
-          .that.is.an.instanceof(RefraxTreeNode)
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(namespaceAPI.__node)
+          .to.have.property('identifier', 'api');
+        expect(namespaceAPI.__node)
           .to.have.property('definition')
             .that.deep.equals({
-              uri: 'api'
+              classify: CLASSIFY_NAMESPACE,
+              path: 'api'
             });
       });
     });
@@ -66,19 +62,22 @@ describe('createSchemaNamespace', function() {
       it('should pass options to namespace', function() {
         var namespaceAPI = createSchemaNamespace('api', {
           namespace: {
-            partial: 'bar'
+            path: 'barz'
           }
         });
 
-        expect(namespaceAPI.__node.subject).with.deep.property('[0]')
-          .that.is.an.instanceof(RefraxTreeNode)
-          .that.deep.equals({
-            type: CLASSIFY_NAMESPACE,
-            definition: {
-              uri: 'api',
-              partial: 'bar'
-            }
-          });
+        expect(namespaceAPI)
+          .to.be.an.instanceof(RefraxSchemaPath)
+          .to.have.property('__node')
+            .that.is.instanceof(RefraxSchemaNode);
+        expect(namespaceAPI.__node)
+          .to.have.property('identifier', 'api');
+        expect(namespaceAPI.__node)
+          .to.have.property('definition')
+            .that.deep.equals({
+              classify: CLASSIFY_NAMESPACE,
+              path: 'barz'
+            });
       });
     });
   });

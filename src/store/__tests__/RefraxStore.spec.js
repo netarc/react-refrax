@@ -27,7 +27,7 @@ const dataSegmentId_2 = {
 var refStore;
 
 function fixtureStore() {
-  refStore = RefraxStore.get();
+  refStore = new RefraxStore();
 
   refStore.updateResource(TestHelper.descriptorCollection({
     basePath: '/projects'
@@ -71,9 +71,8 @@ function testInvalidateSubscriber(args) {
   });
 }
 
+/* eslint-disable no-new */
 describe('RefraxStore', function() {
-  afterEach(TestHelper.deleteStores);
-
   describe('instance method', function() {
     beforeEach(fixtureStore);
 
@@ -134,8 +133,6 @@ describe('RefraxStore', function() {
     });
 
     describe('fetchResource', function() {
-      beforeEach(fixtureStore);
-
       it('should properly invoke cache fetch', function() {
         var descriptor = TestHelper.descriptorFrom({
           basePath: '/projects'
@@ -151,8 +148,6 @@ describe('RefraxStore', function() {
     });
 
     describe('touchResource', function() {
-      beforeEach(fixtureStore);
-
       it('should properly invoke cache touch', function() {
         var disposer
           , callback = sinon.spy()
@@ -173,8 +168,6 @@ describe('RefraxStore', function() {
     });
 
     describe('updateResource', function() {
-      beforeEach(fixtureStore);
-
       it('should properly invoke cache update', function() {
         var disposer
           , callback = sinon.spy()
@@ -195,8 +188,6 @@ describe('RefraxStore', function() {
     });
 
     describe('deleteResource', function() {
-      beforeEach(fixtureStore);
-
       it('should properly invoke cache destroy', function() {
         var disposer
           , callback = sinon.spy()
@@ -212,60 +203,6 @@ describe('RefraxStore', function() {
         expect(callback.callCount).to.equal(1);
         expect(refStore.cache.destroy.callCount).to.equal(1);
         expect(refStore.cache.destroy.getCall(0).args[0]).to.equal(descriptor);
-      });
-    });
-  });
-
-  describe('static methods', function() {
-    describe('get', function() {
-      describe('with no arguments', function() {
-        it('should create an anonymous store', function() {
-          var result = RefraxStore.get();
-          expect(result).to.be.an.instanceof(RefraxStore);
-          expect(Object.keys(RefraxStore.all)).to.have.members([result.definition.type]);
-        });
-      });
-
-      describe('with an invalid argument', function() {
-        it('should throw an error', function() {
-          expect(function() {
-            RefraxStore.get(123);
-          }).to.throw(Error);
-        });
-      });
-
-      describe('with a string argument', function() {
-        it('should create a named store', function() {
-          var result = RefraxStore.get('foobar');
-          expect(result).to.be.an.instanceof(RefraxStore);
-          expect(Object.keys(RefraxStore.all)).to.have.members(['foobar']);
-        });
-
-        it('should fetch a previously named store with the same name', function() {
-          var storeFoo = RefraxStore.get('foobar')
-            , storeBar = RefraxStore.get('barfoo');
-
-          expect(RefraxStore.get('foobar')).to.equal(storeFoo);
-          expect(RefraxStore.get('foobar')).to.not.equal(storeBar);
-          expect(RefraxStore.get('barfoo')).to.equal(storeBar);
-          expect(RefraxStore.get('barfoo')).to.not.equal(storeFoo);
-        });
-      });
-    });
-
-    describe('reset', function() {
-      it('should properly reset the store', function() {
-        var store1 = RefraxStore.get('store1')
-          , store2 = RefraxStore.get('store2')
-          , storeCache1 = store1.cache
-          , storeCache2 = store2.cache;
-
-        RefraxStore.reset();
-
-        expect(store1.cache).to.not.equal(storeCache1);
-        expect(store1.cache.fragments).to.deep.equal({});
-        expect(store2.cache).to.not.equal(storeCache2);
-        expect(store2.cache.fragments).to.deep.equal({});
       });
     });
   });

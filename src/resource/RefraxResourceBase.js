@@ -26,17 +26,17 @@ const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
  * RefraxResource is a public facing interface class to querying a Schema Node.
  */
 class RefraxResourceBase {
-  constructor(accessor, ...args) {
+  constructor(schemaPath, ...args) {
     var i, arg
       , options = new RefraxOptions()
       , queryParams = new RefraxQueryParameters()
       , parameters = new RefraxParameters()
       , paths = [];
 
-    if (!(accessor instanceof RefraxSchemaPath)) {
+    if (!(schemaPath instanceof RefraxSchemaPath)) {
       throw new TypeError(
-        'RefraxResourceBase expected valid SchemaNodeAccessor\n\r' +
-        'found: `' + accessor + '`'
+        'RefraxResourceBase expected valid SchemaPath\n\r' +
+        'found: `' + schemaPath + '`'
       );
     }
 
@@ -66,7 +66,7 @@ class RefraxResourceBase {
       }
     }
 
-    Object.defineProperty(this, '_accessor', {value: accessor});
+    Object.defineProperty(this, '_schemaPath', {value: schemaPath});
     Object.defineProperty(this, '_paths', {value: paths});
 
     mixinDisposable(this);
@@ -122,7 +122,7 @@ class RefraxResourceBase {
     }
 
     return [].concat(
-      this._accessor.__stack,
+      this._schemaPath.__stack,
       this._paths,
       this._parameters,
       this._queryParams,

@@ -14,12 +14,6 @@ const CLASSIFY_ITEM = RefraxConstants.classify.item;
 const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
 
 
-exports.deleteStores = function() {
-  for (var key in Refrax.Store.all) {
-    delete Refrax.Store.all[key];
-  }
-};
-
 export function descriptorFrom(params) {
   var descriptor = new RefraxResourceDescriptor();
   descriptor.basePath = params.path || descriptor.path;

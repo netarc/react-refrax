@@ -5,7 +5,6 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
 const RefraxConstants = require('RefraxConstants');
 const RefraxOptions = require('RefraxOptions');
 const RefraxResourceBase = require('RefraxResourceBase');
@@ -20,8 +19,8 @@ const ResourceMap = new WeakMap();
  * RefraxResource is a public facing interface class to querying a Schema Node.
  */
 class RefraxResource extends RefraxResourceBase {
-  static from(accessor, ...args) {
-    return new RefraxResource(accessor, ...args);
+  static from(schemaPath, ...args) {
+    return new RefraxResource(schemaPath, ...args);
   }
 
   get timestamp() {
@@ -39,8 +38,8 @@ class RefraxResource extends RefraxResourceBase {
     return result.data;
   }
 
-  constructor(accessor, ...args) {
-    super(accessor, ...args);
+  constructor(schemaPath, ...args) {
+    super(schemaPath, ...args);
 
     this.onDispose(() => {
       ResourceMap.delete(this);
@@ -124,11 +123,7 @@ class RefraxResource extends RefraxResourceBase {
       }
 
       if (options.cascade === true) {
-        options = RefraxTools.extend({}, options, { errorOnInvalid: false });
-
-        this._accessor.enumerateLeafs((key, accessor) => {
-          accessor.invalidate(options);
-        });
+        this._schemaPath.invalidateLeafs(options);
       }
     });
   }

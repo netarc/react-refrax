@@ -24,6 +24,7 @@ export default {
     inspect: 'inspect'
   },
   classify: {
+    schema: 'schema',
     collection: 'collection',
     item: 'item',
     resource: 'resource',

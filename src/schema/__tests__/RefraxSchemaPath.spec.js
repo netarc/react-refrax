@@ -8,6 +8,8 @@
 const chai = require('chai');
 const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxSchemaNode = require('RefraxSchemaNode');
+const RefraxConstants = require('RefraxConstants');
+const CLASSIFY_NAMESPACE = RefraxConstants.classify.namespace;
 const expect = chai.expect;
 
 
@@ -37,27 +39,15 @@ describe('RefraxSchemaPath', function() {
         new RefraxSchemaPath(new RefraxSchemaNode());
       }).to.not.throw(Error);
     });
-
-    it('should look like a node accessor', function() {
-      var rootAccessor = new RefraxSchemaPath(new RefraxSchemaNode({
-        foo: 213
-      }));
-
-      expect(rootAccessor).to.have.property('__node')
-        .that.is.an.instanceof(RefraxSchemaNode)
-        .to.have.property('subject')
-          .that.is.an.instanceof(Array)
-          .that.deep.equals([{foo: 213}]);
-    });
   });
 
   describe('methods', function() {
     describe('enumerateLeafs', function() {
       it('should only enumerate shallow leafs', function() {
         var nodeAccessor = new RefraxSchemaPath(new RefraxSchemaNode())
-          , schemaNode = new RefraxSchemaNode(123)
-          , schemaNodeWithLiteral = new RefraxSchemaNode(123, 'foo')
-          , schemaNodeNested = new RefraxSchemaNode(123)
+          , schemaNode = new RefraxSchemaNode()
+          , schemaNodeWithLiteral = new RefraxSchemaNode(CLASSIFY_NAMESPACE, 'foo')
+          , schemaNodeNested = new RefraxSchemaNode()
           , keys = []
           , accessorNodes = [];
 
@@ -79,7 +69,7 @@ describe('RefraxSchemaPath', function() {
     describe('addLeaf', function() {
       it('should only accept a leaf object optionally preceeded by an identifier', function() {
         var nodeAccessor = new RefraxSchemaPath(new RefraxSchemaNode())
-          , schemaNode = new RefraxSchemaNode(123);
+          , schemaNode = new RefraxSchemaNode();
 
         expect(function() {
           nodeAccessor.addLeaf(123);
@@ -100,8 +90,8 @@ describe('RefraxSchemaPath', function() {
 
       it('should not throw an error on valid arguments', function() {
         var nodeAccessor = new RefraxSchemaPath(new RefraxSchemaNode())
-          , schemaNode = new RefraxSchemaNode(123)
-          , schemaNodeWithLiteral = new RefraxSchemaNode(123, 'foo');
+          , schemaNode = new RefraxSchemaNode()
+          , schemaNodeWithLiteral = new RefraxSchemaNode(CLASSIFY_NAMESPACE, 'foo');
 
         expect(function() {
           nodeAccessor.addLeaf('bar', schemaNode);
@@ -111,8 +101,8 @@ describe('RefraxSchemaPath', function() {
 
       it('should correctly add an accessible leaf', function() {
         var rootAccessor = new RefraxSchemaPath(new RefraxSchemaNode())
-          , schemaNode1 = new RefraxSchemaNode(123)
-          , schemaNode2 = new RefraxSchemaNode(321);
+          , schemaNode1 = new RefraxSchemaNode()
+          , schemaNode2 = new RefraxSchemaNode();
 
         rootAccessor.addLeaf('foo', schemaNode1);
         expect(rootAccessor).to.have.property('foo')

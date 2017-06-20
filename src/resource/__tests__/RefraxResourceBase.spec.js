@@ -6,7 +6,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 const chai = require('chai');
-const TestHelper = require('TestHelper');
 const RefraxResourceBase = require('RefraxResourceBase');
 const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
@@ -28,29 +27,27 @@ describe('RefraxResourceBase', function() {
     collectionAccessor = createSchemaCollection('users');
   });
 
-  afterEach(TestHelper.deleteStores);
-
   describe('instantiation', function() {
     it('should require a valid accessor', function() {
       expect(function() {
         new RefraxResourceBase();
-      }).to.throw(Error, 'RefraxResourceBase expected valid SchemaNodeAccessor');
+      }).to.throw(Error, 'RefraxResourceBase expected valid SchemaPath');
 
       expect(function() {
         new RefraxResourceBase(123);
-      }).to.throw(Error, 'RefraxResourceBase expected valid SchemaNodeAccessor');
+      }).to.throw(Error, 'RefraxResourceBase expected valid SchemaPath');
 
       expect(function() {
         new RefraxResourceBase('foo');
-      }).to.throw(Error, 'RefraxResourceBase expected valid SchemaNodeAccessor');
+      }).to.throw(Error, 'RefraxResourceBase expected valid SchemaPath');
 
       expect(function() {
         new RefraxResourceBase({foo: 'bar'});
-      }).to.throw(Error, 'RefraxResourceBase expected valid SchemaNodeAccessor');
+      }).to.throw(Error, 'RefraxResourceBase expected valid SchemaPath');
 
       expect(function() {
         new RefraxResourceBase(function() {});
-      }).to.throw(Error, 'RefraxResourceBase expected valid SchemaNodeAccessor');
+      }).to.throw(Error, 'RefraxResourceBase expected valid SchemaPath');
 
       expect(function() {
         new RefraxResourceBase(collectionAccessor);
@@ -63,7 +60,7 @@ describe('RefraxResourceBase', function() {
       expect(resource)
         .to.be.instanceof(RefraxResourceBase);
       expect(resource)
-        .to.have.property('_accessor')
+        .to.have.property('_schemaPath')
           .that.is.an.instanceof(RefraxSchemaPath);
       expect(resource)
         .to.have.property('_paths')
