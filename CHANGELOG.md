@@ -1,6 +1,7 @@
 # Unreleased
 
 ## [v0.5.16]
+- **Bugfix** Mutable `setState` this reference
 
 # Released
 
