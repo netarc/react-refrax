@@ -1,9 +1,13 @@
 # Unreleased
 
-## [v0.5.16]
-- **Bugfix** Mutable `setState` this reference
+## [v0.5.17]
 
 # Released
+
+## [v0.5.16](https://github.com/netarc/refrax/compare/v0.5.15...v0.5.16)
+> June 21, 2017
+
+- **Bugfix** Mutable `setState` this reference
 
 ## [v0.5.15]
 > June 13, 2017
