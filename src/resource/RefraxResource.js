@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 const RefraxConstants = require('RefraxConstants');
+const RefraxTools = require('RefraxTools');
 const RefraxOptions = require('RefraxOptions');
 const RefraxResourceBase = require('RefraxResourceBase');
 const STATUS_STALE = RefraxConstants.status.STALE;
@@ -60,7 +61,7 @@ class RefraxResource extends RefraxResourceBase {
       if (this._options.invalidate) {
         // shortcut for no options
         if (this._options.invalidate === true) {
-          this._options.invalidate = {noPropagate: true};
+          this._options.invalidate = { noPropagate: true };
         }
 
         this.invalidate(this._options.invalidate);
@@ -87,13 +88,19 @@ class RefraxResource extends RefraxResourceBase {
 
       subscriber();
 
+      // 'touch' actions that originate from ourself come from `_fetchFragment` so we can
+      // safely ignore them as that implicitly updates our cache state
+      if (event.action === 'touch' && event.invoker === this) {
+        return;
+      }
+
       // If we are an item resource and we encounter a destroy event, we switch on the
       // 'no fetching' option so we can still passively poll the data but not cause a re-fetch
       if (descriptor.classify === CLASSIFY_ITEM && event.action === 'destroy') {
         this._options.noFetchGet = true;
       }
 
-      this._updateCache();
+      this._updateCache({ noPropagate: event.noPropagate });
 
       if (event.noPropagate !== true) {
         this.emit('change', this, event);
@@ -103,15 +110,20 @@ class RefraxResource extends RefraxResourceBase {
     subscriber();
   }
 
-  _fetchFragment() {
-    return this.fetch({ fragmentOnly: true });
+  _fetchFragment(options = {}) {
+    const fragment = this.fetch(RefraxTools.extend({}, options, {
+      fragmentOnly: true
+    }));
+
+    ResourceMap.set(this, fragment);
+
+    return fragment;
   }
 
-  _updateCache() {
-    const fragment = this._fetchFragment();
+  _updateCache(options = {}) {
+    const fragment = this._fetchFragment(options);
 
     this._dispatchLoad && this._dispatchLoad(fragment && fragment.data);
-    ResourceMap.set(this, fragment);
   }
 
   invalidate(options = {}) {
@@ -119,7 +131,10 @@ class RefraxResource extends RefraxResourceBase {
 
     this._generateDescriptor(null, descriptorOptions, (descriptor) => {
       if (descriptor.store) {
-        descriptor.store.invalidate(descriptor, options);
+        descriptor.store.invalidate(descriptor, RefraxTools.extend({}, options, {
+          invoker: this,
+          fragmentOnly: true
+        }));
       }
 
       if (options.cascade === true) {

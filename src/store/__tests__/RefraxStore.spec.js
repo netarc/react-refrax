@@ -46,28 +46,20 @@ function testInvalidateResult(args, result) {
   });
 }
 
-function testInvalidateSubscriber(args) {
+function testInvalidateSubscriber(args, expectedEmits) {
   it('should trigger a subscriber', function() {
-    var callback
-      , disposer
-      , event = null;
+    sinon.spy(refStore, 'emit');
 
-    callback = sinon.spy(function(innerEvent) {
-      event = innerEvent;
-    });
-    sinon.spy(refStore.cache, 'invalidate');
-
-    disposer = refStore.subscribe('change', callback);
     refStore.invalidate.apply(refStore, args);
-    disposer();
 
-    expect(callback.callCount).to.equal(1);
-    expect(event)
-      .to.be.a('object')
-      .to.deep.equal(RefraxTools.extend({
-        type: refStore.definition.type,
-        action: 'invalidate'
-      }, refStore.cache.invalidate.getCall(0).args[1]));
+    expect(refStore.emit.callCount).to.equal(expectedEmits.length);
+    for (var i = 0; i < expectedEmits.length; i++) {
+      expect(refStore.emit.getCall(i).args[1])
+        .to.be.a('object')
+        .to.deep.equal(RefraxTools.extend({
+          type: refStore.definition.type
+        }, expectedEmits[i]));
+    }
   });
 }
 
@@ -90,7 +82,20 @@ describe('RefraxStore', function() {
     describe('invalidate', function() {
       describe('with no arguments', function() {
         testInvalidateResult([], [null, {}]);
-        testInvalidateSubscriber([]);
+        testInvalidateSubscriber([], [
+          {
+            fragment: '1',
+            action: 'invalidate'
+          },
+          {
+            fragment: '2',
+            action: 'invalidate'
+          },
+          {
+            query: '/projects',
+            action: 'invalidate'
+          }
+        ]);
       });
 
       describe('with a descriptor argument', function() {
@@ -99,14 +104,35 @@ describe('RefraxStore', function() {
         });
 
         testInvalidateResult([descriptor], [descriptor, {}]);
-        testInvalidateSubscriber([descriptor]);
+        testInvalidateSubscriber([descriptor], [
+          {
+            query: '/projects',
+            action: 'invalidate'
+          }
+        ]);
       });
 
       describe('with options argument first', function() {
         var options = {foo: 123};
 
         testInvalidateResult([options], [null, options]);
-        testInvalidateSubscriber([options]);
+        testInvalidateSubscriber([options], [
+          {
+            fragment: '1',
+            action: 'invalidate',
+            foo: 123
+          },
+          {
+            fragment: '2',
+            action: 'invalidate',
+            foo: 123
+          },
+          {
+            query: '/projects',
+            action: 'invalidate',
+            foo: 123
+          }
+        ]);
       });
 
       describe('with descriptor and options argument', function() {
@@ -116,7 +142,13 @@ describe('RefraxStore', function() {
           });
 
         testInvalidateResult([descriptor, options], [descriptor, options]);
-        testInvalidateSubscriber([descriptor, options]);
+        testInvalidateSubscriber([descriptor, options], [
+          {
+            query: '/projects',
+            action: 'invalidate',
+            foo: 123
+          }
+        ]);
       });
 
       describe('with invalid argument', function() {
@@ -156,7 +188,7 @@ describe('RefraxStore', function() {
           });
 
         sinon.spy(refStore.cache, 'touch');
-        disposer = refStore.subscribe('change', callback);
+        disposer = refStore.subscribe(descriptor.event, callback);
         refStore.touchResource(descriptor, dataSegmentId_1);
         disposer();
 
@@ -176,7 +208,7 @@ describe('RefraxStore', function() {
           });
 
         sinon.spy(refStore.cache, 'update');
-        disposer = refStore.subscribe('change', callback);
+        disposer = refStore.subscribe(descriptor.event, callback);
         refStore.updateResource(descriptor, dataSegmentId_1);
         disposer();
 
@@ -196,7 +228,7 @@ describe('RefraxStore', function() {
           });
 
         sinon.spy(refStore.cache, 'destroy');
-        disposer = refStore.subscribe('change', callback);
+        disposer = refStore.subscribe(descriptor.event, callback);
         refStore.destroyResource(descriptor);
         disposer();
 

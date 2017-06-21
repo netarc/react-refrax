@@ -40,6 +40,7 @@
     "babel": "^5.8.25",
     "babel-core": "^5.8.25",
     "babel-eslint": "^6.0.0",
+    "chai": "^4.0.2",
     "del": "^1.2.0",
     "eslint": "^2.5.1",
     "eslint-plugin-react": "^4.2.3",
@@ -50,17 +51,16 @@
     "gulp-flatten": "^0.1.0",
     "gulp-header": "^1.2.2",
     "gulp-mocha": "^4.3.1",
-    "gulp-util": "^3.0.6",
-    "run-sequence": "^1.1.2",
-    "webpack-stream": "^2.1.0",
-    "webpack": "1.11.0",
-    "object-assign": "^3.0.0",
-    "chai": "3.5.0",
     "gulp-sourcemaps": "1.6.0",
-    "source-map-support": "0.4.0",
+    "gulp-util": "^3.0.6",
     "mocha": "~3.4.1",
     "nock": "3.5.0",
-    "sinon": "^1.10.3"
+    "object-assign": "^3.0.0",
+    "run-sequence": "^1.1.2",
+    "sinon": "^1.10.3",
+    "source-map-support": "0.4.0",
+    "webpack": "1.11.0",
+    "webpack-stream": "^2.1.0"
   },
   "peerDependencies": {
     "react": ">=0.12.2"

@@ -89,8 +89,11 @@ function pluginDeepMatch(chai, utils) {
           deepMatchObject(expect, this._obj);
         }
         catch (msg) {
-          // throw new chai.AssertionError(msg);
-          this.assert(false, msg, undefined, expect, this._obj, true);
+          throw new chai.AssertionError(msg, {
+            actual: this._obj,
+            expected: expect,
+            showDiff: true
+          }, arguments.callee);
         }
       }
       else {

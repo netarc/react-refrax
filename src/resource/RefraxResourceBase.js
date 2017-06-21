@@ -100,7 +100,9 @@ class RefraxResourceBase {
       result = store.fetchResource(descriptor);
 
       if (this._options.noFetchGet !== true && result.timestamp < TIMESTAMP_LOADING) {
-        promise = invokeDescriptor(descriptor, this._options);
+        promise = invokeDescriptor(descriptor, RefraxTools.extend({}, this._options, options, {
+          invoker: this
+        }));
         result = store.fetchResource(descriptor);
       }
 

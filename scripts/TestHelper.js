@@ -17,6 +17,7 @@ const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
 export function descriptorFrom(params) {
   var descriptor = new RefraxResourceDescriptor();
   descriptor.basePath = params.path || descriptor.path;
+  descriptor.event = params.id || params.basePath;
   RefraxTools.extend(descriptor, params);
   return descriptor;
 }
