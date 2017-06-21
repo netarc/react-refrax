@@ -1,6 +1,6 @@
 {
   "name": "refrax",
-  "version": "0.5.15",
+  "version": "0.6.0",
   "description": "A framework for building api-based data-driven applications.",
   "author": "Joshua Hollenbeck",
   "license": "BSD-3-Clause",
@@ -55,7 +55,6 @@
     "webpack-stream": "^2.1.0",
     "webpack": "1.11.0",
     "object-assign": "^3.0.0",
-
     "chai": "3.5.0",
     "gulp-sourcemaps": "1.6.0",
     "source-map-support": "0.4.0",
