@@ -7,7 +7,7 @@
  */
 const RefraxTools = require('RefraxTools');
 
-const setState = (state, attribute, value, options, emit) => {
+function setState(state, attribute, value, options, emit) {
   const attributes = options.shallow === true ? [attribute] : attribute.split('.');
 
   for (let attr_count = attributes.length, i = 0; i < attr_count; i++) {
@@ -36,9 +36,9 @@ const setState = (state, attribute, value, options, emit) => {
       value: value
     });
   }
-};
+}
 
-const getState = (state, attribute, options) => {
+function getState(state, attribute, options) {
   const attributes = options.shallow === true ? [attribute] : attribute.split('.');
 
   for (let attr_count = attributes.length, i = 0; i < attr_count; i++) {
@@ -58,7 +58,7 @@ const getState = (state, attribute, options) => {
   }
 
   return undefined;
-};
+}
 
 const MixinMutable = {
   get: function(attribute, options = {}) {
