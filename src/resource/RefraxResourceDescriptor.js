@@ -22,8 +22,8 @@ const STRATEGY_MERGE = RefraxConstants.strategy.merge;
 const STRATEGY_REPLACE = RefraxConstants.strategy.replace;
 const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
-const CLASSIFY_INVALID = RefraxConstants.classify.invalid;
 
+const GlobalStoreMap = new RefraxStoreMap();
 
 // simple-depth serialize to avoid circular references for error debugging
 function serializer() {
@@ -160,7 +160,7 @@ function processStack(resourceDescriptor, stack) {
       paramId: null,
       queryParams: {},
       appendPaths: [],
-      storeMap: null
+      storeMap: GlobalStoreMap
     }
     , pathErrors = []
     , i, item, definition
@@ -290,6 +290,8 @@ function processStack(resourceDescriptor, stack) {
 }
 
 class RefraxResourceDescriptor {
+  static storeMap = GlobalStoreMap;
+
   constructor(action = ACTION_GET, stack = []) {
     this.action = action;
     this.event = ['change'];

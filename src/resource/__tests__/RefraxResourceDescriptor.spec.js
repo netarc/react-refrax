@@ -33,10 +33,10 @@ const expect = chai.expect;
 
 
 /* eslint-disable no-new */
-describe('RefraxResourceDescriptor', function() {
-  describe('instantiation', function() {
-    describe('with no arguments', function() {
-      it('should have correct shape default for GET', function() {
+describe('RefraxResourceDescriptor', () => {
+  describe('instantiation', () => {
+    describe('with no arguments', () => {
+      it('should have correct shape default for GET', () => {
         const descriptor = new RefraxResourceDescriptor();
 
         expect(descriptor).to.deep.match({
@@ -57,8 +57,8 @@ describe('RefraxResourceDescriptor', function() {
       });
     });
 
-    describe('with just an action argument', function() {
-      it('should have correct shape for CREATE', function() {
+    describe('with just an action argument', () => {
+      it('should have correct shape for CREATE', () => {
         const descriptor = new RefraxResourceDescriptor(ACTION_CREATE);
 
         expect(descriptor).to.deep.match({
@@ -78,7 +78,7 @@ describe('RefraxResourceDescriptor', function() {
         });
       });
 
-      it('should have correct shape for UPDATE', function() {
+      it('should have correct shape for UPDATE', () => {
         const descriptor = new RefraxResourceDescriptor(ACTION_UPDATE);
 
         expect(descriptor).to.deep.match({
@@ -98,7 +98,7 @@ describe('RefraxResourceDescriptor', function() {
         });
       });
 
-      it('should have correct shape for DELETE', function() {
+      it('should have correct shape for DELETE', () => {
         const descriptor = new RefraxResourceDescriptor(ACTION_DELETE);
 
         expect(descriptor).to.deep.match({
@@ -119,9 +119,9 @@ describe('RefraxResourceDescriptor', function() {
       });
     });
 
-    describe('with a stack argument', function() {
-      describe('SchemaNode(Namespace)', function() {
-        it('should have correct shape', function() {
+    describe('with a stack argument', () => {
+      describe('SchemaNode(Namespace)', () => {
+        it('should have correct shape', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaNamespace('api'));
           const stack = schema.api.__stack;
@@ -146,7 +146,7 @@ describe('RefraxResourceDescriptor', function() {
           });
         });
 
-        it('should have correct shape when nested', function() {
+        it('should have correct shape when nested', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaNamespace('api'));
           schema.api.addLeaf(createSchemaCollection('projects'));
@@ -174,8 +174,8 @@ describe('RefraxResourceDescriptor', function() {
         });
       });
 
-      describe('SchemaNode(Collection)', function() {
-        it('should have correct shape', function() {
+      describe('SchemaNode(Collection)', () => {
+        it('should have correct shape', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaCollection('projects'));
           const stack = schema.projects.__stack;
@@ -200,7 +200,7 @@ describe('RefraxResourceDescriptor', function() {
           });
         });
 
-        it('should have correct shape when nested', function() {
+        it('should have correct shape when nested', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaCollection('projects'));
           schema.projects.project.addLeaf(createSchemaCollection('users'));
@@ -229,17 +229,17 @@ describe('RefraxResourceDescriptor', function() {
         });
       });
 
-      describe('SchemaNode(Item)', function() {
-        it('should throw an error when provided no parameters', function() {
+      describe('SchemaNode(Item)', () => {
+        it('should throw an error when provided no parameters', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaCollection('projects'));
           const stack = schema.projects.project.__stack;
-          expect(function() {
+          expect(() => {
             new RefraxResourceDescriptor(ACTION_GET, stack);
           }).to.throw(TypeError, 'Failed to map path: `/projects/:projectId`');
         });
 
-        it('should have correct shape', function() {
+        it('should have correct shape', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaCollection('projects'));
           const stack = schema.projects.project.__stack.concat([
@@ -266,7 +266,7 @@ describe('RefraxResourceDescriptor', function() {
           });
         });
 
-        it('should have correct shape when nested', function() {
+        it('should have correct shape when nested', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaCollection('projects'));
           schema.projects.project.addLeaf(createSchemaCollection('users'));
@@ -295,8 +295,8 @@ describe('RefraxResourceDescriptor', function() {
         });
       });
 
-      describe('SchemaNode(Resource)', function() {
-        it('should have correct shape', function() {
+      describe('SchemaNode(Resource)', () => {
+        it('should have correct shape', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaResource('settings'));
           const stack = schema.settings.__stack;
@@ -321,7 +321,7 @@ describe('RefraxResourceDescriptor', function() {
           });
         });
 
-        it('should have correct shape when nested', function() {
+        it('should have correct shape when nested', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaCollection('projects'));
           schema.projects.project.addLeaf(createSchemaResource('settings'));
@@ -350,8 +350,8 @@ describe('RefraxResourceDescriptor', function() {
         });
       });
 
-      describe('QueryParams', function() {
-        it('should have correct shape with numbers', function() {
+      describe('QueryParams', () => {
+        it('should have correct shape with numbers', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaNamespace('api'));
           const stack = schema.api.__stack.concat(new RefraxQueryParameters({ foo: 123 }));
@@ -376,7 +376,7 @@ describe('RefraxResourceDescriptor', function() {
           });
         });
 
-        it('should have correct shape with strings', function() {
+        it('should have correct shape with strings', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaNamespace('api'));
           const stack = schema.api.__stack.concat(new RefraxQueryParameters({ foo: 'bar' }));
@@ -401,7 +401,7 @@ describe('RefraxResourceDescriptor', function() {
           });
         });
 
-        it('should have correct shape with arrays', function() {
+        it('should have correct shape with arrays', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaNamespace('api'));
           const stack = schema.api.__stack.concat(new RefraxQueryParameters({ foo: [1, 'abc'] }));
@@ -426,7 +426,7 @@ describe('RefraxResourceDescriptor', function() {
           });
         });
 
-        it('should have correct shape when mixed', function() {
+        it('should have correct shape when mixed', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaNamespace('api'));
           const stack = schema.api.__stack.concat([
@@ -456,9 +456,9 @@ describe('RefraxResourceDescriptor', function() {
         });
       });
 
-      describe('Path', function() {
-        describe('when not a modifier', function() {
-          it('should have correct shape', function() {
+      describe('Path', () => {
+        describe('when not a modifier', () => {
+          it('should have correct shape', () => {
             const schema = new RefraxSchema();
             schema.addLeaf(createSchemaNamespace('api'));
             const stack = schema.api.__stack.concat(
@@ -485,7 +485,7 @@ describe('RefraxResourceDescriptor', function() {
             });
           });
 
-          it('should have correct shape when nested', function() {
+          it('should have correct shape when nested', () => {
             const schema = new RefraxSchema();
             schema.addLeaf(createSchemaNamespace('api'));
             const stack = schema.api.__stack.concat(
@@ -515,8 +515,8 @@ describe('RefraxResourceDescriptor', function() {
           });
         });
 
-        describe('when a modifier', function() {
-          it('should have correct shape', function() {
+        describe('when a modifier', () => {
+          it('should have correct shape', () => {
             const schema = new RefraxSchema();
             schema.addLeaf(createSchemaNamespace('api'));
             const stack = schema.api.__stack.concat(
@@ -543,7 +543,7 @@ describe('RefraxResourceDescriptor', function() {
             });
           });
 
-          it('should have correct shape when nested', function() {
+          it('should have correct shape when nested', () => {
             const schema = new RefraxSchema();
             schema.addLeaf(createSchemaNamespace('api'));
             const stack = schema.api.__stack.concat(
@@ -573,9 +573,9 @@ describe('RefraxResourceDescriptor', function() {
         });
       });
 
-      describe('Options', function() {
-        describe('paramId', function() {
-          it('should have correct shape', function() {
+      describe('Options', () => {
+        describe('paramId', () => {
+          it('should have correct shape', () => {
             const schema = new RefraxSchema();
             schema.addLeaf(createSchemaCollection('projects', {
               member: { paramId: 'pId' }
@@ -604,7 +604,7 @@ describe('RefraxResourceDescriptor', function() {
             });
           });
 
-          it('should have correct shape when nested', function() {
+          it('should have correct shape when nested', () => {
             const schema = new RefraxSchema();
             schema.addLeaf(createSchemaCollection('projects', {
               member: { paramId: 'pId' }
@@ -636,6 +636,27 @@ describe('RefraxResourceDescriptor', function() {
             });
           });
         });
+      });
+    });
+
+    describe('resolves storeMap', () => {
+      it('should use default global storeMap when not using a Schema', () => {
+        const projects = createSchemaCollection('projects');
+        const descriptor = new RefraxResourceDescriptor(ACTION_GET, projects.__stack);
+
+        expect(descriptor.store)
+          .to.equal(RefraxResourceDescriptor.storeMap.getOrCreate(descriptor.type));
+      });
+
+      it('should use schema storeMap when using a Schema', () => {
+        const schema = new RefraxSchema();
+        schema.addLeaf(createSchemaCollection('projects'));
+        const descriptor = new RefraxResourceDescriptor(ACTION_GET, schema.projects.__stack);
+
+        expect(descriptor.store)
+          .to.not.equal(RefraxResourceDescriptor.storeMap.getOrCreate(descriptor.type));
+        expect(descriptor.store)
+          .to.equal(schema.__storeMap.getOrCreate(descriptor.type));
       });
     });
   });

@@ -2,6 +2,7 @@
 
 ## [v0.6.1]
 - **Bugfix** Mutable `setState` this reference
+- **Minor** ResourceDescriptor now uses a default global `storeMap`
 
 # Released
 
