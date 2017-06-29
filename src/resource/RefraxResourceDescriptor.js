@@ -165,7 +165,7 @@ function processStack(resourceDescriptor, stack) {
     , pathErrors = []
     , i, item, definition
     , lastURIParamId = null
-    , key, result;
+    , result;
 
   // Pass 1
   for (i = 0; i < stack.length; i++) {

@@ -24,7 +24,7 @@ var babel = require('gulp-babel')
   , sourcemaps = require('gulp-sourcemaps')
   , mocha = require('gulp-mocha');
 
-var HEADER = [
+const HEADER = [
   '/**',
   ' * Refrax v<%= version %>',
   ' *',
@@ -36,7 +36,7 @@ var HEADER = [
   ' */'
 ].join('\n') + '\n';
 
-var babelOpts = {
+const babelOpts = {
   nonStandard: true,
   loose: [
     'es6.classes'
@@ -62,7 +62,11 @@ var babelOpts = {
     'pluralize': 'pluralize',
     // test modules
     'chai': 'chai',
-    'sinon': 'sinon'
+    'sinon': 'sinon',
+    'jsdom': 'jsdom',
+    'enzyme': 'enzyme',
+    'moxios': 'moxios',
+    'mocha/lib/utils.js': 'mocha/lib/utils.js'
   }
 };
 
@@ -70,11 +74,7 @@ var buildDist = function(opts) {
   var webpackOpts = {
     debug: opts.debug,
     externals: {
-      'react': 'react',
-      // 'bluebird': 'bluebird',
-      // 'axios': 'axios',
-      // 'eventemitter3': 'eventemitter3',
-      // 'pluralize': 'pluralize'
+      'react': 'react'
     },
     output: {
       filename: opts.output,
@@ -114,21 +114,18 @@ var buildDist = function(opts) {
   });
 };
 
-var paths = {
+const paths = {
   dist: 'dist',
   lib: 'lib',
   test: 'test',
   entry: 'lib/RefraxBuild.js',
   src: [
     '*src/**/*.js',
-    '!src/**/__tests__/**/*.js',
-    '!src/.legacy'
+    '!src/**/__tests__/**/*.js'
   ],
   srcTest: [
-    '*scripts/**/*.js',
-    '*src/**/*.js',
-    '*src/**/__tests__/**/*.js',
-    '!src/.legacy'
+    '*scripts/*.js',
+    '*src/**/*.js'
   ]
 };
 
@@ -165,7 +162,7 @@ gulp.task('dist', ['modules'], function() {
     debug: true,
     output: 'refrax.js'
   };
-  return gulp.src(paths.entry)
+  gulp.src(paths.entry)
     .pipe(buildDist(distOpts))
     .pipe(derequire())
     .pipe(header(HEADER, {
@@ -179,7 +176,7 @@ gulp.task('dist:min', ['modules'], function() {
     debug: false,
     output: 'refrax.min.js'
   };
-  return gulp.src(paths.entry)
+  gulp.src(paths.entry)
     .pipe(buildDist(distOpts))
     .pipe(header(HEADER, {
       version: process.env.npm_package_version
@@ -188,16 +185,22 @@ gulp.task('dist:min', ['modules'], function() {
 });
 
 gulp.task('testMocha', ['modules-test'], function() {
-  return gulp.src([
-    'test/ChaiDeepMatch.js',
-    '*test/**/*.spec.js'
-  ], {read: false})
-	.pipe(
-    mocha()
-    .on('error', function(error) {
-      this.emit('end');
-    })
-  );
+  gulp
+    .src([
+      'test/*.spec.js'
+    ], {read: false})
+    .pipe(
+      mocha({
+        require: [
+          'test/ChaiDeepMatch.js',
+          'test/TestSupport.js'
+        ],
+        reporter: 'scripts/Reporter.js'
+      })
+        .on('error', function(error) {
+          this.emit('end');
+        })
+    );
 });
 
 gulp.task('watch', function() {

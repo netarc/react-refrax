@@ -10,6 +10,7 @@ const RefraxTools = require('RefraxTools');
 const RefraxOptions = require('RefraxOptions');
 const RefraxResourceBase = require('RefraxResourceBase');
 const STATUS_STALE = RefraxConstants.status.STALE;
+const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
 // WeakMap offers a ~743% performance boost (~0.55ms => ~0.074ms) per fetch
@@ -59,7 +60,7 @@ class RefraxResource extends RefraxResourceBase {
 
       // NOTE: we invalidate before potentially subscribing
       if (this._options.invalidate) {
-        // shortcut for no options
+        // `invalidate: true` is an alias for `{ noPropgate: true }`
         if (this._options.invalidate === true) {
           this._options.invalidate = { noPropagate: true };
         }
@@ -100,7 +101,10 @@ class RefraxResource extends RefraxResourceBase {
         this._options.noFetchGet = true;
       }
 
-      this._updateCache({ noPropagate: event.noPropagate });
+      this._updateCache({
+        noPropagate: !!event.noPropagate,
+        noFetchGet: !!event.noFetchGet
+      });
 
       if (event.noPropagate !== true) {
         this.emit('change', this, event);
@@ -115,7 +119,7 @@ class RefraxResource extends RefraxResourceBase {
       fragmentOnly: true
     }));
 
-    ResourceMap.set(this, fragment);
+    ResourceMap.set(this, fragment || {});
 
     return fragment;
   }
@@ -123,7 +127,9 @@ class RefraxResource extends RefraxResourceBase {
   _updateCache(options = {}) {
     const fragment = this._fetchFragment(options);
 
-    this._dispatchLoad && this._dispatchLoad(fragment && fragment.data);
+    if (this._dispatchLoad && fragment && fragment.status === STATUS_COMPLETE) {
+      this._dispatchLoad(fragment.data);
+    }
   }
 
   invalidate(options = {}) {
@@ -132,8 +138,7 @@ class RefraxResource extends RefraxResourceBase {
     this._generateDescriptor(null, descriptorOptions, (descriptor) => {
       if (descriptor.store) {
         descriptor.store.invalidate(descriptor, RefraxTools.extend({}, options, {
-          invoker: this,
-          fragmentOnly: true
+          invoker: this
         }));
       }
 
