@@ -3,6 +3,7 @@
 ## [v0.6.1]
 - **Bugfix** Mutable `setState` this reference
 - **Minor** ResourceDescriptor now uses a default global `storeMap`
+- **Major** Refactor store events to fully represent fragment/queries
 
 # Released
 

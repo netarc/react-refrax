@@ -6,56 +6,66 @@
  * LICENSE file in the root directory of this source tree.
  */
 const chai = require('chai');
+const Promise = require('bluebird');
 const RefraxResourceBase = require('RefraxResourceBase');
 const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
 const RefraxPath = require('RefraxPath');
 const RefraxQueryParameters = require('RefraxQueryParameters');
 const RefraxSchemaPath = require('RefraxSchemaPath');
+const RefraxSchema = require('RefraxSchema');
+const RefraxFragmentResult = require('RefraxFragmentResult');
 const RefraxConstants = require('RefraxConstants');
 const createSchemaCollection = require('createSchemaCollection');
 const ACTION_GET = RefraxConstants.action.get;
 const ACTION_CREATE = RefraxConstants.action.create;
 const expect = chai.expect;
 
+const dataCollectionUsers = [
+  { id: 1, name: 'foo bob' },
+  { id: 2, name: 'foo baz' }
+];
 
+/* global mock_get mock_reset mock_request_count wait_for_promise delay_for_request */
 /* eslint-disable no-new */
-describe('RefraxResourceBase', function() {
-  var collectionAccessor;
+describe('RefraxResourceBase', () => {
+  let schema;
 
-  beforeEach(function() {
-    collectionAccessor = createSchemaCollection('users');
+  beforeEach(() => {
+    schema = new RefraxSchema();
+
+    schema.addLeaf(createSchemaCollection('users'));
   });
 
-  describe('instantiation', function() {
-    it('should require a valid accessor', function() {
-      expect(function() {
+  describe('instantiation', () => {
+    it('should require a valid accessor', () => {
+      expect(() => {
         new RefraxResourceBase();
       }).to.throw(Error, 'RefraxResourceBase expected valid SchemaPath');
 
-      expect(function() {
+      expect(() => {
         new RefraxResourceBase(123);
       }).to.throw(Error, 'RefraxResourceBase expected valid SchemaPath');
 
-      expect(function() {
+      expect(() => {
         new RefraxResourceBase('foo');
       }).to.throw(Error, 'RefraxResourceBase expected valid SchemaPath');
 
-      expect(function() {
+      expect(() => {
         new RefraxResourceBase({foo: 'bar'});
       }).to.throw(Error, 'RefraxResourceBase expected valid SchemaPath');
 
-      expect(function() {
-        new RefraxResourceBase(function() {});
+      expect(() => {
+        new RefraxResourceBase(() => {});
       }).to.throw(Error, 'RefraxResourceBase expected valid SchemaPath');
 
-      expect(function() {
-        new RefraxResourceBase(collectionAccessor);
+      expect(() => {
+        new RefraxResourceBase(schema.users);
       }).to.not.throw(Error);
     });
 
-    it('should look like a ResourceBase', function() {
-      var resource = new RefraxResourceBase(collectionAccessor);
+    it('should look like a ResourceBase', () => {
+      var resource = new RefraxResourceBase(schema.users);
 
       expect(resource)
         .to.be.instanceof(RefraxResourceBase);
@@ -77,11 +87,11 @@ describe('RefraxResourceBase', function() {
     });
   });
 
-  describe('methods', function() {
-    describe('_generateStack', function() {
-      it('correctly represents the stack', function() {
+  describe('methods', () => {
+    describe('_generateStack', () => {
+      it('correctly represents the stack', () => {
         var resource = new RefraxResourceBase(
-          collectionAccessor,
+          schema.users,
           new RefraxQueryParameters({queryFoo: 123}),
           new RefraxParameters({paramFoo: 321}),
           new RefraxOptions({optionFoo: 111}),
@@ -90,7 +100,7 @@ describe('RefraxResourceBase', function() {
 
         expect(resource._generateStack())
           .to.deep.equal([].concat(
-            collectionAccessor.__stack,
+            schema.users.__stack,
             new RefraxPath('pathFoo'),
             {paramFoo: 321},
             {queryFoo: 123},
@@ -98,9 +108,9 @@ describe('RefraxResourceBase', function() {
           ));
       });
 
-      it('correctly uses params options', function() {
+      it('correctly uses params options', () => {
         var options = new RefraxOptions({
-            paramsGenerator: function() {
+            paramsGenerator: () => {
               return {
                 paramFoo: 'abc'
               };
@@ -110,7 +120,7 @@ describe('RefraxResourceBase', function() {
             }
           })
           , resource = new RefraxResourceBase(
-          collectionAccessor,
+          schema.users,
           new RefraxQueryParameters({queryFoo: 123}),
           new RefraxParameters({paramFoo: 321}),
           options,
@@ -119,7 +129,7 @@ describe('RefraxResourceBase', function() {
 
         expect(resource._generateStack())
           .to.deep.equal([].concat(
-            collectionAccessor.__stack,
+            schema.users.__stack,
             new RefraxPath('pathFoo'),
             {paramFoo: 321},
             {queryFoo: 123},
@@ -130,22 +140,110 @@ describe('RefraxResourceBase', function() {
       });
     });
 
-    describe('_generateDescriptor', function() {
-      describe('invoked with no arguments', function() {
-        it('generates a descriptor with a default action ', function() {
-          var resource = new RefraxResourceBase(collectionAccessor)
+    describe('_generateDescriptor', () => {
+      describe('invoked with no arguments', () => {
+        it('generates a descriptor with a default action ', () => {
+          var resource = new RefraxResourceBase(schema.users)
             , descriptor = resource._generateDescriptor();
 
           expect(descriptor.action).to.equal(ACTION_GET);
         });
       });
 
-      describe('invoked with an action', function() {
-        it('generates a descriptor using that action ', function() {
-          var resource = new RefraxResourceBase(collectionAccessor)
+      describe('invoked with an action', () => {
+        it('generates a descriptor using that action ', () => {
+          var resource = new RefraxResourceBase(schema.users)
             , descriptor = resource._generateDescriptor(ACTION_CREATE);
 
           expect(descriptor.action).to.equal(ACTION_CREATE);
+        });
+      });
+    });
+
+    describe('fetch', () => {
+      beforeEach(mock_reset);
+
+      describe('invoked with', () => {
+        describe('no arguments', () => {
+          it('should look and behave as expected', () => {
+            const resource = new RefraxResourceBase(schema.users);
+
+            return delay_for_request(() => {
+              mock_get('/users', dataCollectionUsers);
+
+              expect(mock_request_count()).to.equal(0);
+
+              const promise = resource.fetch();
+              expect(promise).is.instanceof(Promise);
+
+              return promise.then((result) => {
+                expect(mock_request_count()).to.equal(1);
+                expect(result).is.instanceof(RefraxFragmentResult);
+                expect(result.data).to.deep.equal(dataCollectionUsers);
+              });
+            });
+          });
+        });
+
+        describe('noFetchGet', () => {
+          it('should look and behave as expected', () => {
+            const resource = new RefraxResourceBase(schema.users);
+
+            return delay_for_request(() => {
+              mock_get('/users', dataCollectionUsers);
+
+              expect(mock_request_count()).to.equal(0);
+
+              const promise = resource.fetch({ noFetchGet: true });
+              expect(promise).is.instanceof(Promise);
+
+              return promise.then((result) => {
+                expect(mock_request_count()).to.equal(0);
+                expect(result).is.instanceof(RefraxFragmentResult);
+                expect(result.data).to.equal(null);
+              });
+            });
+          });
+        });
+
+        describe('fragmentOnly', () => {
+          it('should look and behave as expected', () => {
+            const resource = new RefraxResourceBase(schema.users);
+
+            return delay_for_request(() => {
+              mock_get('/users', dataCollectionUsers);
+
+              expect(mock_request_count()).to.equal(0);
+
+              const result = resource.fetch({ fragmentOnly: true });
+              expect(result).is.instanceof(RefraxFragmentResult);
+
+              const start = mock_request_count();
+              return wait_for_promise(() => mock_request_count() !== start)
+                .then(() => {
+                  expect(mock_request_count()).to.equal(1);
+                });
+            });
+          });
+        });
+      });
+    });
+
+    describe('get', () => {
+      beforeEach(mock_reset);
+
+      describe('invoked with no arguments', () => {
+        it('should invoke a `get` descriptor', () => {
+          const resource = new RefraxResourceBase(schema.users);
+
+          mock_get('/users', dataCollectionUsers);
+
+          expect(resource.fetch({ noFetchGet: true, fragmentOnly: true }).data).to.equal(null);
+
+          return resource.get().then((result) => {
+            expect(result).is.instanceof(RefraxFragmentResult);
+            expect(result.data).to.deep.equal(dataCollectionUsers);
+          });
         });
       });
     });

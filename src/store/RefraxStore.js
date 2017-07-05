@@ -100,8 +100,8 @@ class RefraxStore {
       );
     }
 
-    this.cache.invalidate(resourceDescriptor, options);
-    this._notifyChange(resourceDescriptor, RefraxTools.extend({action: 'invalidate'}, options));
+    const touched = this.cache.invalidate(resourceDescriptor, options);
+    this._notifyChange('invalidate', touched, options);
   }
 
   // Fragment Map is intentionally separate to allow future switching depending
@@ -112,35 +112,43 @@ class RefraxStore {
   }
 
   touchResource(resourceDescriptor, data, options = {}) {
-    this.cache.touch(resourceDescriptor, data);
-    this._notifyChange(resourceDescriptor, RefraxTools.extend({action: 'touch'}, options));
+    const touched = this.cache.touch(resourceDescriptor, data);
+    this._notifyChange('touch', touched, options);
   }
 
   updateResource(resourceDescriptor, data, status, options = {}) {
-    this.cache.update(resourceDescriptor, data, status);
-    this._notifyChange(resourceDescriptor, RefraxTools.extend({action: 'update'}, options));
+    const touched = this.cache.update(resourceDescriptor, data, status);
+    this._notifyChange('update', touched, options);
   }
 
   destroyResource(resourceDescriptor, options = {}) {
-    this.cache.destroy(resourceDescriptor);
-    this._notifyChange(resourceDescriptor, RefraxTools.extend({action: 'destroy'}, options));
+    const touched = this.cache.destroy(resourceDescriptor);
+    this._notifyChange('destroy', touched, options);
   }
 
   //
 
-  _notifyChange(resourceDescriptor, event) {
-    if (event.noNotify === true) {
+  _notifyChange(action, touched, options) {
+    var i, len;
+
+    if (options.noNotify === true) {
       return;
     }
 
-    event = RefraxTools.extend({type: this.definition.type}, event);
+    const event = RefraxTools.extend({}, options, {
+      type: this.definition.type,
+      action: action
+    });
 
-    this.emit('change', event);
-    if (resourceDescriptor && resourceDescriptor.id) {
-      this.emit(
-        'change:' + resourceDescriptor.id,
-        RefraxTools.extend({id: resourceDescriptor.id}, event)
-      );
+    // fragments
+    for (i = 0, len = touched.fragments.length; i < len; i++) {
+      const id = touched.fragments[i];
+      this.emit(id, RefraxTools.extend({}, event, { fragment: id }));
+    }
+    // queries
+    for (i = 0, len = touched.queries.length; i < len; i++) {
+      const id = touched.queries[i];
+      this.emit(id, RefraxTools.extend({}, event, { query: id }));
     }
   }
 }
