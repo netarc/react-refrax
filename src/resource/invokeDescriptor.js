@@ -70,13 +70,16 @@ function invokeDescriptor(descriptor, options = {}) {
     Axios(requestConfig)
       .then(function(response) {
         processResponse(response && response.data, descriptor, null, options);
+
         const resource = store && store.fetchResource(descriptor) || {};
         resource.response = response;
+
         resolve(resource);
       }, function(err) {
         if (store) {
-          store.touchResource(descriptor, {timestamp: Date.now()}, options);
+          store.touchResource(descriptor, { timestamp: Date.now() }, options);
         }
+
         reject(new RequestError(err.response));
       });
   });

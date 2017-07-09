@@ -31,20 +31,20 @@
     "url": "https://github.com/netarc/refrax.git"
   },
   "dependencies": {
-    "eventemitter3": "^1.2.0",
-    "axios": "^0.15.3",
-    "bluebird": "^3.4.5",
-    "pluralize": "1.2.1"
+    "axios": "^0.16.2",
+    "bluebird": "^3.5.0",
+    "eventemitter3": "^2.0.3",
+    "pluralize": "^5.0.0"
   },
   "devDependencies": {
-    "babel": "^5.8.25",
-    "babel-core": "^5.8.25",
-    "babel-eslint": "^6.0.0",
+    "babel": "^6.23.0",
+    "babel-core": "^6.25.0",
+    "babel-eslint": "^7.2.3",
     "chai": "^4.0.2",
     "del": "^1.2.0",
     "enzyme": "^2.9.1",
-    "eslint": "^2.5.1",
-    "eslint-plugin-react": "^4.2.3",
+    "eslint": "^4.2.0",
+    "eslint-plugin-react": "^7.1.0",
     "fbjs-scripts": "^0.5.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.1.0",

@@ -49,11 +49,14 @@ function processResponse(data, descriptor, handler = null, options = {}) {
     );
   }
 
-  if (descriptor.action === ACTION_DELETE) {
-    descriptor.store.destroyResource(descriptor, options);
-  }
-  else {
-    descriptor.store.updateResource(descriptor, result.data, STATUS_COMPLETE, options);
+  const store = descriptor.store;
+  if (store) {
+    if (descriptor.action === ACTION_DELETE) {
+      store.destroyResource(descriptor, options);
+    }
+    else {
+      store.updateResource(descriptor, result.data, STATUS_COMPLETE, options);
+    }
   }
 }
 
