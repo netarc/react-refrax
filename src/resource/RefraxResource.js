@@ -48,7 +48,7 @@ class RefraxResource extends RefraxResourceBase {
       this._disposeSubscriber && this._disposeSubscriber();
     });
 
-    this._generateDescriptor((descriptor) => {
+    this._generateDescriptor((descriptor, options) => {
       this._dispatchLoad = (data) => {
         if (data) {
           this._dispatchLoad = null;
@@ -59,16 +59,11 @@ class RefraxResource extends RefraxResourceBase {
       };
 
       // NOTE: we invalidate before potentially subscribing
-      if (this._options.invalidate) {
-        // `invalidate: true` is an alias for `{ noPropgate: true }`
-        if (this._options.invalidate === true) {
-          this._options.invalidate = { noPropagate: true };
-        }
-
-        this.invalidate(this._options.invalidate);
+      if (options.invalidate) {
+        this.invalidate(options.invalidate);
       }
 
-      if (this._options.noSubscribe !== true && descriptor.store) {
+      if (options.noSubscribe !== true && descriptor.store) {
         this._subscribeToStore(descriptor);
       }
 
@@ -135,11 +130,9 @@ class RefraxResource extends RefraxResourceBase {
   invalidate(options = {}) {
     const descriptorOptions = new RefraxOptions({ errorOnInvalid: !!options.errorOnInvalid });
 
-    this._generateDescriptor(null, descriptorOptions, (descriptor) => {
+    this._generateDescriptor(descriptorOptions, options, (descriptor, options) => {
       if (descriptor.store) {
-        descriptor.store.invalidate(descriptor, RefraxTools.extend({}, options, {
-          invoker: this
-        }));
+        descriptor.store.invalidate(descriptor, options);
       }
 
       if (options.cascade === true) {

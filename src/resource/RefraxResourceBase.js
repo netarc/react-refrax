@@ -66,6 +66,11 @@ class RefraxResourceBase {
       }
     }
 
+    // `invalidate: true` is an alias for `{ noPropgate: true }`
+    if (options.invalidate === true) {
+      options.invalidate = { noPropagate: true };
+    }
+
     Object.defineProperty(this, '_schemaPath', {value: schemaPath});
     Object.defineProperty(this, '_paths', {value: paths});
 
@@ -81,17 +86,13 @@ class RefraxResourceBase {
   //
 
   get() {
-    return this._generateDescriptor((descriptor) => {
-      return invokeDescriptor(descriptor, this._options);
+    return this._generateDescriptor((descriptor, options) => {
+      return invokeDescriptor(descriptor, options);
     });
   }
 
   fetch(options = {}) {
-    options = RefraxTools.extend({}, this._options, options, {
-      invoker: this
-    });
-
-    return this._generateDescriptor((descriptor) => {
+    return this._generateDescriptor(options, (descriptor, options) => {
       const store = descriptor.store;
       var result = null
         , promise = null;
@@ -135,20 +136,45 @@ class RefraxResourceBase {
     );
   }
 
-  _generateDescriptor(action, data, onValid) {
-    if (RefraxTools.isFunction(action)) {
-      onValid = action;
-      action = null;
+  _generateDescriptor(...args) {
+    var action = ACTION_GET
+      , data = []
+      , options = null
+      , onValid = null;
+
+    while (args.length > 0) {
+      const arg = args.pop();
+
+      if (typeof(arg) === 'string') {
+        action = arg;
+      }
+      else if (RefraxTools.isFunction(arg)) {
+        onValid = arg;
+      }
+      else if (RefraxTools.isArray(arg) || arg instanceof RefraxOptions) {
+        data = arg;
+      }
+      else if (RefraxTools.isPlainObject(arg)) {
+        options = arg;
+      }
+      else {
+        throw new TypeError(
+          '_generateDescriptor invalid argument found: `' + arg + '`'
+        );
+      }
     }
 
-    const stack = this._generateStack().concat(data || []);
-    const descriptor = new RefraxResourceDescriptor(action || ACTION_GET, stack);
+    const stack = this._generateStack().concat(data);
+    const descriptor = new RefraxResourceDescriptor(action, stack);
+    options = RefraxTools.extend({}, this._options, options, {
+      invoker: this
+    });
 
     if (!onValid) {
       return descriptor;
     }
 
-    return descriptor.valid && onValid(descriptor);
+    return descriptor.valid && onValid(descriptor, options);
   }
 }
 

@@ -6,33 +6,58 @@
  * LICENSE file in the root directory of this source tree.
  */
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
+const RefraxTools = require('RefraxTools');
 const RefraxConstants = require('RefraxConstants');
 const parseNested = require('parseNested');
 const parseUnnested = require('parseUnnested');
 const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
-const ACTION_GET = RefraxConstants.action.get;
+const ACTION_DELETE = RefraxConstants.action.delete;
 
 
-function processResponse(data, resourceDescriptor, handler) {
-  var result = (handler || processResponse.defaultHandler)(data, resourceDescriptor)
-    , type = resourceDescriptor && resourceDescriptor.type || result.type
-    , store = resourceDescriptor.store;
-
-  if (!type) {
+function processResponse(data, descriptor, handler = null, options = {}) {
+  if (!(descriptor instanceof RefraxResourceDescriptor)) {
     throw new TypeError(
-      'processResponse: Failed to resolve data type.'
+      'processResponse: descriptor of type `ResourceDescriptor` expected but found `' +
+      typeof(descriptor) + '`.'
     );
   }
 
-  if (!resourceDescriptor) {
-    resourceDescriptor = new RefraxResourceDescriptor(ACTION_GET, [store]);
+  if (RefraxTools.isPlainObject(handler)) {
+    options = handler;
+    handler = null;
   }
-  resourceDescriptor.type = type;
-  resourceDescriptor.partial = resourceDescriptor.partial ||
-                               result.partial ||
-                               RefraxConstants.defaultFragment;
 
-  store.updateResource(resourceDescriptor, result.data, STATUS_COMPLETE);
+  handler = handler || processResponse.defaultHandler;
+  if (!handler || typeof(handler) !== 'function') {
+    throw new TypeError(
+      'processResponse: expected handler `Function`, but found `' + typeof(handler) + '`.'
+    );
+  }
+
+  if (!RefraxTools.isPlainObject(options)) {
+    throw new TypeError(
+      'processResponse: options of type `Object` expected but found `' + typeof(options) + '`.'
+    );
+  }
+
+  const result = data && handler(data, descriptor) || {};
+
+  if (result.type && result.type !== descriptor.type) {
+    throw new TypeError(
+      'processResponse: Type mismatch on processed data, expected `' + descriptor.type +
+      '` but found `' + result.type + '`.'
+    );
+  }
+
+  const store = descriptor.store;
+  if (store) {
+    if (descriptor.action === ACTION_DELETE) {
+      store.destroyResource(descriptor, options);
+    }
+    else {
+      store.updateResource(descriptor, result.data, STATUS_COMPLETE, options);
+    }
+  }
 }
 
 /**

@@ -11,12 +11,9 @@ const RefraxTools = require('RefraxTools');
 const RequestError = require('RequestError');
 const RefraxConstants = require('RefraxConstants');
 const processResponse = require('processResponse');
-const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
 const STATUS_STALE = RefraxConstants.status.STALE;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
 const ACTION_GET = RefraxConstants.action.get;
-const ACTION_DELETE = RefraxConstants.action.delete;
-const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 
 
 // We only quietly consume RequestError's
@@ -26,38 +23,6 @@ Promise.onPossiblyUnhandledRejection(function(err, promise) {
   }
   throw err;
 });
-
-/**
- * Given a known Store update a resource descriptors data and repeat with
- * any embedded data.
- */
-function processRequestSuccess(descriptor, response, options) {
-  var data = response && response.data;
-
-  if (!descriptor.store) {
-    return;
-  }
-
-  // Successfull response but no data.. so lets default to an empty value accordingly
-  if (!data) {
-    if (descriptor.classify === CLASSIFY_COLLECTION) {
-      data = [];
-    }
-    else {
-      data = {};
-    }
-  }
-
-  if (descriptor.action === ACTION_GET) {
-    processResponse(data, descriptor);
-  }
-  else if (descriptor.action === ACTION_DELETE) {
-    descriptor.store.destroyResource(descriptor, options);
-  }
-  else {
-    descriptor.store.updateResource(descriptor, data, STATUS_COMPLETE, options);
-  }
-}
 
 function containsMultipart(data) {
   return data && RefraxTools.any(data, function(value) {
@@ -104,14 +69,17 @@ function invokeDescriptor(descriptor, options = {}) {
     // eslint-disable-next-line new-cap
     Axios(requestConfig)
       .then(function(response) {
-        processRequestSuccess(descriptor, response, options);
+        processResponse(response && response.data, descriptor, null, options);
+
         const resource = store && store.fetchResource(descriptor) || {};
         resource.response = response;
+
         resolve(resource);
       }, function(err) {
         if (store) {
-          store.touchResource(descriptor, {timestamp: Date.now()}, options);
+          store.touchResource(descriptor, { timestamp: Date.now() }, options);
         }
+
         reject(new RequestError(err.response));
       });
   });

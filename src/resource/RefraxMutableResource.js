@@ -36,26 +36,20 @@ class RefraxMutableResource extends RefraxResourceBase {
   }
 
   create(...data) {
-    return this._generateDescriptor(ACTION_CREATE, data, (descriptor) => {
-      return invokeDescriptor(descriptor, RefraxTools.extend(this._options, {
-        invoker: this
-      }));
+    return this._generateDescriptor(ACTION_CREATE, data, (descriptor, options) => {
+      return invokeDescriptor(descriptor, options);
     });
   }
 
   destroy(...data) {
-    return this._generateDescriptor(ACTION_DELETE, data, (descriptor) => {
-      return invokeDescriptor(descriptor, RefraxTools.extend(this._options, {
-        invoker: this
-      }));
+    return this._generateDescriptor(ACTION_DELETE, data, (descriptor, options) => {
+      return invokeDescriptor(descriptor, options);
     });
   }
 
   update(...data) {
-    return this._generateDescriptor(ACTION_UPDATE, data, (descriptor) => {
-      return invokeDescriptor(descriptor, RefraxTools.extend(this._options, {
-        invoker: this
-      }));
+    return this._generateDescriptor(ACTION_UPDATE, data, (descriptor, options) => {
+      return invokeDescriptor(descriptor, options);
     });
   }
 }
