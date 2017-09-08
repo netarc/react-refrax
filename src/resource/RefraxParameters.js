@@ -5,30 +5,12 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
-
+const ComposableHash = require('RefraxComposableHash');
 
 /**
- * A RefraxParameters is a wrapper around an object to identify it as a
- * set of parameters.
+ * A RefraxParameters is a simple subclass to identify a uniuqe ComposableHash class.
  */
-class RefraxParameters {
-  static validate(params) {
-    if (params && !(params instanceof RefraxParameters ||
-                     RefraxTools.isPlainObject(params))) {
-      throw new TypeError(
-        'RefraxParameters expected argument of type `Object`\n\r' +
-        'found: `' + params + '`'
-      );
-    }
-  }
-
-  constructor(...args) {
-    RefraxTools.each(args, (params) => {
-      RefraxParameters.validate(params);
-      RefraxTools.extend(this, params);
-    });
-  }
+class RefraxParameters extends ComposableHash {
 }
 
 export default RefraxParameters;

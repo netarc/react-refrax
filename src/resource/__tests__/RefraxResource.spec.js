@@ -115,7 +115,7 @@ describe('RefraxResource', () => {
           expect(resource.timestamp).to.not.equal(TIMESTAMP_LOADING);
           expect(store.once.callCount).to.equal(3);
 
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, schema.users.__stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, schema.users.__stack);
           store.updateResource(descriptor, dataCollectionUsersUpdate, STATUS_COMPLETE);
 
           expect(onLoad.callCount).to.equal(1);
@@ -254,7 +254,7 @@ describe('RefraxResource', () => {
     describe('_subscribeToStore', () => {
       it('correctly sets up a weakly referenced subscriber', () => {
         const store = schema.__storeMap.getOrCreate('user');
-        const descriptor = new RefraxResourceDescriptor(ACTION_GET, schema.users.__stack);
+        const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, schema.users.__stack);
         const resource = new RefraxResource(schema.users, new RefraxOptions({ noSubscribe: true }));
         const onChange = sinon.spy();
 

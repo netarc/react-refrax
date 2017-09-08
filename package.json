@@ -24,7 +24,7 @@
     "build": "gulp",
     "lint": "eslint ./src",
     "test": "gulp test",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",

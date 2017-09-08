@@ -5,29 +5,12 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
-
+const ComposableHash = require('RefraxComposableHash');
 
 /**
- * A RefraxOptions is a wrapper around an object to identify it as a set of options.
+ * A RefrashOptions is a simple subclass to identify a uniuqe ComposableHash class.
  */
-class RefraxOptions {
-  static validate(options) {
-    if (options && !(options instanceof RefraxOptions ||
-                     RefraxTools.isPlainObject(options))) {
-      throw new TypeError(
-        'RefraxOptions expected argument of type `Object`\n\r' +
-        'found: `' + options + '`'
-      );
-    }
-  }
-
-  constructor(...args) {
-    RefraxTools.each(args, (options) => {
-      RefraxOptions.validate(options);
-      RefraxTools.extend(this, options);
-    });
-  }
+class RefrashOptions extends ComposableHash {
 }
 
-export default RefraxOptions;
+export default RefrashOptions;

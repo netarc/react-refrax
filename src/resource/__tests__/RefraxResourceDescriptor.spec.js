@@ -37,7 +37,7 @@ describe('RefraxResourceDescriptor', () => {
   describe('instantiation', () => {
     describe('with no arguments', () => {
       it('should have correct shape default for GET', () => {
-        const descriptor = new RefraxResourceDescriptor();
+        const descriptor = new RefraxResourceDescriptor(null, );
 
         expect(descriptor).to.deep.match({
           action: ACTION_GET,
@@ -59,7 +59,7 @@ describe('RefraxResourceDescriptor', () => {
 
     describe('with just an action argument', () => {
       it('should have correct shape for CREATE', () => {
-        const descriptor = new RefraxResourceDescriptor(ACTION_CREATE);
+        const descriptor = new RefraxResourceDescriptor(null, ACTION_CREATE);
 
         expect(descriptor).to.deep.match({
           action: ACTION_CREATE,
@@ -79,7 +79,7 @@ describe('RefraxResourceDescriptor', () => {
       });
 
       it('should have correct shape for UPDATE', () => {
-        const descriptor = new RefraxResourceDescriptor(ACTION_UPDATE);
+        const descriptor = new RefraxResourceDescriptor(null, ACTION_UPDATE);
 
         expect(descriptor).to.deep.match({
           action: ACTION_UPDATE,
@@ -99,7 +99,7 @@ describe('RefraxResourceDescriptor', () => {
       });
 
       it('should have correct shape for DELETE', () => {
-        const descriptor = new RefraxResourceDescriptor(ACTION_DELETE);
+        const descriptor = new RefraxResourceDescriptor(null, ACTION_DELETE);
 
         expect(descriptor).to.deep.match({
           action: ACTION_DELETE,
@@ -125,7 +125,7 @@ describe('RefraxResourceDescriptor', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaNamespace('api'));
           const stack = schema.api.__stack;
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
           expect(descriptor).to.deep.match({
             action: ACTION_GET,
@@ -152,7 +152,7 @@ describe('RefraxResourceDescriptor', () => {
           schema.api.addLeaf(createSchemaCollection('projects'));
           schema.api.projects.addLeaf(createSchemaNamespace('bar'));
           const stack = schema.api.projects.bar.__stack;
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
           expect(descriptor).to.deep.match({
             action: ACTION_GET,
@@ -179,7 +179,7 @@ describe('RefraxResourceDescriptor', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaCollection('projects'));
           const stack = schema.projects.__stack;
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
           expect(descriptor).to.deep.match({
             action: ACTION_GET,
@@ -207,7 +207,7 @@ describe('RefraxResourceDescriptor', () => {
           const stack = schema.projects.project.users.__stack.concat([
             new RefraxParameters({ projectId: 123 })
           ]);
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
           expect(descriptor).to.deep.match({
             action: ACTION_GET,
@@ -235,7 +235,7 @@ describe('RefraxResourceDescriptor', () => {
           schema.addLeaf(createSchemaCollection('projects'));
           const stack = schema.projects.project.__stack;
           expect(() => {
-            new RefraxResourceDescriptor(ACTION_GET, stack);
+            new RefraxResourceDescriptor(null, ACTION_GET, stack);
           }).to.throw(TypeError, 'Failed to map path: `/projects/:projectId`');
         });
 
@@ -245,7 +245,7 @@ describe('RefraxResourceDescriptor', () => {
           const stack = schema.projects.project.__stack.concat([
             new RefraxParameters({ projectId: 123 })
           ]);
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
           expect(descriptor).to.deep.match({
             action: ACTION_GET,
@@ -273,7 +273,7 @@ describe('RefraxResourceDescriptor', () => {
           const stack = schema.projects.project.users.user.__stack.concat([
             new RefraxParameters({ projectId: 123, userId: 321 })
           ]);
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
           expect(descriptor).to.deep.match({
             action: ACTION_GET,
@@ -300,7 +300,7 @@ describe('RefraxResourceDescriptor', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaResource('settings'));
           const stack = schema.settings.__stack;
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
           expect(descriptor).to.deep.match({
             action: ACTION_GET,
@@ -328,7 +328,7 @@ describe('RefraxResourceDescriptor', () => {
           const stack = schema.projects.project.settings.__stack.concat([
             new RefraxParameters({ projectId: 123 })
           ]);
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
           expect(descriptor).to.deep.match({
             action: ACTION_GET,
@@ -355,7 +355,7 @@ describe('RefraxResourceDescriptor', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaNamespace('api'));
           const stack = schema.api.__stack.concat(new RefraxQueryParameters({ foo: 123 }));
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
           expect(descriptor).to.deep.match({
             action: ACTION_GET,
@@ -380,7 +380,7 @@ describe('RefraxResourceDescriptor', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaNamespace('api'));
           const stack = schema.api.__stack.concat(new RefraxQueryParameters({ foo: 'bar' }));
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
           expect(descriptor).to.deep.match({
             action: ACTION_GET,
@@ -405,7 +405,7 @@ describe('RefraxResourceDescriptor', () => {
           const schema = new RefraxSchema();
           schema.addLeaf(createSchemaNamespace('api'));
           const stack = schema.api.__stack.concat(new RefraxQueryParameters({ foo: [1, 'abc'] }));
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
           expect(descriptor).to.deep.match({
             action: ACTION_GET,
@@ -434,7 +434,7 @@ describe('RefraxResourceDescriptor', () => {
             new RefraxQueryParameters({ bar: 'abc' }),
             new RefraxQueryParameters({ foo: [1, 2] })
           ]);
-          const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+          const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
           expect(descriptor).to.deep.match({
             action: ACTION_GET,
@@ -464,7 +464,7 @@ describe('RefraxResourceDescriptor', () => {
             const stack = schema.api.__stack.concat(
               new RefraxPath('bar')
             );
-            const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+            const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
             expect(descriptor).to.deep.match({
               action: ACTION_GET,
@@ -493,7 +493,7 @@ describe('RefraxResourceDescriptor', () => {
               new RefraxQueryParameters({ foo: 123 }),
               new RefraxPath('foo'),
             );
-            const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+            const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
             expect(descriptor).to.deep.match({
               action: ACTION_GET,
@@ -522,7 +522,7 @@ describe('RefraxResourceDescriptor', () => {
             const stack = schema.api.__stack.concat(
               new RefraxPath('bar', true)
             );
-            const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+            const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
             expect(descriptor).to.deep.match({
               action: ACTION_GET,
@@ -550,7 +550,7 @@ describe('RefraxResourceDescriptor', () => {
               new RefraxPath('bar', true),
               new RefraxQueryParameters({ foo: 123 })
             );
-            const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+            const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
             expect(descriptor).to.deep.match({
               action: ACTION_GET,
@@ -583,7 +583,7 @@ describe('RefraxResourceDescriptor', () => {
             const stack = schema.projects.project.__stack.concat([
               new RefraxParameters({ pId: 123 })
             ]);
-            const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+            const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
             expect(descriptor).to.deep.match({
               action: ACTION_GET,
@@ -615,7 +615,7 @@ describe('RefraxResourceDescriptor', () => {
             const stack = schema.projects.project.users.user.__stack.concat([
               new RefraxParameters({ pId: 123, uId: 321 })
             ]);
-            const descriptor = new RefraxResourceDescriptor(ACTION_GET, stack);
+            const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, stack);
 
             expect(descriptor).to.deep.match({
               action: ACTION_GET,
@@ -642,7 +642,7 @@ describe('RefraxResourceDescriptor', () => {
     describe('resolves storeMap', () => {
       it('should use default global storeMap when not using a Schema', () => {
         const projects = createSchemaCollection('projects');
-        const descriptor = new RefraxResourceDescriptor(ACTION_GET, projects.__stack);
+        const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, projects.__stack);
 
         expect(descriptor.store)
           .to.equal(RefraxResourceDescriptor.storeMap.getOrCreate(descriptor.type));
@@ -651,7 +651,7 @@ describe('RefraxResourceDescriptor', () => {
       it('should use schema storeMap when using a Schema', () => {
         const schema = new RefraxSchema();
         schema.addLeaf(createSchemaCollection('projects'));
-        const descriptor = new RefraxResourceDescriptor(ACTION_GET, schema.projects.__stack);
+        const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, schema.projects.__stack);
 
         expect(descriptor.store)
           .to.not.equal(RefraxResourceDescriptor.storeMap.getOrCreate(descriptor.type));

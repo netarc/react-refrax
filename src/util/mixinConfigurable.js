@@ -14,36 +14,27 @@ const RefraxQueryParameters = require('RefraxQueryParameters');
 const Mixin = {
   withOptions: function(...args) {
     const clone = this.clone && this.clone() || this;
-    clone.setOptions(...args);
+    clone._options.extend(...args);
     return clone;
   },
   withParams: function(...args) {
     const clone = this.clone && this.clone() || this;
-    clone.setParams(...args);
+    clone._parameters.extend(...args);
     return clone;
   },
   withQueryParams: function(...args) {
     const clone = this.clone && this.clone() || this;
-    clone.setQueryParams(...args);
+    clone._queryParams.extend(...args);
     return clone;
   },
   setOptions: function(...args) {
-    RefraxTools.each(args, (options) => {
-      RefraxOptions.validate(options);
-      RefraxTools.extend(this._options, options);
-    });
+    this._options.extend(...args);
   },
   setParams: function(...args) {
-    RefraxTools.each(args, (params) => {
-      RefraxParameters.validate(params);
-      RefraxTools.extend(this._parameters, params);
-    });
+    this._parameters.extend(...args);
   },
   setQueryParams: function(...args) {
-    RefraxTools.each(args, (params) => {
-      RefraxQueryParameters.validate(params);
-      RefraxTools.extend(this._queryParams, params);
-    });
+    this._queryParams.extend(...args);
   }
 };
 

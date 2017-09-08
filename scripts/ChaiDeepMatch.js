@@ -1,8 +1,13 @@
 const chai = require('chai');
+const sinon = require('sinon');
 
 function pluginDeepMatch(chai, utils) {
   function deepMatchObject(expect, actual, path) {
     path = path || '';
+
+    if (expect === actual) {
+      return true;
+    }
 
     // null value
     if (expect === null) {
@@ -54,7 +59,8 @@ function pluginDeepMatch(chai, utils) {
             '"' + actual.toISOString() + '" at path "' + path + '".'
           );
         }
-      } else {
+      }
+      else {
         throw(
           'Expected to have date "' + expect.toISOString() + '" but got ' +
           '"' + actual + '" at path "' + path + '".'

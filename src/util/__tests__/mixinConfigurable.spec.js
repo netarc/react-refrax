@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 const chai = require('chai');
+const sinon = require('sinon');
 const mixinConfigurable = require('mixinConfigurable');
 const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
@@ -35,40 +36,22 @@ describe('mixinConfigurable', function() {
 
   describe('methods', function() {
     describe('withOptions', function() {
-      it('should require a valid options argument', function() {
-        var configurable = mixinConfigurable({});
+      it('should forward to internal extend', function() {
+        var configurable = mixinConfigurable({})
+          , arg1 = { foo: 123 }
+          , fn1 = () => {};
 
-        expect(function() {
-          configurable.withOptions(123);
-        }).to.throw(Error, 'RefraxOptions expected argument of type `Object`');
+        sinon.spy(configurable._options, 'extend');
+        sinon.spy(configurable._parameters, 'extend');
+        sinon.spy(configurable._queryParams, 'extend');
 
-        expect(function() {
-          configurable.withOptions(function() { });
-        }).to.throw(Error, 'RefraxOptions expected argument of type `Object`');
+        configurable.withOptions(arg1, fn1);
 
-        expect(function() {
-          configurable.withOptions('foobar');
-        }).to.throw(Error, 'RefraxOptions expected argument of type `Object`');
-      });
-
-      it('should correctly update', function() {
-        var configurable1 = mixinConfigurable({})
-          , configurable2 = mixinConfigurable({}, { _options: {foo: 321} });
-
-        configurable1.withOptions({bar: 123});
-        expect(configurable1._parameters).deep.equals({});
-        expect(configurable1._queryParams).deep.equals({});
-        expect(configurable1._options).deep.equals({
-          bar: 123
-        });
-
-        configurable2.withOptions({bar: 123});
-        expect(configurable2._parameters).deep.equals({});
-        expect(configurable2._queryParams).deep.equals({});
-        expect(configurable2._options).deep.equals({
-          foo: 321,
-          bar: 123
-        });
+        expect(configurable._options.extend.callCount).to.equal(1);
+        expect(configurable._parameters.extend.callCount).to.equal(0);
+        expect(configurable._queryParams.extend.callCount).to.equal(0);
+        expect(configurable._options.extend.getCall(0).args[0]).to.equal(arg1);
+        expect(configurable._options.extend.getCall(0).args[1]).to.equal(fn1);
       });
 
       it('should return self with no clone', function() {
@@ -91,40 +74,22 @@ describe('mixinConfigurable', function() {
     });
 
     describe('withParams', function() {
-      it('should require a valid params argument', function() {
-        var configurable = mixinConfigurable({});
+      it('should forward to internal extend', function() {
+        var configurable = mixinConfigurable({})
+          , arg1 = { foo: 123 }
+          , fn1 = () => {};
 
-        expect(function() {
-          configurable.withParams(123);
-        }).to.throw(Error, 'RefraxParameters expected argument of type `Object`');
+        sinon.spy(configurable._options, 'extend');
+        sinon.spy(configurable._parameters, 'extend');
+        sinon.spy(configurable._queryParams, 'extend');
 
-        expect(function() {
-          configurable.withParams(function() { });
-        }).to.throw(Error, 'RefraxParameters expected argument of type `Object`');
+        configurable.withParams(arg1, fn1);
 
-        expect(function() {
-          configurable.withParams('foobar');
-        }).to.throw(Error, 'RefraxParameters expected argument of type `Object`');
-      });
-
-      it('should correctly update', function() {
-        var configurable1 = mixinConfigurable({})
-          , configurable2 = mixinConfigurable({}, { _parameters: {foo: 321} });
-
-        configurable1.withParams({bar: 123});
-        expect(configurable1._options).deep.equals({});
-        expect(configurable1._queryParams).deep.equals({});
-        expect(configurable1._parameters).deep.equals({
-          bar: 123
-        });
-
-        configurable2.withParams({bar: 123});
-        expect(configurable2._options).deep.equals({});
-        expect(configurable2._queryParams).deep.equals({});
-        expect(configurable2._parameters).deep.equals({
-          foo: 321,
-          bar: 123
-        });
+        expect(configurable._options.extend.callCount).to.equal(0);
+        expect(configurable._parameters.extend.callCount).to.equal(1);
+        expect(configurable._queryParams.extend.callCount).to.equal(0);
+        expect(configurable._parameters.extend.getCall(0).args[0]).to.equal(arg1);
+        expect(configurable._parameters.extend.getCall(0).args[1]).to.equal(fn1);
       });
 
       it('should return self with no clone', function() {
@@ -147,40 +112,22 @@ describe('mixinConfigurable', function() {
     });
 
     describe('withQueryParams', function() {
-      it('should require a valid query params argument', function() {
-        var configurable = mixinConfigurable({});
+      it('should forward to internal extend', function() {
+        var configurable = mixinConfigurable({})
+          , arg1 = { foo: 123 }
+          , fn1 = () => {};
 
-        expect(function() {
-          configurable.withQueryParams(123);
-        }).to.throw(Error, 'RefraxQueryParameters expected argument of type `Object`');
+        sinon.spy(configurable._options, 'extend');
+        sinon.spy(configurable._parameters, 'extend');
+        sinon.spy(configurable._queryParams, 'extend');
 
-        expect(function() {
-          configurable.withQueryParams(function() { });
-        }).to.throw(Error, 'RefraxQueryParameters expected argument of type `Object`');
+        configurable.withQueryParams(arg1, fn1);
 
-        expect(function() {
-          configurable.withQueryParams('foobar');
-        }).to.throw(Error, 'RefraxQueryParameters expected argument of type `Object`');
-      });
-
-      it('should correctly update', function() {
-        var configurable1 = mixinConfigurable({})
-          , configurable2 = mixinConfigurable({}, { _queryParams: {foo: 321} });
-
-        configurable1.withQueryParams({bar: 123});
-        expect(configurable1._options).deep.equals({});
-        expect(configurable1._parameters).deep.equals({});
-        expect(configurable1._queryParams).deep.equals({
-          bar: 123
-        });
-
-        configurable2.withQueryParams({bar: 123});
-        expect(configurable2._options).deep.equals({});
-        expect(configurable2._parameters).deep.equals({});
-        expect(configurable2._queryParams).deep.equals({
-          foo: 321,
-          bar: 123
-        });
+        expect(configurable._options.extend.callCount).to.equal(0);
+        expect(configurable._parameters.extend.callCount).to.equal(0);
+        expect(configurable._queryParams.extend.callCount).to.equal(1);
+        expect(configurable._queryParams.extend.getCall(0).args[0]).to.equal(arg1);
+        expect(configurable._queryParams.extend.getCall(0).args[1]).to.equal(fn1);
       });
 
       it('should return self with no clone', function() {
@@ -203,116 +150,62 @@ describe('mixinConfigurable', function() {
     });
 
     describe('setOptions', function() {
-      it('should require a valid options argument', function() {
-        var configurable = mixinConfigurable({});
+      it('should forward to internal extend', function() {
+        var configurable = mixinConfigurable({})
+          , arg1 = { foo: 123 }
+          , fn1 = () => {};
 
-        expect(function() {
-          configurable.setOptions(123);
-        }).to.throw(Error, 'RefraxOptions expected argument of type `Object`');
+        sinon.spy(configurable._options, 'extend');
+        sinon.spy(configurable._parameters, 'extend');
+        sinon.spy(configurable._queryParams, 'extend');
 
-        expect(function() {
-          configurable.setOptions(function() { });
-        }).to.throw(Error, 'RefraxOptions expected argument of type `Object`');
+        configurable.setOptions(arg1, fn1);
 
-        expect(function() {
-          configurable.setOptions('foobar');
-        }).to.throw(Error, 'RefraxOptions expected argument of type `Object`');
-      });
-
-      it('should correctly update', function() {
-        var configurable1 = mixinConfigurable({})
-          , configurable2 = mixinConfigurable({}, { _options: {foo: 321} });
-
-        configurable1.setOptions({bar: 123});
-        expect(configurable1._parameters).deep.equals({});
-        expect(configurable1._queryParams).deep.equals({});
-        expect(configurable1._options).deep.equals({
-          bar: 123
-        });
-
-        configurable2.setOptions({bar: 123});
-        expect(configurable2._parameters).deep.equals({});
-        expect(configurable2._queryParams).deep.equals({});
-        expect(configurable2._options).deep.equals({
-          foo: 321,
-          bar: 123
-        });
+        expect(configurable._options.extend.callCount).to.equal(1);
+        expect(configurable._parameters.extend.callCount).to.equal(0);
+        expect(configurable._queryParams.extend.callCount).to.equal(0);
+        expect(configurable._options.extend.getCall(0).args[0]).to.equal(arg1);
+        expect(configurable._options.extend.getCall(0).args[1]).to.equal(fn1);
       });
     });
 
     describe('setParams', function() {
-      it('should require a valid params argument', function() {
-        var configurable = mixinConfigurable({});
+      it('should forward to internal extend', function() {
+        var configurable = mixinConfigurable({})
+          , arg1 = { foo: 123 }
+          , fn1 = () => {};
 
-        expect(function() {
-          configurable.setParams(123);
-        }).to.throw(Error, 'RefraxParameters expected argument of type `Object`');
+        sinon.spy(configurable._options, 'extend');
+        sinon.spy(configurable._parameters, 'extend');
+        sinon.spy(configurable._queryParams, 'extend');
 
-        expect(function() {
-          configurable.setParams(function() { });
-        }).to.throw(Error, 'RefraxParameters expected argument of type `Object`');
+        configurable.setParams(arg1, fn1);
 
-        expect(function() {
-          configurable.setParams('foobar');
-        }).to.throw(Error, 'RefraxParameters expected argument of type `Object`');
-      });
-
-      it('should correctly update', function() {
-        var configurable1 = mixinConfigurable({})
-          , configurable2 = mixinConfigurable({}, { _parameters: {foo: 321} });
-
-        configurable1.setParams({bar: 123});
-        expect(configurable1._options).deep.equals({});
-        expect(configurable1._queryParams).deep.equals({});
-        expect(configurable1._parameters).deep.equals({
-          bar: 123
-        });
-
-        configurable2.setParams({bar: 123});
-        expect(configurable2._options).deep.equals({});
-        expect(configurable2._queryParams).deep.equals({});
-        expect(configurable2._parameters).deep.equals({
-          foo: 321,
-          bar: 123
-        });
+        expect(configurable._options.extend.callCount).to.equal(0);
+        expect(configurable._parameters.extend.callCount).to.equal(1);
+        expect(configurable._queryParams.extend.callCount).to.equal(0);
+        expect(configurable._parameters.extend.getCall(0).args[0]).to.equal(arg1);
+        expect(configurable._parameters.extend.getCall(0).args[1]).to.equal(fn1);
       });
     });
 
     describe('setQueryParams', function() {
-      it('should require a valid query params argument', function() {
-        var configurable = mixinConfigurable({});
+      it('should forward to internal extend', function() {
+        var configurable = mixinConfigurable({})
+          , arg1 = { foo: 123 }
+          , fn1 = () => {};
 
-        expect(function() {
-          configurable.setQueryParams(123);
-        }).to.throw(Error, 'RefraxQueryParameters expected argument of type `Object`');
+        sinon.spy(configurable._options, 'extend');
+        sinon.spy(configurable._parameters, 'extend');
+        sinon.spy(configurable._queryParams, 'extend');
 
-        expect(function() {
-          configurable.setQueryParams(function() { });
-        }).to.throw(Error, 'RefraxQueryParameters expected argument of type `Object`');
+        configurable.setQueryParams(arg1, fn1);
 
-        expect(function() {
-          configurable.setQueryParams('foobar');
-        }).to.throw(Error, 'RefraxQueryParameters expected argument of type `Object`');
-      });
-
-      it('should correctly update', function() {
-        var configurable1 = mixinConfigurable({})
-          , configurable2 = mixinConfigurable({}, { _queryParams: {foo: 321} });
-
-        configurable1.setQueryParams({bar: 123});
-        expect(configurable1._options).deep.equals({});
-        expect(configurable1._parameters).deep.equals({});
-        expect(configurable1._queryParams).deep.equals({
-          bar: 123
-        });
-
-        configurable2.setQueryParams({bar: 123});
-        expect(configurable2._options).deep.equals({});
-        expect(configurable2._parameters).deep.equals({});
-        expect(configurable2._queryParams).deep.equals({
-          foo: 321,
-          bar: 123
-        });
+        expect(configurable._options.extend.callCount).to.equal(0);
+        expect(configurable._parameters.extend.callCount).to.equal(0);
+        expect(configurable._queryParams.extend.callCount).to.equal(1);
+        expect(configurable._queryParams.extend.getCall(0).args[0]).to.equal(arg1);
+        expect(configurable._queryParams.extend.getCall(0).args[1]).to.equal(fn1);
       });
     });
   });

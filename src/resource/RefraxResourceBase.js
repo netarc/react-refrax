@@ -40,6 +40,11 @@ class RefraxResourceBase {
       );
     }
 
+    // SchemaPath is a `mixinConfigurable`
+    RefraxTools.extend(options, schemaPath._options);
+    RefraxTools.extend(parameters, schemaPath._parameters);
+    RefraxTools.extend(queryParams, schemaPath._queryParams);
+
     for (i=0; i<args.length; i++) {
       arg = args[i];
       if (arg === undefined || arg === null) {
@@ -52,14 +57,14 @@ class RefraxResourceBase {
         paths.push(arg);
       }
       else if (arg instanceof RefraxOptions) {
-        RefraxTools.extend(options, arg);
+        options.extend(arg);
       }
       else if (arg instanceof RefraxParameters) {
-        RefraxTools.extend(parameters, arg);
+        parameters.extend(arg);
       }
       else if (arg instanceof RefraxQueryParameters ||
                RefraxTools.isPlainObject(arg)) {
-        RefraxTools.extend(queryParams, arg);
+        queryParams.extend(arg);
       }
       else {
         console.warn('RefraxResourceBase: unexpected argument `' + arg + '` passed to constructor.');
@@ -76,6 +81,7 @@ class RefraxResourceBase {
 
     mixinDisposable(this);
     this.onDispose(mixinSubscribable.asDisposable(this));
+    // Cloning not supported
     mixinConfigurable(this, {
       _options: options,
       _parameters: parameters,
@@ -116,23 +122,12 @@ class RefraxResourceBase {
   //
 
   _generateStack() {
-    var stack = [];
-
-    if (this._options.paramsGenerator) {
-      stack.push(new RefraxParameters(this._options.paramsGenerator()));
-    }
-
-    if (this._options.params) {
-      stack.push(new RefraxParameters(this._options.params));
-    }
-
     return [].concat(
       this._schemaPath.__stack,
       this._paths,
       this._parameters,
       this._queryParams,
-      this._options,
-      stack
+      this._options
     );
   }
 
@@ -165,8 +160,8 @@ class RefraxResourceBase {
     }
 
     const stack = this._generateStack().concat(data);
-    const descriptor = new RefraxResourceDescriptor(action, stack);
-    options = RefraxTools.extend({}, this._options, options, {
+    const descriptor = new RefraxResourceDescriptor(this, action, stack);
+    options = RefraxTools.extend({}, this._options.compose(this), options, {
       invoker: this
     });
 

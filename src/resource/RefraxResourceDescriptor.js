@@ -137,21 +137,13 @@ function resolveOptions(resourceDescriptor, resolver, options) {
   if (typeof(options.errorOnInvalid) === 'boolean') {
     resolver.errorOnInvalid = options.errorOnInvalid;
   }
-
-  if (RefraxTools.isFunction(options.paramsGenerator)) {
-    RefraxTools.extend(resourceDescriptor.params, options.paramsGenerator());
-  }
-
-  if (RefraxTools.isObject(options.params)) {
-    RefraxTools.extend(resourceDescriptor.params, options.params);
-  }
 }
 
 /**
  * Given a stack representing a path in our Schema tree and options affecting it, we
  * reduce and resolve it down to a descriptor describing a resource.
  */
-function processStack(resourceDescriptor, stack) {
+function processStack(invoker, resourceDescriptor, stack) {
   var action = resourceDescriptor.action
     , resolver = {
       errorOnInvalid: action !== 'inspect',
@@ -188,13 +180,13 @@ function processStack(resourceDescriptor, stack) {
       resolveOptions(resourceDescriptor, resolver, item.definition);
     }
     else if (item instanceof RefraxOptions) {
-      resolveOptions(resourceDescriptor, resolver, item);
+      resolveOptions(resourceDescriptor, resolver, item.compose(invoker));
     }
     else if (item instanceof RefraxParameters) {
-      RefraxTools.extend(resourceDescriptor.params, item);
+      RefraxTools.extend(resourceDescriptor.params, item.compose(invoker));
     }
     else if (item instanceof RefraxQueryParameters) {
-      RefraxTools.extend(resolver.queryParams, item);
+      RefraxTools.extend(resolver.queryParams, item.compose(invoker));
     }
     else if (item instanceof RefraxPath) {
       resolver.appendPaths.push(item);
@@ -292,7 +284,7 @@ function processStack(resourceDescriptor, stack) {
 class RefraxResourceDescriptor {
   static storeMap = GlobalStoreMap;
 
-  constructor(action = ACTION_GET, stack = []) {
+  constructor(invoker, action = ACTION_GET, stack = []) {
     this.action = action;
     this.event = null;
     this.classify = CLASSIFY_RESOURCE;
@@ -311,7 +303,7 @@ class RefraxResourceDescriptor {
       stack = [stack];
     }
 
-    processStack(this, stack);
+    processStack(invoker, this, stack);
   }
 
   // Using our own descriptor's rules, grab an id from an object
