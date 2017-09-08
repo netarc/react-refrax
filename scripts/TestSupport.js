@@ -1,10 +1,23 @@
 const Promise = require('bluebird');
-const enzyme = require('enzyme');
+const JSDOM = require('jsdom').JSDOM;
 const moxios = require('moxios');
 const axios = require('axios');
 const Utils = require('mocha/lib/utils.js');
 const map = Utils.map;
 const indexOf = Utils.indexOf;
+
+/* global before after */
+
+
+// IMPORTANT: We need to setup our global window/document otherwise `fbjs` will
+// fail to init canUseDOM correctly when `react` or `enzyme` is loaded at the start
+// of a test spec file.
+const { window } = new JSDOM('<!doctype html><html><head><meta charset="utf-8"></head><body></body></html>');
+global.window = window;
+global.document = window.document;
+global.navigator = {
+  userAgent: 'node.js'
+};
 
 var isHooked = false;
 function moxios_hook() {

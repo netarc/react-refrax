@@ -10,7 +10,6 @@ const mixinSubscribable = require('mixinSubscribable');
 const mixinMutable = require('mixinMutable');
 const RequestError = require('RequestError');
 const RefraxMutableResource = require('RefraxMutableResource');
-const RefraxOptions = require('RefraxOptions');
 const RefraxTools = require('RefraxTools');
 
 class ActionInvoker {
@@ -20,21 +19,26 @@ class ActionInvoker {
 
   mutableFrom(accessor, ...args) {
     const action = this._action;
-
-    return RefraxMutableResource.from(accessor,
-      new RefraxOptions(action._options.resource),
+    const stack = [].concat(
+      action._options,
       action._parameters,
       action._queryParams,
-      ...args);
+      args
+    );
+
+    return RefraxMutableResource.from(accessor, ...stack);
   }
 
   invalidate(items, options) {
-    options = RefraxTools.extend({
-      params: this._action._parameters
-    }, this._action._options.resource, options);
+    const action = this._action;
     items = [].concat(items || []);
 
-    RefraxTools.each(items, (item) => item.invalidate(options));
+    RefraxTools.each(items, (item) => {
+      item
+        .withParams(action._parameters)
+        .withQueryParams(action._queryParams)
+        .invalidate(options);
+    });
   }
 }
 

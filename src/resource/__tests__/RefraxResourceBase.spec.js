@@ -102,40 +102,9 @@ describe('RefraxResourceBase', () => {
           .to.deep.equal([].concat(
             schema.users.__stack,
             new RefraxPath('pathFoo'),
-            {paramFoo: 321},
-            {queryFoo: 123},
-            {optionFoo: 111}
-          ));
-      });
-
-      it('correctly uses params options', () => {
-        var options = new RefraxOptions({
-            paramsGenerator: () => {
-              return {
-                paramFoo: 'abc'
-              };
-            },
-            params: {
-              paramBar: 'bar'
-            }
-          })
-          , resource = new RefraxResourceBase(
-          schema.users,
-          new RefraxQueryParameters({queryFoo: 123}),
-          new RefraxParameters({paramFoo: 321}),
-          options,
-          'pathFoo'
-        );
-
-        expect(resource._generateStack())
-          .to.deep.equal([].concat(
-            schema.users.__stack,
-            new RefraxPath('pathFoo'),
-            {paramFoo: 321},
-            {queryFoo: 123},
-            options,
-            {paramFoo: 'abc'},
-            {paramBar: 'bar'}
+            new RefraxParameters({paramFoo: 321}),
+            new RefraxQueryParameters({queryFoo: 123}),
+            new RefraxOptions({optionFoo: 111})
           ));
       });
     });

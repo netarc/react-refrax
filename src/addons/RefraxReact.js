@@ -71,12 +71,9 @@ const MixinBase = {
     return attach(this, target, options, ...args);
   },
   mutableFrom: function(accessor, ...args) {
-    var self = this
-      , options = {
-        paramsGenerator: function() {
-          return Shims.getComponentParams.call(self);
-        }
-      };
+    const componentParams = () => {
+      return Shims.getComponentParams.call(this);
+    };
 
     // Mutable has no need for data arguments so convert them to params
     args = RefraxTools.map(args, function(arg) {
@@ -86,7 +83,7 @@ const MixinBase = {
       return arg;
     });
 
-    return new RefraxMutableResource(accessor, new RefraxOptions(options), ...args);
+    return new RefraxMutableResource(accessor, new RefraxParameters(componentParams), ...args);
   }
 };
 
@@ -158,13 +155,15 @@ function attachAccessor(component, accessor, options, ...args) {
     options = null;
   }
 
-  options = RefraxTools.extend({
-    paramsGenerator: function() {
-      return Shims.getComponentParams.call(component);
-    }
-  }, options);
+  const componentParams = () => {
+    return Shims.getComponentParams.call(component);
+  };
 
-  resource = new RefraxResource(accessor, new RefraxOptions(options), ...args);
+  resource = new RefraxResource(accessor,
+    new RefraxOptions(options),
+    new RefraxParameters(componentParams),
+    ...args
+  );
   component.__refrax.resources.push(resource);
   component.__refrax.disposers.push(resource.subscribe('change', function() {
     dispatchRender(component);
@@ -211,12 +210,9 @@ function attachAction(component, Action, options = {}) {
     action.attached = true;
   }
 
-  action.setOptions(options, {
-    resource: RefraxTools.extend({
-      paramsGenerator: () => {
-        return Shims.getComponentParams.call(component);
-      }
-    }, options.resource)
+  action.setOptions(options);
+  action.setParams(() => {
+    return Shims.getComponentParams.call(component);
   });
 
   component.__refrax.actions.push(action);

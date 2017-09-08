@@ -41,7 +41,7 @@ describe('processResponse', () => {
       it('should error with an invalid handler', () => {
         RefraxTools.each([123, 'foo'], (handler) => {
           expect(function() {
-            processResponse({}, new RefraxResourceDescriptor(), handler);
+            processResponse({}, new RefraxResourceDescriptor(null, ), handler);
           }).to.throw(TypeError, 'processResponse: expected handler `Function`');
         });
       });
@@ -64,7 +64,7 @@ describe('processResponse', () => {
       });
 
       it('should invoke default handler when none specified', () => {
-        const descriptor = new RefraxResourceDescriptor(ACTION_GET, schema.users.__stack);
+        const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, schema.users.__stack);
 
         processResponse(dataCollectionUsers, descriptor);
 
@@ -74,7 +74,7 @@ describe('processResponse', () => {
       });
 
       it('should invoke handler when specified', () => {
-        const descriptor = new RefraxResourceDescriptor(ACTION_GET, schema.users.__stack);
+        const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, schema.users.__stack);
         const handler = sinon.spy();
 
         processResponse(dataCollectionUsers, descriptor, handler);
@@ -87,8 +87,8 @@ describe('processResponse', () => {
 
       it('should translate action correctly to store', () => {
         const store = schema.__storeMap.getOrCreate('user');
-        const descriptor1 = new RefraxResourceDescriptor(ACTION_GET, schema.users.__stack);
-        const descriptor2 = new RefraxResourceDescriptor(ACTION_DELETE, schema.users.__stack);
+        const descriptor1 = new RefraxResourceDescriptor(null, ACTION_GET, schema.users.__stack);
+        const descriptor2 = new RefraxResourceDescriptor(null, ACTION_DELETE, schema.users.__stack);
         const options = { foo: 123 };
 
         sinon.spy(store, 'updateResource');

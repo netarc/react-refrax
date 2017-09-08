@@ -44,7 +44,7 @@ const babelOpts = {
   stage: 1,
   // optional: ['runtime'],
   plugins: [
-    // babelPluginDEV,
+    babelPluginDEV,
     {
       position: 'before',
       transformer: babelPluginAutoImporter
@@ -64,13 +64,14 @@ const babelOpts = {
     'chai': 'chai',
     'sinon': 'sinon',
     'jsdom': 'jsdom',
+    'jsdom/lib/old-api': 'jsdom/lib/old-api',
     'enzyme': 'enzyme',
     'moxios': 'moxios',
     'mocha/lib/utils.js': 'mocha/lib/utils.js'
   }
 };
 
-var buildDist = function(opts) {
+const buildDist = function(opts) {
   var webpackOpts = {
     debug: opts.debug,
     externals: {
@@ -147,12 +148,12 @@ gulp.task('modules-test', function() {
   return gulp
     .src(paths.srcTest)
     .pipe(sourcemaps.init())
-      .pipe(babel(babelOpts).on('error', function(error) {
-        gulpUtil.log(gulpUtil.colors.red('Babel Error: '), error.message);
-      }))
-      .pipe(flatten())
-      // NOTE: this is somewhat of a hack so mocha will load source maps
-      .pipe(header("require('source-map-support').install();\n"))
+    .pipe(babel(babelOpts).on('error', function(error) {
+      gulpUtil.log(gulpUtil.colors.red('Babel Error: '), error.message);
+    }))
+    .pipe(flatten())
+    // NOTE: this is somewhat of a hack so mocha will load source maps
+    .pipe(header("require('source-map-support').install();\n"))
     .pipe(sourcemaps.write({sourceRoot: ''}))
     .pipe(gulp.dest('test'));
 });
@@ -189,6 +190,7 @@ gulp.task('testMocha', ['modules-test'], function() {
     .src([
       'test/*.spec.js'
     ], {read: false})
+    .pipe(header("require('source-map-support').install();\n"))
     .pipe(
       mocha({
         require: [
@@ -208,7 +210,7 @@ gulp.task('watch', function() {
 });
 
 gulp.task('test', function(cb) {
-  runSequence('clean', ['testMocha'], cb);
+  runSequence('clean', 'testMocha', cb);
 });
 
 gulp.task('default', function(cb) {
