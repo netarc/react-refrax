@@ -56,20 +56,16 @@ function _createAction(stack, from = null) {
 
   function Action(...args) {
     if (this instanceof Action) {
-      var options = args[0] || {};
-
-      // A Shared action only differs by the Configurable state wrapper
-      if (options.shared) {
-        return _createAction(stack, Action);
-      }
-      else {
-        return _createAction(stack.concat(new RefraxActionEntity(entity._method)));
-      }
+      throw new TypeError('direct Action instantiation is deprecated; use Action.coextend instead');
     }
     else {
       return entity.invoke(Action, args);
     }
   }
+
+  Action.coextend = function() {
+    return _createAction(stack.concat(new RefraxActionEntity(entity._method)), Action);
+  };
 
   Action.toString = function() {
     return 'RefraxAction(' + stack.length + ') => ' + entity._method.toString();
@@ -92,6 +88,10 @@ function _createAction(stack, from = null) {
 function createAction(method) {
   if (this instanceof createAction) {
     throw new TypeError('Cannot directly instantiate createAction');
+  }
+
+  if (!RefraxTools.isFunction(method)) {
+    throw new TypeError('createAction: Expected function, but found `' + method + '`');
   }
 
   return _createAction([new RefraxActionEntity(method)]);
