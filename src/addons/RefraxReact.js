@@ -182,7 +182,7 @@ function attachAction(component, Action, options = {}) {
     if (!refPool) {
       refPool = RefPool[refLink] = {
         Action: Action,
-        action: new Action(),
+        action: Action.coextend(),
         components: []
       };
     }
@@ -206,7 +206,13 @@ function attachAction(component, Action, options = {}) {
     });
   }
   else {
-    action = new Action({ shared: Action.attached === true });
+    // referencing an attached action (IE resource `default` to an attached resourced)
+    if (Action.attached === true) {
+      action = Action.clone();
+    }
+    else {
+      action = Action.coextend();
+    }
     action.attached = true;
   }
 

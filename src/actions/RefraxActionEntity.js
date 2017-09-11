@@ -73,8 +73,6 @@ class RefraxActionEntity {
 
     for (i=0; i<stackSize; i++) {
       stack[i]._promises.push(invoker);
-    }
-    for (i=0; i<stackSize; i++) {
       stack[i].emit('start', invoker);
     }
 
@@ -82,7 +80,12 @@ class RefraxActionEntity {
 
     if (!RefraxTools.isPromise(result)) {
       promise = new Promise(function(resolve, reject) {
-        resolve(result);
+        if (result instanceof Error) {
+          reject(result);
+        }
+        else {
+          resolve(result);
+        }
       });
     }
 
@@ -104,8 +107,6 @@ class RefraxActionEntity {
         if (n > -1) {
           stack[i]._promises.splice(n, 1);
         }
-      }
-      for (i=0; i<stackSize; i++) {
         stack[i].emit('finish', invoker);
       }
     }
