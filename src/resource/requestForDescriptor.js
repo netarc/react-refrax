@@ -26,7 +26,7 @@ Promise.onPossiblyUnhandledRejection(function(err, promise) {
 
 function containsMultipart(data) {
   return data && RefraxTools.any(data, function(value) {
-    return value instanceof global.File;
+    return global.File && value instanceof global.File;
   });
 }
 
@@ -40,7 +40,7 @@ function composeFormData(data) {
   return result;
 }
 
-function invokeDescriptor(descriptor, options = {}) {
+function requestForDescriptor(descriptor, options = {}, callback = null) {
   var store = descriptor.store
     , touchParams = {
       timestamp: TIMESTAMP_LOADING
@@ -65,24 +65,52 @@ function invokeDescriptor(descriptor, options = {}) {
     store.touchResource(descriptor, touchParams, options);
   }
 
-  return new Promise(function(resolve, reject) {
+  let promise = new Promise(function(resolve, reject) {
     // eslint-disable-next-line new-cap
     Axios(requestConfig)
       .then(function(response) {
-        processResponse(response && response.data, descriptor, null, options);
-
-        const resource = store && store.fetchResource(descriptor) || {};
-        resource.response = response;
-
-        resolve(resource);
+        resolve([response.data, response, descriptor]);
       }, function(err) {
-        if (store) {
-          store.touchResource(descriptor, { timestamp: Date.now() }, options);
-        }
-
         reject(new RequestError(err.response));
       });
   });
+
+  // Callback acts as a way to inject into our request and modify the result or
+  // perform some action before the result feeds into processResponse.
+  if (callback) {
+    promise = promise.then(([data, response, descriptor]) => {
+      let result = callback(data, response, descriptor);
+
+      if (result === undefined) {
+        result = data;
+      }
+      // If our result is a promise, lets chain off it to ensure we return the expected tuple
+      else if (RefraxTools.isPromise(result)) {
+        return result.then((data) => {
+          return [data, response, descriptor];
+        });
+      }
+
+      return [result, response, descriptor];
+    });
+  }
+
+  return promise
+    .then(([data, response, descriptor]) => {
+      processResponse(data, descriptor, null, options);
+
+      const result = store && store.fetchResource(descriptor) || {};
+
+      return [result, response, descriptor];
+    })
+    // We deliberately catch after our processResponse so we can more gracefully
+    // reset to a finished state (timestamp)
+    .catch((err) => {
+      if (store) {
+        store.touchResource(descriptor, { timestamp: Date.now() }, options);
+      }
+      throw err;
+    });
 }
 
-export default invokeDescriptor;
+export default requestForDescriptor;

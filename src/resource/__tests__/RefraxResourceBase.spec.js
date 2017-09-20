@@ -26,8 +26,8 @@ const dataCollectionUsers = [
   { id: 2, name: 'foo baz' }
 ];
 
-/* global mock_get mock_reset mock_request_count wait_for_promise delay_for_request */
-/* eslint-disable no-new */
+/* global mock_get mock_reset mock_request_count wait_for_promise delay */
+/* eslint-disable no-new, indent */
 describe('RefraxResourceBase', () => {
   let schema;
 
@@ -113,7 +113,7 @@ describe('RefraxResourceBase', () => {
       describe('invoked with no arguments', () => {
         it('generates a descriptor with a default action ', () => {
           var resource = new RefraxResourceBase(schema.users)
-            , descriptor = resource._generateDescriptor();
+            , descriptor = resource._generateDescriptor(ACTION_GET);
 
           expect(descriptor.action).to.equal(ACTION_GET);
         });
@@ -137,7 +137,7 @@ describe('RefraxResourceBase', () => {
           it('should look and behave as expected', () => {
             const resource = new RefraxResourceBase(schema.users);
 
-            return delay_for_request(() => {
+            return delay(() => {
               mock_get('/users', dataCollectionUsers);
 
               expect(mock_request_count()).to.equal(0);
@@ -145,7 +145,7 @@ describe('RefraxResourceBase', () => {
               const promise = resource.fetch();
               expect(promise).is.instanceof(Promise);
 
-              return promise.then((result) => {
+              return promise.then(([result, response, descriptor]) => {
                 expect(mock_request_count()).to.equal(1);
                 expect(result).is.instanceof(RefraxFragmentResult);
                 expect(result.data).to.deep.equal(dataCollectionUsers);
@@ -158,7 +158,7 @@ describe('RefraxResourceBase', () => {
           it('should look and behave as expected', () => {
             const resource = new RefraxResourceBase(schema.users);
 
-            return delay_for_request(() => {
+            return delay(() => {
               mock_get('/users', dataCollectionUsers);
 
               expect(mock_request_count()).to.equal(0);
@@ -166,7 +166,7 @@ describe('RefraxResourceBase', () => {
               const promise = resource.fetch({ noFetchGet: true });
               expect(promise).is.instanceof(Promise);
 
-              return promise.then((result) => {
+              return promise.then(([result, response, descriptor]) => {
                 expect(mock_request_count()).to.equal(0);
                 expect(result).is.instanceof(RefraxFragmentResult);
                 expect(result.data).to.equal(null);
@@ -179,7 +179,7 @@ describe('RefraxResourceBase', () => {
           it('should look and behave as expected', () => {
             const resource = new RefraxResourceBase(schema.users);
 
-            return delay_for_request(() => {
+            return delay(() => {
               mock_get('/users', dataCollectionUsers);
 
               expect(mock_request_count()).to.equal(0);
@@ -209,7 +209,7 @@ describe('RefraxResourceBase', () => {
 
           expect(resource.fetch({ noFetchGet: true, fragmentOnly: true }).data).to.equal(null);
 
-          return resource.get().then((result) => {
+          return resource.get().then(([result, response, descriptor]) => {
             expect(result).is.instanceof(RefraxFragmentResult);
             expect(result.data).to.deep.equal(dataCollectionUsers);
           });
