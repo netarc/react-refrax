@@ -9,11 +9,27 @@ const RefraxResourceBase = require('RefraxResourceBase');
 const RefraxConstants = require('RefraxConstants');
 const RefraxPath = require('RefraxPath');
 const RefraxTools = require('RefraxTools');
-const invokeDescriptor = require('invokeDescriptor');
+const requestForDescriptor = require('requestForDescriptor');
 const ACTION_CREATE = RefraxConstants.action.create;
 const ACTION_UPDATE = RefraxConstants.action.update;
 const ACTION_DELETE = RefraxConstants.action.delete;
 
+const spliceCallback = (array) => {
+  let len = array.length
+    , callback = null;
+
+  for (let i=0; i<len; i++) {
+    const arg = array[i];
+
+    if (RefraxTools.isFunction(arg)) {
+      callback = arg;
+      array.splice(i, 1);
+      len-= 1;
+    }
+  }
+
+  return callback;
+};
 
 /**
  * RefraxMutableResource is a public facing interface class to modifying through a Schema Node.
@@ -35,21 +51,27 @@ class RefraxMutableResource extends RefraxResourceBase {
     super(schemaPath, ...args);
   }
 
-  create(...data) {
-    return this._generateDescriptor(ACTION_CREATE, data, (descriptor, options) => {
-      return invokeDescriptor(descriptor, options);
+  create(...args) {
+    const callback = spliceCallback(args);
+
+    return this._generateDescriptor(ACTION_CREATE, args, (descriptor, options) => {
+      return requestForDescriptor(descriptor, options, callback);
     });
   }
 
-  destroy(...data) {
-    return this._generateDescriptor(ACTION_DELETE, data, (descriptor, options) => {
-      return invokeDescriptor(descriptor, options);
+  destroy(...args) {
+    const callback = spliceCallback(args);
+
+    return this._generateDescriptor(ACTION_DELETE, args, (descriptor, options) => {
+      return requestForDescriptor(descriptor, options, callback);
     });
   }
 
-  update(...data) {
-    return this._generateDescriptor(ACTION_UPDATE, data, (descriptor, options) => {
-      return invokeDescriptor(descriptor, options);
+  update(...args) {
+    const callback = spliceCallback(args);
+
+    return this._generateDescriptor(ACTION_UPDATE, args, (descriptor, options) => {
+      return requestForDescriptor(descriptor, options, callback);
     });
   }
 }

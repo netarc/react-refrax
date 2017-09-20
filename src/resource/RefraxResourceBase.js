@@ -17,7 +17,7 @@ const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
 const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxTools = require('RefraxTools');
 const RefraxConstants = require('RefraxConstants');
-const invokeDescriptor = require('invokeDescriptor');
+const requestForDescriptor = require('requestForDescriptor');
 const ACTION_GET = RefraxConstants.action.get;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
 
@@ -92,13 +92,13 @@ class RefraxResourceBase {
   //
 
   get() {
-    return this._generateDescriptor((descriptor, options) => {
-      return invokeDescriptor(descriptor, options);
+    return this._generateDescriptor(ACTION_GET, (descriptor, options) => {
+      return requestForDescriptor(descriptor, options);
     });
   }
 
   fetch(options = {}) {
-    return this._generateDescriptor(options, (descriptor, options) => {
+    return this._generateDescriptor(ACTION_GET, options, (descriptor, options) => {
       const store = descriptor.store;
       var result = null
         , promise = null;
@@ -111,11 +111,15 @@ class RefraxResourceBase {
       result = store.fetchResource(descriptor);
 
       if (options.noFetchGet !== true && result.timestamp < TIMESTAMP_LOADING) {
-        promise = invokeDescriptor(descriptor, options);
+        promise = requestForDescriptor(descriptor, options);
         result = store.fetchResource(descriptor);
       }
 
-      return options.fragmentOnly === true && result || promise || Promise.resolve(result);
+      if (options.fragmentOnly === true) {
+        return result;
+      }
+
+      return promise || Promise.resolve([result, null, descriptor]);
     });
   }
 
@@ -131,23 +135,19 @@ class RefraxResourceBase {
     );
   }
 
-  _generateDescriptor(...args) {
-    var action = ACTION_GET
-      , data = []
+  _generateDescriptor(action, ...args) {
+    var stackAppend = []
       , options = null
       , onValid = null;
 
     while (args.length > 0) {
       const arg = args.pop();
 
-      if (typeof(arg) === 'string') {
-        action = arg;
-      }
-      else if (RefraxTools.isFunction(arg)) {
+      if (RefraxTools.isFunction(arg)) {
         onValid = arg;
       }
-      else if (RefraxTools.isArray(arg) || arg instanceof RefraxOptions) {
-        data = arg;
+      else if (RefraxTools.isArray(arg)) {
+        stackAppend = arg;
       }
       else if (RefraxTools.isPlainObject(arg)) {
         options = arg;
@@ -159,7 +159,7 @@ class RefraxResourceBase {
       }
     }
 
-    const stack = this._generateStack().concat(data);
+    const stack = this._generateStack().concat(stackAppend);
     const descriptor = new RefraxResourceDescriptor(this, action, stack);
     options = RefraxTools.extend({}, this._options.compose(this), options, {
       invoker: this

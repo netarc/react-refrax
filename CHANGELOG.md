@@ -4,6 +4,7 @@
 - **Bugfix** Mutable `setState` this reference
 - **Minor** ResourceDescriptor now uses a default global `storeMap`
 - **Major** Refactor store events to fully represent fragment/queries
+- **Major** `Resource.fetch` and `MutableResource` methods promise value now is a tuple consisting of [result/response/descriptor]
 
 # Released
 

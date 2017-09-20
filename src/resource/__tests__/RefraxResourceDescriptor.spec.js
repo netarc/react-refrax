@@ -7,12 +7,10 @@
  */
 const chai = require('chai');
 const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
 const RefraxPath = require('RefraxPath');
 const RefraxQueryParameters = require('RefraxQueryParameters');
 const RefraxSchema = require('RefraxSchema');
-const RefraxSchemaPath = require('RefraxSchemaPath');
 const createSchemaCollection = require('createSchemaCollection');
 const createSchemaNamespace = require('createSchemaNamespace');
 const createSchemaResource = require('createSchemaResource');
@@ -27,7 +25,6 @@ const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
 const CLASSIFY_NAMESPACE = RefraxConstants.classify.namespace;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
-const CLASSIFY_INVALID = RefraxConstants.classify.invalid;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
 const expect = chai.expect;
 
@@ -37,7 +34,7 @@ describe('RefraxResourceDescriptor', () => {
   describe('instantiation', () => {
     describe('with no arguments', () => {
       it('should have correct shape default for GET', () => {
-        const descriptor = new RefraxResourceDescriptor(null, );
+        const descriptor = new RefraxResourceDescriptor(null, ACTION_GET);
 
         expect(descriptor).to.deep.match({
           action: ACTION_GET,

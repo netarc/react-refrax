@@ -32,8 +32,8 @@ const dataCollectionUsersUpdate = [
   { id: 3, name: 'zip zoo' }
 ];
 
-/* global mock_get mock_reset mock_request_count wait_for_promise delay_for_request */
-/* eslint-disable no-new */
+/* global mock_get mock_reset mock_request_count wait_for_promise delay delay_for_resource_request */
+/* eslint-disable no-new, indent */
 describe('RefraxResource', () => {
   let schema;
 
@@ -140,7 +140,7 @@ describe('RefraxResource', () => {
             resource.subscribe('load', onLoad);
             resource.subscribe('change', onChange);
 
-            return delay_for_request(() => {
+            return delay(() => {
               // prove Resource made no request
               expect(resource.data).to.equal(null);
               expect(resource.status).to.equal(STATUS_STALE);
@@ -183,7 +183,7 @@ describe('RefraxResource', () => {
             resource.subscribe('load', onLoad);
             resource.subscribe('change', onChange);
 
-            return delay_for_request(() => {
+            return delay_for_resource_request(resource, () => {
               expect(onLoad.callCount).to.equal(1);
               expect(onChange.callCount).to.equal(1);
               expect(mock_request_count()).to.equal(1);
@@ -192,7 +192,7 @@ describe('RefraxResource', () => {
               expect(resource.timestamp).to.not.equal(TIMESTAMP_LOADING);
 
               const fragment = resource._fetchFragment();
-              return delay_for_request(() => {
+              return delay(() => {
                 expect(fragment).is.instanceof(RefraxFragmentResult);
                 expect(fragment.data).to.deep.equal(dataCollectionUsers);
                 expect(fragment.status).to.equal(STATUS_COMPLETE);
@@ -217,7 +217,7 @@ describe('RefraxResource', () => {
             resource.subscribe('load', onLoad);
             resource.subscribe('change', onChange);
 
-            return delay_for_request(() => {
+            return delay(() => {
               // prove Resource made no request
               expect(resource.data).to.equal(null);
               expect(resource.status).to.equal(STATUS_STALE);
@@ -237,7 +237,8 @@ describe('RefraxResource', () => {
               expect(onLoad.callCount).to.equal(0);
               expect(onChange.callCount).to.equal(0);
 
-              return delay_for_request(() => {
+              // no request occurs after fetching
+              return delay(() => {
                 expect(onLoad.callCount).to.equal(0);
                 expect(onChange.callCount).to.equal(0);
                 expect(resource.data).to.equal(null);
@@ -267,7 +268,7 @@ describe('RefraxResource', () => {
         expect(resource._disposeSubscriber).to.equal(undefined);
         expect(onChange.callCount).to.equal(0);
 
-        resource._generateDescriptor((descriptor) => {
+        resource._generateDescriptor(ACTION_GET, (descriptor) => {
           resource._subscribeToStore(descriptor);
         });
 
@@ -290,7 +291,7 @@ describe('RefraxResource', () => {
         const spyFetchFragment = sinon.spy(resource, '_fetchFragment');
         const spyDispatchLoad = sinon.spy(resource, '_dispatchLoad');
 
-        return delay_for_request(() => {
+        return delay(() => {
           // prove Resource made no request
           expect(resource.data).to.equal(null);
           expect(resource.status).to.equal(STATUS_STALE);
@@ -309,7 +310,7 @@ describe('RefraxResource', () => {
           expect(spyDispatchLoad.callCount).to.equal(0);
           expect(resource._dispatchLoad).to.equal(spyDispatchLoad);
 
-          return delay_for_request(() => {
+          return delay_for_resource_request(resource, () => {
             expect(resource.data).to.deep.equal(dataCollectionUsers);
             expect(resource.status).to.equal(STATUS_COMPLETE);
             expect(resource.timestamp).to.not.equal(TIMESTAMP_LOADING);
@@ -348,7 +349,7 @@ describe('RefraxResource', () => {
               expect(resource.timestamp).to.equal(TIMESTAMP_LOADING);
               expect(mock_request_count()).to.equal(1);
 
-              return delay_for_request(() => {
+              return delay_for_resource_request(resource, () => {
                 expect(mock_request_count()).to.equal(2);
                 expect(resource.status).to.equal(STATUS_COMPLETE);
                 expect(resource.timestamp).to.not.equal(TIMESTAMP_STALE);
@@ -379,7 +380,8 @@ describe('RefraxResource', () => {
               expect(resource.timestamp).to.equal(TIMESTAMP_STALE);
               expect(mock_request_count()).to.equal(1);
 
-              return delay_for_request(() => {
+              // no request occurs after invalidating
+              return delay(() => {
                 expect(mock_request_count()).to.equal(1);
                 expect(resource.status).to.equal(STATUS_STALE);
                 expect(resource.timestamp).to.equal(TIMESTAMP_STALE);

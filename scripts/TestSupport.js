@@ -57,6 +57,16 @@ global.mock_post = function(uri, response, status = 200) {
   moxios.stubRequest(`${host}${uri}`, { status, response });
 };
 
+global.mock_put = function(uri, response, status = 200) {
+  moxios_hook();
+  moxios.stubRequest(`${host}${uri}`, { status, response });
+};
+
+global.mock_delete = function(uri, response, status = 200) {
+  moxios_hook();
+  moxios.stubRequest(`${host}${uri}`, { status, response });
+};
+
 global.wait_for_promise = (fn) => {
   return new Promise((resolve, reject) => {
     const failure = setTimeout(() => {
@@ -83,7 +93,7 @@ global.wait_for_promise = (fn) => {
   });
 };
 
-global.delay_for_request = (fn) => {
+global.delay = (fn) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       const result = fn();
@@ -93,6 +103,31 @@ global.delay_for_request = (fn) => {
       else {
         resolve();
       }
-    }, 1);
+    }, 10);
+  });
+};
+
+global.delay_for_resource_request = (resource, fn) => {
+  // pre-create our error so we can use its stack-trace when we reject
+  const err = new Error('delay timeout!');
+
+  return new Promise((resolve, reject) => {
+    let timer = null;
+    const disposer = resource.once('change', () => {
+      clearTimeout(timer);
+
+      const result = fn();
+      if (result instanceof Promise) {
+        result.then(resolve);
+      }
+      else {
+        resolve();
+      }
+    });
+
+    timer = setTimeout(() => {
+      disposer();
+      reject(err);
+    }, 500);
   });
 };

@@ -9,6 +9,7 @@ const RefraxConstants = require('RefraxConstants');
 const RefraxTools = require('RefraxTools');
 const RefraxOptions = require('RefraxOptions');
 const RefraxResourceBase = require('RefraxResourceBase');
+const ACTION_GET = RefraxConstants.action.get;
 const STATUS_STALE = RefraxConstants.status.STALE;
 const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
@@ -48,7 +49,7 @@ class RefraxResource extends RefraxResourceBase {
       this._disposeSubscriber && this._disposeSubscriber();
     });
 
-    this._generateDescriptor((descriptor, options) => {
+    this._generateDescriptor(ACTION_GET, (descriptor, options) => {
       this._dispatchLoad = (data) => {
         if (data) {
           this._dispatchLoad = null;
@@ -130,7 +131,7 @@ class RefraxResource extends RefraxResourceBase {
   invalidate(options = {}) {
     const descriptorOptions = new RefraxOptions({ errorOnInvalid: !!options.errorOnInvalid });
 
-    this._generateDescriptor(descriptorOptions, options, (descriptor, options) => {
+    this._generateDescriptor(ACTION_GET, [descriptorOptions], options, (descriptor, options) => {
       if (descriptor.store) {
         descriptor.store.invalidate(descriptor, options);
       }

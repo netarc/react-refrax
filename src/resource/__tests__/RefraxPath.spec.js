@@ -10,7 +10,7 @@ const RefraxPath = require('RefraxPath');
 const expect = chai.expect;
 
 
-/* eslint-disable no-new */
+/* eslint-disable no-new, indent */
 describe('RefraxPath', function() {
   describe('instantiation', function() {
     it('should throw an error on invalid path', function() {
