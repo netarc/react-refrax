@@ -40,6 +40,9 @@ describe('RefraxComposableHash', () => {
         .to.deep.equal({});
 
       expect(hash)
+        .to.have.property('__weakHooks')
+        .that.deep.equals([]);
+      expect(hash)
         .to.have.property('__hooks')
         .that.deep.equals([]);
     });
@@ -56,6 +59,9 @@ describe('RefraxComposableHash', () => {
         });
 
       expect(hash)
+        .to.have.property('__weakHooks')
+        .that.deep.equals([]);
+      expect(hash)
         .to.have.property('__hooks')
         .that.deep.equals([fn]);
     });
@@ -70,6 +76,9 @@ describe('RefraxComposableHash', () => {
           'foo': 'bar'
         });
 
+      expect(hash)
+        .to.have.property('__weakHooks')
+        .that.deep.equals([]);
       expect(hash)
         .to.have.property('__hooks')
         .that.deep.equals([fn]);
@@ -106,6 +115,7 @@ describe('RefraxComposableHash', () => {
         hash.extend();
 
         expect(hash).to.deep.equal({});
+        expect(hash.__weakHooks).to.deep.equal([]);
         expect(hash.__hooks).to.deep.equal([]);
       });
 
@@ -118,6 +128,7 @@ describe('RefraxComposableHash', () => {
           'foo': 'bar',
           'baz': 123
         });
+        expect(hash.__weakHooks).to.deep.equal([]);
         expect(hash.__hooks).to.deep.equal([fn]);
       });
 
@@ -129,7 +140,21 @@ describe('RefraxComposableHash', () => {
         expect(hash).to.deep.equal({
           'foo': 'bar'
         });
+        expect(hash.__weakHooks).to.deep.equal([]);
         expect(hash.__hooks).to.deep.equal([fn]);
+      });
+
+      it('should accept another lazy RefraxComposableHash instance', () => {
+        var fn = () => { return {}; };
+
+        hash.extend({ 'foo': 'baz' });
+        hash.extend(new RefraxComposableHash({ 'foo': 'bar' }, fn).weakify());
+
+        expect(hash).to.deep.equal({
+          'foo': 'baz'
+        });
+        expect(hash.__weakHooks).to.deep.equal([fn]);
+        expect(hash.__hooks).to.deep.equal([]);
       });
 
       it('should return itself', () => {
@@ -165,6 +190,7 @@ describe('RefraxComposableHash', () => {
         hash.hook(fn, fn2);
 
         expect(hash).to.deep.equal({});
+        expect(hash.__weakHooks).to.deep.equal([]);
         expect(hash.__hooks).to.deep.equal([fn, fn2]);
       });
 
@@ -216,6 +242,27 @@ describe('RefraxComposableHash', () => {
         hash.extend({foo: 123});
         hash.hook(fn1);
         hash.hook(fn2);
+
+        expect(hash.compose(invoker)).to.deep.equal({
+          bar: 4,
+          foo: 123,
+          zap: 'abc'
+        });
+      });
+
+      it('should correctly handle lazy hashes', () => {
+        var fn1 = (i, self) => { return { bar: self.baz + 1 }; }
+          , fn2 = (i, self) => { return { bar: i.bar * 2, zap: 'abc' }; }
+          , invoker = { baz: 1 };
+
+        hash.extend({foo: 123});
+        hash.hook(fn1);
+        hash.hook(fn2);
+        hash.extend(new RefraxComposableHash({
+          bar: 999
+        }, (i, self) => {
+          return { foo: 888 };
+        }).weakify());
 
         expect(hash.compose(invoker)).to.deep.equal({
           bar: 4,

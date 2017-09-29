@@ -45,29 +45,32 @@ function serializer() {
 
 function fillURI(uri, params, paramMap) {
   var vars = uri.match(/:(\w+)/g) || []
-    , lastParamKey = null
+    , paramsUsed = {}
     , i, v, value
+    , param = null
     , errors = [];
 
   for (i = 0; i < vars.length; i++) {
     v = vars[i];
 
-    lastParamKey = v.substr(1);
-    if (paramMap && paramMap[lastParamKey]) {
-      lastParamKey = paramMap[lastParamKey];
+    param = v.substr(1);
+    if (paramMap && paramMap[param]) {
+      param = paramMap[param];
     }
 
-    if ((value = params[lastParamKey])) {
+    paramsUsed[param] = params[param];
+    if ((value = params[param])) {
       uri = uri.replace(v, value);
     }
     else {
-      errors.push(lastParamKey);
-      uri = uri.replace(v, ':' + lastParamKey);
+      errors.push(param);
+      uri = uri.replace(v, ':' + param);
     }
   }
 
   return {
-    lastParamKey: lastParamKey,
+    paramsUsed: paramsUsed,
+    lastParamKey: param,
     uri: uri,
     errors: errors
   };
@@ -230,6 +233,7 @@ function processStack(invoker, resourceDescriptor, stack) {
         pathErrors = pathErrors.concat(result.errors);
         resolver.path.push(result.uri);
         lastURIParamId = result.lastParamKey;
+        RefraxTools.extend(resourceDescriptor.pathParams, result.paramsUsed);
       }
     }
   }
@@ -298,6 +302,8 @@ class RefraxResourceDescriptor {
     this.cacheStrategy = STRATEGY_REPLACE;
     this.collectionStrategy = action === ACTION_CREATE ? STRATEGY_MERGE : STRATEGY_REPLACE;
     this.valid = true;
+    this.queryParams = {};
+    this.pathParams = {};
 
     if (!RefraxTools.isArray(stack)) {
       stack = [stack];

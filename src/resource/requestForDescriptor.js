@@ -11,7 +11,7 @@ const RefraxTools = require('RefraxTools');
 const RequestError = require('RequestError');
 const RefraxConstants = require('RefraxConstants');
 const processResponse = require('processResponse');
-const STATUS_STALE = RefraxConstants.status.STALE;
+const STATUS_STALE = RefraxConstants.status.stale;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
 const ACTION_GET = RefraxConstants.action.get;
 
@@ -71,7 +71,13 @@ function requestForDescriptor(descriptor, options = {}, callback = null) {
       .then(function(response) {
         resolve([response.data, response, descriptor]);
       }, function(err) {
-        reject(new RequestError(err.response));
+        // Convert errors that look like Axios request errors into Refrax request errors
+        if ('request' in err && 'response' in err) {
+          reject(new RequestError(err.response));
+        }
+        else {
+          reject(err);
+        }
       });
   });
 

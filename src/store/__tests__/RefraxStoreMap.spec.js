@@ -33,7 +33,7 @@ function fixtureStoreMap() {
     .add(new RefraxStore('project'))
     .updateResource(TestHelper.descriptorCollection({
       basePath: '/projects'
-    }), [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.COMPLETE);
+    }), [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.complete);
   refStoreMap.add(new RefraxStore('user'));
   refStoreMap.add(new RefraxStore('account'));
 }

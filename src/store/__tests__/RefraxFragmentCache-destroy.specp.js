@@ -11,7 +11,7 @@ const RefraxConstants = require('RefraxConstants');
 const RefraxFragmentCache = require('RefraxFragmentCache');
 const expect = chai.expect;
 const DefaultPartial = RefraxConstants.defaultFragment;
-const STATUS_COMPLETE = RefraxConstants.status.COMPLETE;
+const STATUS_COMPLETE = RefraxConstants.status.complete;
 
 
 const dataSegmentFull__ID_1 = {

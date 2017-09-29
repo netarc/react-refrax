@@ -41,9 +41,9 @@ class RefraxResourceBase {
     }
 
     // SchemaPath is a `mixinConfigurable`
-    RefraxTools.extend(options, schemaPath._options);
-    RefraxTools.extend(parameters, schemaPath._parameters);
-    RefraxTools.extend(queryParams, schemaPath._queryParams);
+    options.extend(schemaPath._options);
+    parameters.extend(schemaPath._parameters);
+    queryParams.extend(schemaPath._queryParams);
 
     for (i=0; i<args.length; i++) {
       arg = args[i];

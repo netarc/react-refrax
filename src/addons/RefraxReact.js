@@ -7,18 +7,16 @@
  */
 const RefraxTools = require('RefraxTools');
 const RefraxSchemaPath = require('RefraxSchemaPath');
+const RefraxContainer = require('RefraxContainer');
+const RefraxPropTypes = require('RefraxPropTypes');
+const RefraxReactShims = require('RefraxReactShims');
 const RefraxResource = require('RefraxResource');
 const RefraxMutableResource = require('RefraxMutableResource');
+const RefraxComposableHash = require('RefraxComposableHash');
 const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
 const RefraxActionEntity = require('RefraxActionEntity');
 const RefPool = {};
-
-export const Shims = {
-  getComponentParams: function() {
-    return RefraxTools.extend({}, this.props);
-  }
-};
 
 function detect(array, targets, predicate) {
   refraxifyComponent(this);
@@ -72,7 +70,7 @@ const MixinBase = {
   },
   mutableFrom: function(accessor, ...args) {
     const componentParams = () => {
-      return Shims.getComponentParams.call(this);
+      return RefraxReactShims.getComponentParams.call(this);
     };
 
     // Mutable has no need for data arguments so convert them to params
@@ -83,7 +81,7 @@ const MixinBase = {
       return arg;
     });
 
-    return new RefraxMutableResource(accessor, new RefraxParameters(componentParams), ...args);
+    return new RefraxMutableResource(accessor, new RefraxParameters(componentParams).weakify(), ...args);
   }
 };
 
@@ -156,12 +154,12 @@ function attachAccessor(component, accessor, options, ...args) {
   }
 
   const componentParams = () => {
-    return Shims.getComponentParams.call(component);
+    return RefraxReactShims.getComponentParams.call(component);
   };
 
   resource = new RefraxResource(accessor,
     new RefraxOptions(options),
-    new RefraxParameters(componentParams),
+    new RefraxParameters(componentParams).weakify(),
     ...args
   );
   component.__refrax.resources.push(resource);
@@ -217,9 +215,9 @@ function attachAction(component, Action, options = {}) {
   }
 
   action.setOptions(options);
-  action.setParams(() => {
-    return Shims.getComponentParams.call(component);
-  });
+  action.setParams(new RefraxComposableHash(() => {
+    return RefraxReactShims.getComponentParams.call(component);
+  }).weakify());
 
   component.__refrax.actions.push(action);
   // TODO: finish/mutated can cause double updates due to a request failure
@@ -271,9 +269,15 @@ export const Mixin = {
 
 RefraxTools.extend(Mixin, MixinBase);
 
+exports.PropTypes = RefraxPropTypes;
+exports.createContainer = RefraxContainer.create;
+exports.Shims = RefraxReactShims;
+
 export default {
-  Shims,
+  Shims: RefraxReactShims,
   attach,
   extend,
-  Mixin
+  Mixin,
+  PropTypes: RefraxPropTypes,
+  createContainer: RefraxContainer.create
 };

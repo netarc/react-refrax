@@ -26,7 +26,7 @@ const dataCollectionUsers = [
   { id: 2, name: 'foo baz' }
 ];
 
-/* global mock_get mock_reset mock_request_count wait_for_promise delay */
+/* global mock_get mock_reset mock_request_count wait_for_promise delay_for */
 /* eslint-disable no-new, indent */
 describe('RefraxResourceBase', () => {
   let schema;
@@ -137,20 +137,21 @@ describe('RefraxResourceBase', () => {
           it('should look and behave as expected', () => {
             const resource = new RefraxResourceBase(schema.users);
 
-            return delay(() => {
-              mock_get('/users', dataCollectionUsers);
+            return delay_for()()
+              .then(() => {
+                mock_get('/users', dataCollectionUsers);
 
-              expect(mock_request_count()).to.equal(0);
+                expect(mock_request_count()).to.equal(0);
 
-              const promise = resource.fetch();
-              expect(promise).is.instanceof(Promise);
+                const promise = resource.fetch();
+                expect(promise).is.instanceof(Promise);
 
-              return promise.then(([result, response, descriptor]) => {
-                expect(mock_request_count()).to.equal(1);
-                expect(result).is.instanceof(RefraxFragmentResult);
-                expect(result.data).to.deep.equal(dataCollectionUsers);
+                return promise.then(([result, response, descriptor]) => {
+                  expect(mock_request_count()).to.equal(1);
+                  expect(result).is.instanceof(RefraxFragmentResult);
+                  expect(result.data).to.deep.equal(dataCollectionUsers);
+                });
               });
-            });
           });
         });
 
@@ -158,42 +159,44 @@ describe('RefraxResourceBase', () => {
           it('should look and behave as expected', () => {
             const resource = new RefraxResourceBase(schema.users);
 
-            return delay(() => {
-              mock_get('/users', dataCollectionUsers);
+            return delay_for()()
+              .then(() => {
+                mock_get('/users', dataCollectionUsers);
 
-              expect(mock_request_count()).to.equal(0);
-
-              const promise = resource.fetch({ noFetchGet: true });
-              expect(promise).is.instanceof(Promise);
-
-              return promise.then(([result, response, descriptor]) => {
                 expect(mock_request_count()).to.equal(0);
-                expect(result).is.instanceof(RefraxFragmentResult);
-                expect(result.data).to.equal(null);
+
+                const promise = resource.fetch({ noFetchGet: true });
+                expect(promise).is.instanceof(Promise);
+
+                return promise.then(([result, response, descriptor]) => {
+                  expect(mock_request_count()).to.equal(0);
+                  expect(result).is.instanceof(RefraxFragmentResult);
+                  expect(result.data).to.equal(null);
+                });
               });
             });
-          });
         });
 
         describe('fragmentOnly', () => {
           it('should look and behave as expected', () => {
             const resource = new RefraxResourceBase(schema.users);
 
-            return delay(() => {
-              mock_get('/users', dataCollectionUsers);
+            return delay_for()()
+              .then(() => {
+                mock_get('/users', dataCollectionUsers);
 
-              expect(mock_request_count()).to.equal(0);
+                expect(mock_request_count()).to.equal(0);
 
-              const result = resource.fetch({ fragmentOnly: true });
-              expect(result).is.instanceof(RefraxFragmentResult);
+                const result = resource.fetch({ fragmentOnly: true });
+                expect(result).is.instanceof(RefraxFragmentResult);
 
-              const start = mock_request_count();
-              return wait_for_promise(() => mock_request_count() !== start)
-                .then(() => {
-                  expect(mock_request_count()).to.equal(1);
-                });
+                const start = mock_request_count();
+                return wait_for_promise(() => mock_request_count() !== start)
+                  .then(() => {
+                    expect(mock_request_count()).to.equal(1);
+                  });
+              });
             });
-          });
         });
       });
     });

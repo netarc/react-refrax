@@ -7,9 +7,9 @@
  */
 export default {
   status: {
-    COMPLETE: 'complete',
-    PARTIAL: 'partial',
-    STALE: 'stale'
+    complete: 'complete',
+    partial: 'partial',
+    stale: 'stale'
   },
   defaultFragment: 'full',
   timestamp: {

@@ -31,7 +31,7 @@ function fixtureStore() {
 
   refStore.updateResource(TestHelper.descriptorCollection({
     basePath: '/projects'
-  }), [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.COMPLETE);
+  }), [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.complete);
 }
 
 function testInvalidateResult(args, result) {

@@ -89,18 +89,6 @@ class RefraxActionEntity {
       });
     }
 
-    promise.then(() => {
-      this.unset();
-    });
-    promise.catch(function(err) {
-      // we are only looking for a Refrax RequestError
-      if (err instanceof RequestError) {
-        if (RefraxTools.isPlainObject(err.response.data)) {
-          Action.setErrors(RefraxTools.extend({}, err.response.data));
-        }
-      }
-    });
-
     function finalize() {
       for (i=0; i<stackSize; i++) {
         const n = stack[i]._promises.indexOf(invoker);
@@ -110,7 +98,21 @@ class RefraxActionEntity {
         stack[i].emit('finish', invoker);
       }
     }
-    promise.then(finalize, finalize);
+    promise.then((result) => {
+      this.unset();
+      finalize();
+      return result;
+    });
+    promise.catch((err) => {
+      if (err instanceof RequestError) {
+        if (RefraxTools.isPlainObject(err.response.data)) {
+          Action.setErrors(RefraxTools.extend({}, err.response.data));
+        }
+      }
+
+      finalize();
+      throw err;
+    });
 
     return promise;
   }
