@@ -21,6 +21,7 @@ const type_links = {
   array: '!https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array',
   function: '!https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function',
 
+  refrax: '/docs/api/refrax.html',
   store: '/docs/api/refrax-store.html',
   action: '/docs/api/refrax-action.html',
   resource: '/docs/api/refrax-resource.html',
@@ -101,7 +102,7 @@ function generate_resource_link(href, text, title) {
 
   out += `>${text}</a>`;
   return out;
-};
+}
 
 
 renderer.heading = function(text, level) {
@@ -225,6 +226,11 @@ metalsmith(__dirname)
     },
     apis: {
       pattern: 'docs/api/*.*',
+      refer: false,
+      sortBy: sortDoc
+    },
+    apis_refrax: {
+      pattern: 'docs/api/refrax/*.*',
       refer: false,
       sortBy: sortDoc
     },

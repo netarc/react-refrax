@@ -97,12 +97,34 @@ body {
   padding-right: 20px;
 }
 
+.content--documentation {
+  padding-top: 20px;
+}
+
 .inner-content {
   margin-left: 210px;
 }
 
-.content--documentation {
-  padding-top: 20px;
+.content--documentation .inner-content {
+	> * + * {
+		margin-top: 15px;
+	}
+
+	strong {
+		font-weight: bold;
+	}
+
+	> ul {
+		list-style: disc;
+
+		li {
+			margin-left: 20px;
+
+			&+ li {
+				margin-top: 10px;
+			}
+		}
+	}
 }
 
 // Fonts

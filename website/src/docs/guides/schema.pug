@@ -1,0 +1,218 @@
+---
+title: Schema
+permalink: /docs/guides/schema.html
+group: 1
+layout: docs.pug
+---
+
+p The <code>Schema</code> in Refrax represents how your data is scoped, how it relates to each other and also describes if data should be treated as a collection or resource.
+
+p When creating elements of the Schema you will typically use the following helper methods imported from !{generate_resource_link("+refrax")}:
+
+ul
+  li <a href="/docs/api/refrax.html#static-createschemacollection">createSchemaCollection</a>
+  li <a href="/docs/api/refrax.html#static-createschemaresource">createSchemaResource</a>
+  li <a href="/docs/api/refrax.html#static-createschemanamespace">createSchemaNamespace</a>
+
+p These all return a !{generate_resource_link("+schema_path")} proxy object that contains the node(s) created as well as representing it's idiomatic path in the Schema.
+
+p Let's take the typical <strong>TODO</strong> app, simply just a collection of <code>todo</code> elements.
+
+h3 Example
+
+pre.prism.language-javascript
+  code
+    | import { Schema, createSchemaCollection } from 'Refrax';
+    | 
+    | const schema = new Schema();
+    | schema.addLeaf(createSchemaCollection("todos"));
+
+p We see a <a href="/docs/api/refrax.html#static-createschemacollection">addLeaf</a> method being used which attaches any !{generate_resource_link("+schema_path")} object into the schema at a specified idiomatic path. 
+
+p If you wanted to look closer under the hood you can make use of the <a href="/docs/api/refrax-schema-path.html#inspect">inspect()</a> method available on any !{generate_resource_link("+schema_path")}.
+
+h3 Example
+
+pre.prism.language-javascript
+  code
+    | schema.inspect();
+    | => {
+    |   "/todos": (ResourceDescriptor) {
+    |     basePath: "/todos",
+    |     coerce: "collection",
+    |     type: "todo",
+    |     ...
+    |   },
+    |   "/todos/:todoId": (ResourceDescriptor) {
+    |     basePath: "/todos/:todoId",
+    |     coerce: "item",
+    |     type: "todo",
+    |     ...
+    |   }
+    | }
+
+p NOTE: By default Refrax expects RESTful backend end-points to authoriate fetching and mutations; but can be changed.
+
+p Let's take the typical TODO app, from our server we might expect to have a collection and its associated item end-points:
+
+ul
+  li <code>GET /todos</code>
+  li <code>GET /todos/:id</code>
+
+
+p We can make use of the <a href="/docs/api/refrax.html#static-createschemacollection">createSchemaCollection</a> method that defines a collection.
+
+
+
+
+p We can see that <a href="/docs/api/refrax.html#static-createschemacollection">createSchemaCollection</a> assumed some details such as taking the <code>todos</code> identifier and using that for its type name and pathing. This is configurable via !{generate_resource_link("+schema_path")} options to suit what you may need.
+
+p You will also note the <code>collection</code> and <code>item</code> entries are keyed to url end-point paths.
+
+p Next, we need to let <code>Refrax</code> know what to do with these paths, so we need to be explicit and defi the root <a href="/docs/api/refrax.html">Schema</a> object and use the <a href="/docs/api/refrax-schema-path.html#addleaf">addLeaf([identifier, ]leaf)</a> method available on any !{generate_resource_link("+schema_path")} object.
+
+h3 Example
+
+pre.prism.language-javascript
+  code
+    | import {createSchemaCollection, Schema} from 'Refrax';
+    | 
+    | Schema.addLeaf(createSchemaCollection("todos"));
+
+p This combines the definition of the <code>todos</code> collection into the root [Schema](/docs/api/refrax.html).
+
+p As you define the Schema, it also provides an idiomatic approach to describing/acessing a particualr path and in itself becomes walkable.
+
+p Using a real world example, let's say we want to add a collection of users to a collection of projects.
+
+h3 Example
+
+pre.prism.language-javascript
+  code
+    | import {createSchemaCollection, Schema} from 'Refrax';
+    | 
+    | Schema.addLeaf(createSchemaCollection("projects"));
+    | 
+    | // Adding the above collection means we can now walk it and add a nested collection
+    | Schema.projects.project.addLeaf(createSchemaCollection("users"));
+
+p And just to look under the hood again, as you would expect this gives the following from inspection:
+
+pre.prism.language-javascript
+  code
+    | Schema.inspect();
+    | => {
+    |   "/projects": (ResourceDescriptor) {
+    |     basePath: "/projects",
+    |     coerce: "collection",
+    |     type: "project",
+    |     ...
+    |   },
+    |   "/projects/:projectId": (ResourceDescriptor) {
+    |     basePath: "/projects/:projectId",
+    |     coerce: "item",
+    |     type: "project",
+    |     ...
+    |   },
+    |   "/projects/:projectId/users": (ResourceDescriptor) {
+    |     basePath: "/projects/:projectId/users",
+    |     coerce: "collection",
+    |     type: "user",
+    |     ...
+    |   },
+    |   "/projects/:projectId/users/:userId": (ResourceDescriptor) {
+    |     basePath: "/projects/:projectId/users/:userId",
+    |     coerce: "item",
+    |     type: "user",
+    |     ...
+    |   }
+    | }
+
+p Just for some insight to whats possible, let's take a look at a more involved setup of a Schema.
+
+h3 Example
+
+pre.prism.language-javascript
+  code
+    | import {createSchemaCollection, createSchemaNamespace, createSchemaResource, Schema} from 'Refrax';
+    | 
+    | var Projects = createSchemaCollection("projects");
+    | var Users = createSchemaCollection("users");
+    | 
+    | Schema.addLeaf(Projects);
+    | Schema.addLeaf(createSchemaNamespace('admin'));
+    | 
+    | Schema.admin.addLeaf(Projects);
+    | Schema.admin.projects.project.addDetachedLeaf(Users);
+    | Schema.admin.addLeaf(Users);
+    | Schema.admin.users.user.addDetachedLeaf(Projects);
+
+p This show cases some new methods and techniques but from an inspection you will see the following:
+
+pre.prism.language-javascript
+  code
+    | Schema.inspect();
+    | => {
+    |   "/projects": (ResourceDescriptor) {
+    |     basePath: "/project",
+    |     coerce: "collection",
+    |     type: "project",
+    |     ...
+    |   },
+    |   "/projects/:projectId": (ResourceDescriptor) {
+    |     basePath: "/projects/:projectId",
+    |     coerce: "item",
+    |     type: "project",
+    |     ...
+    |   },
+    |   "/admin/projects": (ResourceDescriptor) {
+    |     basePath: "/admin/projects",
+    |     coerce: "collection",
+    |     type: "project",
+    |     ...
+    |   },
+    |   "/admin/projects/:projectId": (ResourceDescriptor) {
+    |     basePath: "/admin/projects/:projectId",
+    |     coerce: "item",
+    |     type: "project",
+    |     ...
+    |   },
+    |   "/admin/projects/:projectId/users": (ResourceDescriptor) {
+    |     basePath: "/admin/projects/:projectId/users",
+    |     coerce: "collection",
+    |     type: "user",
+    |     ...
+    |   },
+    |   "/admin/projects/:projectId/users/:userId": (ResourceDescriptor) {
+    |     basePath: "/admin/projects/:projectId/users/:userId",
+    |     coerce: "item",
+    |     type: "user",
+    |     ...
+    |   },
+    |   "/admin/users": (ResourceDescriptor) {
+    |     basePath: "/admin/users",
+    |     coerce: "collection",
+    |     type: "user",
+    |     ...
+    |   },
+    |   "/admin/users/:userId": (ResourceDescriptor) {
+    |     basePath: "/admin/users/:userId",
+    |     coerce: "item",
+    |     type: "user",
+    |     ...
+    |   },
+    |   "/admin/users/:userId/projects": (ResourceDescriptor) {
+    |     basePath: "/admin/users/:userId/projects",
+    |     coerce: "collection",
+    |     type: "project",
+    |     ...
+    |   },
+    |   "/admin/users/:userId/projects/:projectId": (ResourceDescriptor) {
+    |     basePath: "/admin/users/:userId/projects/:projectId",
+    |     coerce: "item",
+    |     type: "project",
+    |     ...
+    |   }
+    | }
+
+<div class="docs-prevnext"><a class="docs-next" href="/docs/guides/resources.html">Next →</a></div>

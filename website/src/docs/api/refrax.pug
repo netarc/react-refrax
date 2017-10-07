@@ -6,9 +6,7 @@ layout: docs.pug
 ---
 include /mixins/doc_templates.pug
 
-p `RefraxAction` is a mechanism to functionally represent a mutation to be performed on data.
-
-p Refrax actions are created using <a href="/docs/api/refrax.html#createAction">Refrax.createAction</a>.
+p <code>Refrax</code> is the entry point to the Refrax library and can be accessed by using <code>require()</code>.
 
 h2.header-section Overview
 
@@ -17,27 +15,27 @@ h3.header-section-sub Properties
 ul.list-properties
   li
     a(href="/docs/api/refrax-config.html")
-      span.anchor-link(href="#"+slug name=slug aria-hidden="true")
+      span.anchor-link
         span.fa.fa-link
       pre
         span Config
   li
     a(href="/docs/api/refrax-mutable-resource.html")
-      span.anchor-link(href="#"+slug name=slug aria-hidden="true")
+      span.anchor-link
         span.fa.fa-link
       pre
         span MutableResource
         i.fa.fa-long-arrow-right(aria-hidden="true")
   li
     a(href="/docs/api/refrax-resource.html")
-      span.anchor-link(href="#"+slug name=slug aria-hidden="true")
+      span.anchor-link
         span.fa.fa-link
       pre
         span Resource
         i.fa.fa-long-arrow-right(aria-hidden="true")
   li
     a(href="/docs/api/refrax-schema-path.html")
-      span.anchor-link(href="#"+slug name=slug aria-hidden="true")
+      span.anchor-link
         span.fa.fa-link
       pre
         span Schema
@@ -45,7 +43,7 @@ ul.list-properties
       Root SchemaPath
   li
     a(href="/docs/api/refrax-store.html")
-      span.anchor-link(href="#"+slug name=slug aria-hidden="true")
+      span.anchor-link
         span.fa.fa-link
       pre
         span Store
@@ -56,21 +54,25 @@ h3.header-section-sub Methods
 ul.list-methods
   li
     a(href="#static-createaction")
+      span.anchor-link(href="#"+slug name=slug aria-hidden="true")
+        span.fa.fa-link
       pre.prism.language-javascript.inline
         code static createAction(method)
       Create an Action wrapper around a given method.
   li
-    a(href="#static-defineschemacollection")
+    a(href="#static-createschemacollection")
+      span.anchor-link(href="#"+slug name=slug aria-hidden="true")
+        span.fa.fa-link
       pre.prism.language-javascript.inline
-        code static defineSchemaCollection(path[, store][, options])
+        code static createSchemaCollection(path[, store][, options])
   li
-    a(href="#static-defineschemaresource")
+    a(href="#static-createschemaresource")
       pre.prism.language-javascript.inline
-        code static defineSchemaResource(path[, store][, options])
+        code static createSchemaResource(path[, store][, options])
   li
-    a(href="#static-defineschemanamespace")
+    a(href="#static-createschemanamespace")
       pre.prism.language-javascript.inline
-        code static defineSchemaNamespace(path[, options])
+        code static createSchemaNamespace(path[, options])
   li
     a(href="#static-processresponse")
       pre.prism.language-javascript.inline
@@ -104,9 +106,9 @@ dl.method-definitions
             td!= generate_resource_link(":action")
             td The action wrapping supplied method.
             
-  +method_header("defineSchemaCollection(path[, store][, options])", "static")
+  +method_header("createSchemaCollection(path[, store][, options])", "static")
   dd.method-definition-details
-    p Create an [:action]() wrapper around a given method.
+    p Create an !{generate_resource_link("+action")} wrapper around a given method.
     
     aside
       h4 Parameters
@@ -208,9 +210,9 @@ dl.method-definitions
             td <a href="esri-geometry-ScreenPoint.html">ScreenPoint</a>
             td The screen point corresponding to the given map point.
       
-  +method_header("defineSchemaResource(path[, store][, options])", "static")
+  +method_header("createSchemaResource(path[, store][, options])", "static")
   dd.method-definition-details
-    p Create an [:action]() wrapper around a given method.
+    p Create an !{generate_resource_link("+action")} wrapper around a given method.
     
     aside
       h4 Parameters
@@ -230,11 +232,11 @@ dl.method-definitions
           p The function to call upon action invocation with local context to an <code>ActionInvoker</code>
     aside
       h4 Returns
-      p Returns [:action]().
+      p Returns !{generate_resource_link("+action")}.
       
-  +method_header("defineSchemaNamespace(path[, options])", "static")
+  +method_header("createSchemaNamespace(path[, options])", "static")
   dd.method-definition-details
-    p Create an [:action]() wrapper around a given method.
+    p Create an !{generate_resource_link("+action")} wrapper around a given method.
     
     aside
       h4 Parameters
@@ -254,11 +256,11 @@ dl.method-definitions
           p The function to call upon action invocation with local context to an <code>ActionInvoker</code>
     aside
       h4 Returns
-      p Returns [:action]().
+      p Returns !{generate_resource_link("+action")}.
 
   +method_header("processResponse(data[, resourceDescriptor][, handler])")
   dd.method-definition-details
-    p Create an [:action]() wrapper around a given method.
+    p Create an !{generate_resource_link("+action")} wrapper around a given method.
     
     aside
       h4 Parameters
@@ -278,4 +280,4 @@ dl.method-definitions
           p The function to call upon action invocation with local context to an <code>ActionInvoker</code>
     aside
       h4 Returns
-      p Returns [:action]().
+      p Returns !{generate_resource_link("+action")}.
