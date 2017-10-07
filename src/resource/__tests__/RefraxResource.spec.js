@@ -75,7 +75,7 @@ describe('RefraxResource', () => {
     it('should look and behave like a Resource', () => {
       const onLoad = sinon.spy();
       const onChange = sinon.spy();
-      const store = schema.__storeMap.getOrCreate('user');
+      const store = schema.__node.definition.storeMap.getOrCreate('user');
       sinon.spy(store, 'once');
 
       const resource = new RefraxResource(schema.users);
@@ -259,7 +259,7 @@ describe('RefraxResource', () => {
 
     describe('_subscribeToStore', () => {
       it('correctly sets up a weakly referenced subscriber', () => {
-        const store = schema.__storeMap.getOrCreate('user');
+        const store = schema.__node.definition.storeMap.getOrCreate('user');
         const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, schema.users.__stack);
         const resource = new RefraxResource(schema.users, new RefraxOptions({ noSubscribe: true }));
         const onChange = sinon.spy();
@@ -337,7 +337,7 @@ describe('RefraxResource', () => {
       describe('with default behavior', () => {
         it('correctly invalidates cache and fetches', () => {
           const resource = new RefraxResource(schema.users);
-          const store = schema.__storeMap.getOrCreate('user');
+          const store = schema.__node.definition.storeMap.getOrCreate('user');
           sinon.spy(store, 'invalidate');
 
           return wait_for_promise(() => resource.status === STATUS_COMPLETE)
@@ -368,7 +368,7 @@ describe('RefraxResource', () => {
       describe('with noFetchGet', () => {
         it('correctly invalidates cache and does not fetch', () => {
           const resource = new RefraxResource(schema.users);
-          const store = schema.__storeMap.getOrCreate('user');
+          const store = schema.__node.definition.storeMap.getOrCreate('user');
           sinon.spy(store, 'invalidate');
 
           return wait_for_promise(() => resource.status === STATUS_COMPLETE)

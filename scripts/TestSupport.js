@@ -14,6 +14,19 @@ global.document = window.document;
 global.navigator = {
   userAgent: 'node.js'
 };
+// JSDOM "polyfill" for storage
+window.localStorage = window.sessionStorage = {
+  __storage: {},
+  getItem: function(key) {
+    return this.__storage[key] || null;
+  },
+  setItem: function(key, value) {
+    this.__storage[key] = '' + value;
+  },
+  removeItem: function(key, value) {
+    delete this.__storage[key];
+  }
+};
 
 let fn_mount = null
   , mounted = [];
@@ -53,6 +66,7 @@ const host = '';
 global.mock_reset = () => {
   axiosMock.requests.reset();
   axiosMock.stubs.reset();
+  window.localStorage.__storage = {};
 };
 
 global.mock_request_count = () => {

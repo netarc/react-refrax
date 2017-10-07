@@ -189,7 +189,7 @@ describe('RefraxResourceDescriptor', () => {
             params: {},
             partial: FRAGMENT_DEFAULT,
             payload: {},
-            store: schema.__storeMap.__map['project'],
+            store: schema.__node.definition.storeMap.__map['project'],
             type: 'project',
             valid: true,
             basePath: '/projects',
@@ -217,7 +217,7 @@ describe('RefraxResourceDescriptor', () => {
             params: { projectId: 123 },
             partial: FRAGMENT_DEFAULT,
             payload: {},
-            store: schema.__storeMap.__map['user'],
+            store: schema.__node.definition.storeMap.__map['user'],
             type: 'user',
             valid: true,
             basePath: '/projects/123/users',
@@ -255,7 +255,7 @@ describe('RefraxResourceDescriptor', () => {
             params: {},
             partial: FRAGMENT_DEFAULT,
             payload: {},
-            store: schema.__storeMap.__map['project'],
+            store: schema.__node.definition.storeMap.__map['project'],
             type: 'project',
             valid: true,
             basePath: '/projects/123',
@@ -283,7 +283,7 @@ describe('RefraxResourceDescriptor', () => {
             params: {},
             partial: FRAGMENT_DEFAULT,
             payload: {},
-            store: schema.__storeMap.__map['user'],
+            store: schema.__node.definition.storeMap.__map['user'],
             type: 'user',
             valid: true,
             basePath: '/projects/123/users/321',
@@ -310,7 +310,7 @@ describe('RefraxResourceDescriptor', () => {
             params: {},
             partial: FRAGMENT_DEFAULT,
             payload: {},
-            store: schema.__storeMap.__map['setting'],
+            store: schema.__node.definition.storeMap.__map['setting'],
             type: 'setting',
             valid: true,
             basePath: '/settings',
@@ -338,7 +338,7 @@ describe('RefraxResourceDescriptor', () => {
             params: {},
             partial: FRAGMENT_DEFAULT,
             payload: {},
-            store: schema.__storeMap.__map['setting'],
+            store: schema.__node.definition.storeMap.__map['setting'],
             type: 'setting',
             valid: true,
             basePath: '/projects/123/settings',
@@ -593,7 +593,7 @@ describe('RefraxResourceDescriptor', () => {
               params: {},
               partial: FRAGMENT_DEFAULT,
               payload: {},
-              store: schema.__storeMap.__map['project'],
+              store: schema.__node.definition.storeMap.__map['project'],
               type: 'project',
               valid: true,
               basePath: '/projects/123',
@@ -625,7 +625,7 @@ describe('RefraxResourceDescriptor', () => {
               params: {},
               partial: FRAGMENT_DEFAULT,
               payload: {},
-              store: schema.__storeMap.__map['user'],
+              store: schema.__node.definition.storeMap.__map['user'],
               type: 'user',
               valid: true,
               basePath: '/projects/123/users/321',
@@ -653,7 +653,7 @@ describe('RefraxResourceDescriptor', () => {
         expect(descriptor.store)
           .to.not.equal(RefraxResourceDescriptor.storeMap.getOrCreate(descriptor.type));
         expect(descriptor.store)
-          .to.equal(schema.__storeMap.getOrCreate(descriptor.type));
+          .to.equal(schema.__node.definition.storeMap.getOrCreate(descriptor.type));
       });
     });
   });

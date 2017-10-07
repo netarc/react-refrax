@@ -132,7 +132,7 @@ describe('RefraxMutableResource', () => {
 
       beforeEach(() => {
         mutableUsers = new RefraxMutableResource(schema.users);
-        store = schema.__storeMap.getOrCreate('user');
+        store = schema.__node.definition.storeMap.getOrCreate('user');
         expectedDescriptor.store = store;
 
         sinon.spy(mutableUsers, '_generateDescriptor');
@@ -275,7 +275,7 @@ describe('RefraxMutableResource', () => {
 
       beforeEach(() => {
         mutableUsers = new RefraxMutableResource(schema.users);
-        store = expectedDescriptor.store = schema.__storeMap.getOrCreate('user');
+        store = expectedDescriptor.store = schema.__node.definition.storeMap.getOrCreate('user');
 
         sinon.spy(mutableUsers, '_generateDescriptor');
         sinon.spy(store, 'touchResource');
@@ -425,7 +425,7 @@ describe('RefraxMutableResource', () => {
 
       beforeEach(() => {
         mutableUsers = new RefraxMutableResource(schema.users);
-        store = expectedDescriptor.store = schema.__storeMap.getOrCreate('user');
+        store = expectedDescriptor.store = schema.__node.definition.storeMap.getOrCreate('user');
 
         sinon.spy(mutableUsers, '_generateDescriptor');
         sinon.spy(store, 'touchResource');

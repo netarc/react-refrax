@@ -86,7 +86,7 @@ describe('processResponse', () => {
       });
 
       it('should translate action correctly to store', () => {
-        const store = schema.__storeMap.getOrCreate('user');
+        const store = schema.__node.definition.storeMap.getOrCreate('user');
         const descriptor1 = new RefraxResourceDescriptor(null, ACTION_GET, schema.users.__stack);
         const descriptor2 = new RefraxResourceDescriptor(null, ACTION_DELETE, schema.users.__stack);
         const options = { foo: 123 };

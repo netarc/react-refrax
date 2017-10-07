@@ -305,7 +305,7 @@ describe('RefraxContainer', function() {
     it('should update and propagate properly when invalidated externally', () => {
       const onLoad = sinon.spy();
       const onChange = sinon.spy();
-      const storeUsers = schema.__storeMap.getOrCreate('user');
+      const storeUsers = schema.__node.definition.storeMap.getOrCreate('user');
       const wrapper = mount(React.createElement(TestComponentContainer, {
         refrax: {
           users: schema.users

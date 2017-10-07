@@ -192,5 +192,5 @@ rules:
   max-len: 0
   max-params: 0
   max-statements: 0
-  no-bitwise: 1
+  no-bitwise: 0
   no-plusplus: 0

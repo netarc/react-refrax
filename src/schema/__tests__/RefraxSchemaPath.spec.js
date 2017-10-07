@@ -181,7 +181,7 @@ describe('RefraxSchemaPath', () => {
               partial: FRAGMENT_DEFAULT,
               path: '/api/projects',
               payload: {},
-              store: schema.__storeMap.__map['project'],
+              store: schema.__node.definition.storeMap.__map['project'],
               type: 'project',
               valid: true
             },
@@ -198,7 +198,7 @@ describe('RefraxSchemaPath', () => {
               partial: FRAGMENT_DEFAULT,
               path: '/api/projects/:projectId',
               payload: {},
-              store: schema.__storeMap.__map['project'],
+              store: schema.__node.definition.storeMap.__map['project'],
               type: 'project',
               valid: false
             },
@@ -246,8 +246,8 @@ describe('RefraxSchemaPath', () => {
       });
 
       it('should correctly invoke store invalidate', () => {
-        const storeProject = schema.__storeMap.__map['project'];
-        const storeUser = schema.__storeMap.__map['user'];
+        const storeProject = schema.__node.definition.storeMap.__map['project'];
+        const storeUser = schema.__node.definition.storeMap.__map['user'];
 
         sinon.spy(storeProject, 'invalidate');
         sinon.spy(storeUser, 'invalidate');
@@ -277,7 +277,7 @@ describe('RefraxSchemaPath', () => {
       });
 
       it('should correctly pass parameters and query params', () => {
-        const store = schema.__storeMap.__map['project'];
+        const store = schema.__node.definition.storeMap.__map['project'];
 
         sinon.spy(store, 'invalidate');
 
@@ -308,7 +308,7 @@ describe('RefraxSchemaPath', () => {
       });
 
       it('should correctly pass options', () => {
-        const store = schema.__storeMap.__map['project'];
+        const store = schema.__node.definition.storeMap.__map['project'];
 
         sinon.spy(store, 'invalidate');
 
@@ -319,12 +319,13 @@ describe('RefraxSchemaPath', () => {
 
       describe('with option cascade', () => {
         it('should correctly enumerate leafs and invalidate', () => {
-          const storeProject = schema.__storeMap.__map['project'];
-          const storeUser = schema.__storeMap.__map['user'];
+          const storeProject = schema.__node.definition.storeMap.__map['project'];
+          const storeUser = schema.__node.definition.storeMap.__map['user'];
 
           sinon.spy(storeProject, 'invalidate');
           sinon.spy(storeUser, 'invalidate');
 
+          console.info("pre invalidate")
           schema.api.projects.withParams({ projectId: 123 }).invalidate({ cascade: true });
 
           expect(storeProject.invalidate.callCount).to.equal(2);
@@ -335,8 +336,8 @@ describe('RefraxSchemaPath', () => {
         });
 
         it('should correctly skip invalid descriptors', () => {
-          const storeProject = schema.__storeMap.__map['project'];
-          const storeUser = schema.__storeMap.__map['user'];
+          const storeProject = schema.__node.definition.storeMap.__map['project'];
+          const storeUser = schema.__node.definition.storeMap.__map['user'];
 
           sinon.spy(storeProject, 'invalidate');
           sinon.spy(storeUser, 'invalidate');
@@ -373,8 +374,8 @@ describe('RefraxSchemaPath', () => {
       });
 
       it('should correctly invoke store invalidate', () => {
-        const storeProject = schema.__storeMap.__map['project'];
-        const storeUser = schema.__storeMap.__map['user'];
+        const storeProject = schema.__node.definition.storeMap.__map['project'];
+        const storeUser = schema.__node.definition.storeMap.__map['user'];
 
         sinon.spy(storeProject, 'invalidate');
         sinon.spy(storeUser, 'invalidate');
@@ -404,7 +405,7 @@ describe('RefraxSchemaPath', () => {
       });
 
       it('should correctly pass parameters and query params', () => {
-        const store = schema.__storeMap.__map['project'];
+        const store = schema.__node.definition.storeMap.__map['project'];
 
         sinon.spy(store, 'invalidate');
 
@@ -435,7 +436,7 @@ describe('RefraxSchemaPath', () => {
       });
 
       it('should correctly pass options', () => {
-        const store = schema.__storeMap.__map['project'];
+        const store = schema.__node.definition.storeMap.__map['project'];
 
         sinon.spy(store, 'invalidate');
 
@@ -444,6 +445,34 @@ describe('RefraxSchemaPath', () => {
           .invalidateLeafs({ noNotify: true });
 
         expect(store.invalidate.getCall(0).args[1]).to.deep.equal({ noNotify: true });
+      });
+    });
+  });
+
+  describe('behavior', () => {
+    describe('detached', () => {
+      it('should not circular reference', () => {
+        let schema = new RefraxSchema();
+        let projects = createSchemaCollection('projects');
+        let users = createSchemaCollection('users');
+
+        schema.addLeaf(projects);
+        schema.projects.project.addDetachedLeaf(users);
+        users.user.addLeaf(projects);
+
+        expect(schema.projects.project.users.user.projects.project).to.be.an.instanceof(RefraxSchemaPath);
+        expect(schema.projects.project.users.user.projects.project.users).to.equal(undefined);
+      });
+
+      it('should circular reference', () => {
+        let schema = new RefraxSchema();
+        let projects = createSchemaCollection('projects');
+        let users = createSchemaCollection('users');
+        projects.project.addLeaf(users);
+        users.user.addLeaf(projects);
+        schema.addLeaf(projects);
+
+        expect(schema.projects.project.users.user.projects.project.users).to.be.an.instanceof(RefraxSchemaPath);
       });
     });
   });

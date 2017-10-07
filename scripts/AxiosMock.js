@@ -14,6 +14,10 @@ import btoa from 'axios/lib/helpers/btoa';
 import cookies from 'axios/lib/helpers/cookies';
 import settle from 'axios/lib/core/settle';
 
+Promise.config({
+  longStackTraces: true
+});
+
 // The default adapter
 let defaultAdapter;
 
@@ -25,10 +29,6 @@ let defaultAdapter;
  * @param {Object} config The config object to be used for the request
  */
 const mockAdapter = (config) => {
-  Promise.config({
-    longStackTraces: true
-  });
-
   return new Promise(function(resolve, reject) {
     const request = new Request(resolve, reject, config);
     axiosMock.requests.track(request);

@@ -21,7 +21,9 @@ const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
 const STRATEGY_MERGE = RefraxConstants.strategy.merge;
 const STRATEGY_REPLACE = RefraxConstants.strategy.replace;
 const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
+const CLASSIFY_SCHEMA = RefraxConstants.classify.schema;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
+const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 
 const GlobalStoreMap = new RefraxStoreMap();
 
@@ -151,7 +153,8 @@ function processStack(invoker, resourceDescriptor, stack) {
     , resolver = {
       errorOnInvalid: action !== 'inspect',
       paramMap: {},
-      path: [],
+      paths: [],
+      collectionPaths: [],
       paramId: null,
       queryParams: {},
       appendPaths: [],
@@ -170,6 +173,10 @@ function processStack(invoker, resourceDescriptor, stack) {
     }
 
     if (item instanceof RefraxSchemaNode) {
+      if (item.type === CLASSIFY_SCHEMA) {
+        resourceDescriptor.adapter = item.definition.adapter;
+      }
+
       if (item.type !== CLASSIFY_ITEM) {
         resetScope(resourceDescriptor, resolver);
       }
@@ -231,23 +238,31 @@ function processStack(invoker, resourceDescriptor, stack) {
 
       if (result) {
         pathErrors = pathErrors.concat(result.errors);
-        resolver.path.push(result.uri);
+        resolver.paths.push(result.uri);
         lastURIParamId = result.lastParamKey;
         RefraxTools.extend(resourceDescriptor.pathParams, result.paramsUsed);
+      }
+
+      if (item.type === CLASSIFY_COLLECTION) {
+        resolver.collectionPaths = [].concat(resolver.paths);
       }
     }
   }
 
   resolver.appendPaths = RefraxTools.map(RefraxTools.select(resolver.appendPaths, function(rPath) {
-    return rPath.isModifier || (resolver.path.push(rPath.path) && false);
+    return rPath.isModifier || (resolver.paths.push(rPath.path) && false);
   }), function(rPath) {
     return rPath.path;
   });
 
   // If we have no base path's ignore pathing all together
-  if (resolver.path.length > 0) {
+  if (resolver.paths.length > 0) {
     resourceDescriptor.basePath =
-      resourceDescriptor.path = RefraxConfig.hostname + '/' + resolver.path.join('/');
+      resourceDescriptor.path = RefraxConfig.hostname + '/' + resolver.paths.join('/');
+
+    if (resolver.collectionPaths.length > 0) {
+      resourceDescriptor.collectionPath = RefraxConfig.hostname + '/' + resolver.collectionPaths.join('/');
+    }
 
     if (resolver.appendPaths.length > 0) {
       resourceDescriptor.path+= '/' + resolver.appendPaths.join('/');
@@ -290,20 +305,21 @@ class RefraxResourceDescriptor {
 
   constructor(invoker, action = ACTION_GET, stack = []) {
     this.action = action;
-    this.event = null;
+    this.adapter = null;
+    this.cacheStrategy = STRATEGY_REPLACE;
     this.classify = CLASSIFY_RESOURCE;
-    this.partial = FRAGMENT_DEFAULT;
+    this.collectionStrategy = action === ACTION_CREATE ? STRATEGY_MERGE : STRATEGY_REPLACE;
+    this.event = null;
+    this.fragments = [];
     this.id = null;
     this.params = {};
-    this.fragments = [];
+    this.partial = FRAGMENT_DEFAULT;
+    this.pathParams = {};
     this.payload = {};
+    this.queryParams = {};
     this.store = null;
     this.type = null;
-    this.cacheStrategy = STRATEGY_REPLACE;
-    this.collectionStrategy = action === ACTION_CREATE ? STRATEGY_MERGE : STRATEGY_REPLACE;
     this.valid = true;
-    this.queryParams = {};
-    this.pathParams = {};
 
     if (!RefraxTools.isArray(stack)) {
       stack = [stack];
