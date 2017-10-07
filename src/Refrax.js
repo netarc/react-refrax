@@ -16,6 +16,10 @@ const createAction = require('createAction');
 const createSchemaCollection = require('createSchemaCollection');
 const createSchemaResource = require('createSchemaResource');
 const createSchemaNamespace = require('createSchemaNamespace');
+const RefraxAdapter = require('RefraxAdapter');
+const XHRAdapter = require('XHRAdapter');
+const LocalStorageAdapter = require('LocalStorageAdapter');
+const SessionStorageAdapter = require('SessionStorageAdapter');
 const processResponse = require('processResponse');
 const invalidateHelper = require('invalidateHelper');
 const RefraxStore = require('RefraxStore');
@@ -35,5 +39,9 @@ export default {
   createSchemaResource,
   createSchemaNamespace,
   processResponse,
-  invalidate: invalidateHelper
+  invalidate: invalidateHelper,
+  Adapter: RefraxAdapter,
+  XHRAdapter,
+  LocalStorageAdapter,
+  SessionStorageAdapter
 };

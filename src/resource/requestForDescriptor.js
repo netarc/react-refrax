@@ -6,14 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 const Promise = require('bluebird');
-const Axios = require('axios');
+const RefraxAdapter = require('RefraxAdapter');
 const RefraxTools = require('RefraxTools');
 const RequestError = require('RequestError');
-const RefraxConstants = require('RefraxConstants');
 const processResponse = require('processResponse');
-const STATUS_STALE = RefraxConstants.status.stale;
-const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
-const ACTION_GET = RefraxConstants.action.get;
 
 
 // We only quietly consume RequestError's
@@ -24,62 +20,19 @@ Promise.onPossiblyUnhandledRejection(function(err, promise) {
   throw err;
 });
 
-function containsMultipart(data) {
-  return data && RefraxTools.any(data, function(value) {
-    return global.File && value instanceof global.File;
-  });
-}
-
-function composeFormData(data) {
-  var result = new global.FormData();
-
-  RefraxTools.each(data, function(value, key) {
-    result.append(key, value);
-  });
-
-  return result;
-}
-
 function requestForDescriptor(descriptor, options = {}, callback = null) {
-  var store = descriptor.store
-    , touchParams = {
-      timestamp: TIMESTAMP_LOADING
-    }
-    , requestConfig = {
-      method: descriptor.action,
-      url: descriptor.path
-    };
+  const store = descriptor.store;
 
-  if (descriptor.action === ACTION_GET) {
-    touchParams.status = STATUS_STALE;
+  if (!descriptor.adapter) {
+    throw new ReferenceError('requestForDescriptor: no adapter specified');
   }
-  else {
-    requestConfig.data = descriptor.payload;
-
-    if (containsMultipart(requestConfig.data)) {
-      requestConfig.data = composeFormData(requestConfig.data);
-    }
+  else if (!(descriptor.adapter instanceof RefraxAdapter)) {
+    throw new ReferenceError('requestForDescriptor: expected RefraxAdapter base but found `' +
+      descriptor.adaptor.constructor.name + '`'
+    );
   }
 
-  if (store) {
-    store.touchResource(descriptor, touchParams, options);
-  }
-
-  let promise = new Promise(function(resolve, reject) {
-    // eslint-disable-next-line new-cap
-    Axios(requestConfig)
-      .then(function(response) {
-        resolve([response.data, response, descriptor]);
-      }, function(err) {
-        // Convert errors that look like Axios request errors into Refrax request errors
-        if ('request' in err && 'response' in err) {
-          reject(new RequestError(err.response));
-        }
-        else {
-          reject(err);
-        }
-      });
-  });
+  let promise = descriptor.adapter.invoke(descriptor, options);
 
   // Callback acts as a way to inject into our request and modify the result or
   // perform some action before the result feeds into processResponse.

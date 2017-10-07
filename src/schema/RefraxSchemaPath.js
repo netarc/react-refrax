@@ -18,15 +18,71 @@ const ACTION_GET = RefraxConstants.action.get;
 const SchemaAccescessorMixins = [];
 
 
-// Determine if a stack matches the ending of another
-function compareStack(part, stack) {
+// @todo Do we need serialization comparison or is strict equality good enough?
+// function serializer() {
+//   var stack = []
+//     , keys = [];
+//
+//   return function(key, value) {
+//     if (stack.length > 0) {
+//       const thisPos = stack.indexOf(this);
+//       if (~thisPos) {
+//         stack.splice(thisPos + 1);
+//         keys.splice(thisPos, Infinity, key);
+//       }
+//       else {
+//         stack.push(this);
+//         keys.push(key);
+//       }
+//
+//       const valuePos = stack.indexOf(value);
+//       if (~valuePos) {
+//         if (stack[0] === value) {
+//           value = '[Circular ~]';
+//         }
+//         else {
+//           value = '[Circular ~.' + keys.slice(0, valuePos).join('.') + ']';
+//         }
+//       }
+//     }
+//     else {
+//       stack.push(value);
+//     }
+//
+//     return value;
+//   };
+// }
+//
+// function stringify(obj) {
+//   return JSON.stringify(obj, serializer());
+// }
+
+// Determine if a "part" of a stack is comparable to another based on nodes only
+function compareStackNodes(part, stack) {
+  part = RefraxTools.select(part, (obj) => {
+    return obj instanceof RefraxSchemaNode;
+  });
+  stack = RefraxTools.select(stack, (obj) => {
+    return obj instanceof RefraxSchemaNode;
+  });
   stack = stack.slice(Math.max(stack.length - part.length, 0));
-  return JSON.stringify(part) === JSON.stringify(stack);
+
+  if (stack.length != part.length) {
+    return false;
+  }
+
+  for (var i=0, size=stack.length; i<size; i++) {
+    if (stack[i] !== part[i]) {
+      return false;
+    }
+  }
+  return true;
+  // return stringify(part) === stringify(stack);
 }
 
 function enumerateNodeLeafs(node, stack, action) {
   RefraxTools.each(node.leafs, function(leaf, key) {
-    if (!leaf.stack || compareStack(leaf.stack, stack)) {
+    if (leaf.stack === null || compareStackNodes(leaf.stack, stack)) {
       action(key, leaf.node, stack.concat(leaf.node));
     }
   });
@@ -57,7 +113,7 @@ function createLeaf(schemaPath, detached, identifier, leafNode) {
   }
 
   identifier = RefraxTools.cleanIdentifier(identifier);
-  node.leafs[identifier] = {node: leafNode, stack: detached ? stack : null};
+  node.leafs[identifier] = { node: leafNode, stack: detached ? stack : null };
 
   Object.defineProperty(schemaPath, identifier, {
     get: function() {
@@ -77,11 +133,11 @@ class RefraxSchemaPath {
     }
 
     if (!stack) {
-      stack = [].concat(node);
+      stack = [node];
     }
 
-    Object.defineProperty(this, '__node', {value: node});
-    Object.defineProperty(this, '__stack', {value: stack});
+    Object.defineProperty(this, '__node', { value: node });
+    Object.defineProperty(this, '__stack', { value: stack });
 
     RefraxTools.each(SchemaAccescessorMixins, function(mixin) {
       RefraxTools.extend(this, mixin);

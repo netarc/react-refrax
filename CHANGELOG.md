@@ -6,6 +6,7 @@
 - **Major** Refactor store events to fully represent fragment/queries
 - **Major** `Resource.fetch` and `MutableResource` methods promise value now is a tuple consisting of [result/response/descriptor]
 - **Major** Added RefraxReact `createContainer` to supersede it's `Mixin` use
+- **Feature** Added Schema `adapter` support with `XHRAdapter` / `LocalStorageAdapter` / `SessionStorageAdapter`
 
 # Released
 

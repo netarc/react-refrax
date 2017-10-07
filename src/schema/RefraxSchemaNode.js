@@ -17,7 +17,8 @@ const CLASSIFY_ITEM = RefraxConstants.classify.item;
 const validDefinitionKeys = {};
 
 validDefinitionKeys[CLASSIFY_SCHEMA] = [
-  'storeMap'
+  'storeMap',
+  'adapter'
 ];
 
 validDefinitionKeys[CLASSIFY_NAMESPACE] = [
@@ -159,10 +160,10 @@ class RefraxSchemaNode {
     // TODO: Do we need to classify this anymore?
     definition.classify = type;
 
-    Object.defineProperty(this, 'type', {value: type});
-    Object.defineProperty(this, 'identifier', {value: identifier});
-    Object.defineProperty(this, 'definition', {value: definition});
-    Object.defineProperty(this, 'leafs', {value: {}});
+    Object.defineProperty(this, 'type', { value: type });
+    Object.defineProperty(this, 'identifier', { value: identifier });
+    Object.defineProperty(this, 'definition', { value: definition });
+    Object.defineProperty(this, 'leafs', { value: {} });
   }
 }
 

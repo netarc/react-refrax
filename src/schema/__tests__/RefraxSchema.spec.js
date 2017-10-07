@@ -17,20 +17,20 @@ describe('RefraxSchema', function() {
     describe('reset', function() {
       it('correctly forwards to storeMap', function() {
         var schema = new RefraxSchema();
-        sinon.spy(schema.__storeMap, 'reset');
+        sinon.spy(schema.__node.definition.storeMap, 'reset');
 
         schema.reset();
-        expect(schema.__storeMap.reset.callCount).to.equal(1);
+        expect(schema.__node.definition.storeMap.reset.callCount).to.equal(1);
       });
     });
 
     describe('invalidate', function() {
       it('correctly forwards to storeMap', function() {
         var schema = new RefraxSchema();
-        sinon.spy(schema.__storeMap, 'invalidate');
+        sinon.spy(schema.__node.definition.storeMap, 'invalidate');
 
         schema.invalidate();
-        expect(schema.__storeMap.invalidate.callCount).to.equal(1);
+        expect(schema.__node.definition.storeMap.invalidate.callCount).to.equal(1);
       });
     });
   });
