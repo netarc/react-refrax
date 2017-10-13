@@ -16,7 +16,32 @@ const warning = require('warning');
 const ACTION_INSPECT = RefraxConstants.action.inspect;
 const ACTION_GET = RefraxConstants.action.get;
 const SchemaAccescessorMixins = [];
+let createSchemaCollection = null
+  , createSchemaResource = null
+  , createSchemaNamespace = null;
 
+
+// Circular dependency getters
+function memoCreateSchemaCollection() {
+  if (!createSchemaCollection) {
+    createSchemaCollection = require('createSchemaCollection');
+  }
+  return createSchemaCollection;
+}
+
+function memoCreateSchemaResource() {
+  if (!createSchemaResource) {
+    createSchemaResource = require('createSchemaResource');
+  }
+  return createSchemaResource;
+}
+
+function memoCreateSchemaNamespace() {
+  if (!createSchemaNamespace) {
+    createSchemaNamespace = require('createSchemaNamespace');
+  }
+  return createSchemaNamespace;
+}
 
 // @todo Do we need serialization comparison or is strict equality good enough?
 // function serializer() {
@@ -290,6 +315,24 @@ class RefraxSchemaPath {
   addDetachedLeaf(identifier, leaf) {
     createLeaf(this, true, identifier, leaf);
     return this;
+  }
+
+  addCollection(path, store, options) {
+    const collection = memoCreateSchemaCollection()(path, store, options);
+    createLeaf(this, true, collection);
+    return collection;
+  }
+
+  addResource(path, store, options) {
+    const resource = memoCreateSchemaResource()(path, store, options);
+    createLeaf(this, true, resource);
+    return resource;
+  }
+
+  addNamespace(path, store, options) {
+    const namespace = memoCreateSchemaNamespace()(path, store, options);
+    createLeaf(this, true, namespace);
+    return namespace;
   }
 }
 
