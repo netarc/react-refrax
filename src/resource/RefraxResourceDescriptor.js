@@ -158,6 +158,7 @@ function processStack(invoker, resourceDescriptor, stack) {
       paramId: null,
       queryParams: {},
       appendPaths: [],
+      navPaths: [],
       storeMap: GlobalStoreMap
     }
     , pathErrors = []
@@ -229,6 +230,8 @@ function processStack(invoker, resourceDescriptor, stack) {
     if (item instanceof RefraxSchemaNode) {
       result = null;
 
+      resolver.navPaths.push(item.identifier);
+
       if (definition.path) {
         result = fillURI(definition.path, resourceDescriptor.params, resolver.paramMap);
       }
@@ -254,6 +257,8 @@ function processStack(invoker, resourceDescriptor, stack) {
   }), function(rPath) {
     return rPath.path;
   });
+
+  resourceDescriptor.navPath = resolver.navPaths.join('.');
 
   // If we have no base path's ignore pathing all together
   if (resolver.paths.length > 0) {

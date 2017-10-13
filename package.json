@@ -57,7 +57,6 @@
     "gulp-util": "^3.0.6",
     "jsdom": "^11.1.0",
     "mocha": "~3.4.1",
-    "nock": "3.5.0",
     "object-assign": "^3.0.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",

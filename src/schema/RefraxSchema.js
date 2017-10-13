@@ -10,6 +10,8 @@ const RefraxSchemaNode = require('RefraxSchemaNode');
 const RefraxSchemaPath = require('RefraxSchemaPath');
 const RefraxAdapter = require('RefraxAdapter');
 const XHRAdapter = require('XHRAdapter');
+const LocalStorageAdapter = require('LocalStorageAdapter');
+const SessionStorageAdapter = require('SessionStorageAdapter');
 const RefraxTools = require('RefraxTools');
 const RefraxConstants = require('RefraxConstants');
 const CLASSIFY_SCHEMA = RefraxConstants.classify.schema;
@@ -23,31 +25,52 @@ function validateDefinition(definition) {
     );
   }
 
+  // Shallow copy so modifications don't affect the source
+  definition = RefraxTools.extend({}, definition);
+
   if ('storeMap' in definition && !(definition.storeMap instanceof RefraxStoreMap)) {
     throw new TypeError(
       'RefraxSchema - Option `storeMap` can only be of type RefraxStoreMap but found ' +
       'type `' + typeof(definition.storeMap) + '`.'
     );
   }
+  else {
+    definition.storeMap = new RefraxStoreMap();
+  }
 
-  if ('adapter' in definition && !(definition.adapter instanceof RefraxAdapter)) {
-    throw new TypeError(
-      'RefraxSchema - Option `adapter` can only be of type RefraxAdapter but found ' +
-      'type `' + typeof(definition.adapter) + '`.'
-    );
+  if ('adapter' in definition) {
+    if (typeof(definition.adapter) === 'string') {
+      if (!(definition.adapter = RefraxSchema.adapters[definition.adapter])) {
+        throw new ReferenceError(
+          `RefraxSchema - No adapter found named \`${definition.adapter}\``
+        );
+      }
+    }
+
+    if (!(definition.adapter instanceof RefraxAdapter)) {
+      throw new TypeError(
+        'RefraxSchema - Option `adapter` can only be of type RefraxAdapter but found ' +
+        'type `' + typeof(definition.adapter) + '`.'
+      );
+    }
+  }
+  else {
+    definition.adapter = new XHRAdapter();
   }
 
   return definition;
 }
 
 class RefraxSchema extends RefraxSchemaPath {
-  constructor(definition = {}) {
-    validateDefinition(definition);
+  static adapters = {
+    base: RefraxAdapter,
+    xhr: XHRAdapter,
+    localStorage: LocalStorageAdapter,
+    sessionStorage: SessionStorageAdapter
+  };
 
-    definition = RefraxTools.extend({
-      adapter: new XHRAdapter(),
-      storeMap: new RefraxStoreMap()
-    }, definition);
+  constructor(definition = {}) {
+    definition = validateDefinition(definition);
 
     super(new RefraxSchemaNode(CLASSIFY_SCHEMA, null, definition));
   }
