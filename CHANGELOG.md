@@ -1,14 +1,17 @@
 # Unreleased
 
-## [v0.6.1]
+
+# Released
+
+## [v0.6.0](https://github.com/netarc/refrax/compare/v0.6.0...v0.6.1)
+> Octobober 13, 2017
+
 - **Bugfix** Mutable `setState` this reference
 - **Minor** ResourceDescriptor now uses a default global `storeMap`
 - **Major** Refactor store events to fully represent fragment/queries
 - **Major** `Resource.fetch` and `MutableResource` methods promise value now is a tuple consisting of [result/response/descriptor]
 - **Major** Added RefraxReact `createContainer` to supersede it's `Mixin` use
 - **Feature** Added Schema `adapter` support with `XHRAdapter` / `LocalStorageAdapter` / `SessionStorageAdapter`
-
-# Released
 
 ## [v0.6.0](https://github.com/netarc/refrax/compare/v0.5.16...v0.6.0)
 > June 20, 2017
