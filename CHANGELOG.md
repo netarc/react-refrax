@@ -1,5 +1,8 @@
 # Unreleased
 
+## [v0.7.0]
+- **Major** Removed addons (React) support to external lib `refrax-react`
+
 
 # Released
 

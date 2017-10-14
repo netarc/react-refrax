@@ -5,35 +5,23 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxConfig = require('RefraxConfig');
-const RefraxTools = require('RefraxTools');
-const RefraxResource = require('RefraxResource');
-const RefraxMutableResource = require('RefraxMutableResource');
-const RefraxParameters = require('RefraxParameters');
-const RefraxOptions = require('RefraxOptions');
-const RefraxSchema = require('RefraxSchema');
-const createAction = require('createAction');
-const createSchemaCollection = require('createSchemaCollection');
-const createSchemaResource = require('createSchemaResource');
-const createSchemaNamespace = require('createSchemaNamespace');
-const processResponse = require('processResponse');
-const invalidateHelper = require('invalidateHelper');
-const RefraxStore = require('RefraxStore');
-
 
 export default {
-  Config: RefraxConfig,
-  MutableResource: RefraxMutableResource,
-  Resource: RefraxResource,
-  Schema: RefraxSchema,
-  Store: RefraxStore,
-  Tools: RefraxTools,
-  Parameters: RefraxParameters,
-  Options: RefraxOptions,
-  createAction,
-  createSchemaCollection,
-  createSchemaResource,
-  createSchemaNamespace,
-  processResponse,
-  invalidate: invalidateHelper
+  ActionEntity: require('RefraxActionEntity'),
+  Config: require('RefraxConfig'),
+  Constants: require('RefraxConstants'),
+  MutableResource: require('RefraxMutableResource'),
+  Options: require('RefraxOptions'),
+  Parameters: require('RefraxParameters'),
+  Resource: require('RefraxResource'),
+  Schema: require('RefraxSchema'),
+  SchemaPath: require('RefraxSchemaPath'),
+  Store: require('RefraxStore'),
+  Tools: require('RefraxTools'),
+  createAction: require('createAction'),
+  createSchemaCollection: require('createSchemaCollection'),
+  createSchemaNamespace: require('createSchemaNamespace'),
+  createSchemaResource: require('createSchemaResource'),
+  invalidate: require('invalidateHelper'),
+  processResponse: require('processResponse')
 };
