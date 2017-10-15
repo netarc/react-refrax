@@ -8,7 +8,7 @@
 const Promise = require('bluebird');
 const mixinSubscribable = require('mixinSubscribable');
 const mixinConfigurable = require('mixinConfigurable');
-const mixinDisposable = require('mixinDisposable');
+const RefraxDisposable = require('RefraxDisposable');
 const RefraxOptions = require('RefraxOptions');
 const RefraxParameters = require('RefraxParameters');
 const RefraxQueryParameters = require('RefraxQueryParameters');
@@ -79,8 +79,13 @@ class RefraxResourceBase {
     Object.defineProperty(this, '_schemaPath', {value: schemaPath});
     Object.defineProperty(this, '_paths', {value: paths});
 
-    mixinDisposable(this);
-    this.onDispose(mixinSubscribable.asDisposable(this));
+    RefraxDisposable.mixinDisposable(this);
+    mixinSubscribable(this);
+
+    this.addDisposable(new RefraxDisposable(() => {
+      this._emitter.removeAllListeners();
+    }));
+
     // Cloning not supported
     mixinConfigurable(this, {
       _options: options,

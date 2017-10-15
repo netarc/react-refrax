@@ -6,14 +6,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 const RefraxTools = require('RefraxTools');
+const RefraxDisposable = require('RefraxDisposable');
 const EventEmitter = require('eventemitter3');
 
 
 const Mixin = {
   subscribe: function(event, callback, context) {
-    var disposed = false
-      , self = this
+    var disposable = false
       , eventHandler = null;
+
+    context = context || this;
 
     if (typeof(event) !== 'string') {
       throw new TypeError('mixinSubscribable - subscribe expected string event but found type `' + event + '`');
@@ -23,9 +25,12 @@ const Mixin = {
       throw new TypeError('mixinSubscribable - subscribe expected callback but found `' + event + '`');
     }
 
-    context = context || this;
+    disposable = new RefraxDisposable(() => {
+      this._emitter.removeListener(event, eventHandler);
+    });
+
     eventHandler = function() {
-      if (disposed) {
+      if (disposable.disposed) {
         return;
       }
       callback.apply(context, arguments);
@@ -33,17 +38,14 @@ const Mixin = {
 
     this._emitter.addListener(event, eventHandler);
 
-    return function() {
-      if (!disposed) {
-        disposed = true;
-        self._emitter.removeListener(event, eventHandler);
-      }
-    };
+    return disposable;
   },
 
   once: function(event, callback, context) {
-    var disposed = false
+    var disposable = false
       , eventHandler = null;
+
+    context = context || this;
 
     if (typeof(event) !== 'string') {
       throw new TypeError('mixinSubscribable - subscribe expected string event but found type `' + event + '`');
@@ -53,22 +55,21 @@ const Mixin = {
       throw new TypeError('mixinSubscribable - subscribe expected callback but found `' + event + '`');
     }
 
-    context = context || this;
+    disposable = new RefraxDisposable(() => {
+      this._emitter.removeListener(event, eventHandler);
+    });
+
     eventHandler = function() {
-      if (disposed) {
+      if (disposable.disposed) {
         return;
       }
-      disposed = true;
       callback.apply(context, arguments);
+      disposable();
     };
 
-    this._emitter.once(event, eventHandler, context || this);
-    return () => {
-      if (!disposed) {
-        disposed = true;
-        this._emitter.removeListener(event, eventHandler);
-      }
-    };
+    this._emitter.addListener(event, eventHandler);
+
+    return disposable;
   },
 
   emit: function() {
@@ -87,13 +88,5 @@ function mixinSubscribable(target) {
 
   return RefraxTools.extend(target, Mixin);
 }
-
-mixinSubscribable.asDisposable = function(target) {
-  mixinSubscribable(target);
-
-  return () => {
-    target._emitter.removeAllListeners();
-  };
-};
 
 export default mixinSubscribable;

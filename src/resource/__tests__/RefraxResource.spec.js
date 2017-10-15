@@ -94,13 +94,10 @@ describe('RefraxResource', () => {
       expect(resource)
         .to.have.property('_dispatchLoad')
           .that.is.a('function');
-      expect(resource)
-        .to.have.property('_disposeSubscriber')
-          .that.is.a('function');
 
       resource.subscribe('load', onLoad);
       resource.subscribe('change', onChange);
-      expect(store.once.callCount).to.equal(2);
+      expect(store.once.callCount).to.equal(0);
       expect(mock_request_count()).to.equal(0);
       expect(onLoad.callCount).to.equal(0);
       expect(onChange.callCount).to.equal(0);
@@ -113,7 +110,7 @@ describe('RefraxResource', () => {
           expect(resource.data).to.deep.equal(dataCollectionUsers);
           expect(resource.status).to.equal(STATUS_COMPLETE);
           expect(resource.timestamp).to.not.equal(TIMESTAMP_LOADING);
-          expect(store.once.callCount).to.equal(3);
+          expect(store.once.callCount).to.equal(0);
 
           const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, schema.users.__stack);
           store.updateResource(descriptor, dataCollectionUsersUpdate, STATUS_COMPLETE);
@@ -258,7 +255,7 @@ describe('RefraxResource', () => {
     });
 
     describe('_subscribeToStore', () => {
-      it('correctly sets up a weakly referenced subscriber', () => {
+      it('correctly sets up a a subscriber', () => {
         const store = schema.__node.definition.storeMap.getOrCreate('user');
         const descriptor = new RefraxResourceDescriptor(null, ACTION_GET, schema.users.__stack);
         const resource = new RefraxResource(schema.users, new RefraxOptions({ noSubscribe: true }));
@@ -266,26 +263,20 @@ describe('RefraxResource', () => {
 
         resource.subscribe('change', onChange);
 
-        expect(resource._disposeSubscriber).to.equal(undefined);
-
         store.updateResource(descriptor, dataCollectionUsers, STATUS_COMPLETE);
 
-        expect(resource._disposeSubscriber).to.equal(undefined);
+        expect(resource._disposers.length).to.equal(2);
         expect(onChange.callCount).to.equal(0);
 
         resource._generateDescriptor(ACTION_GET, (descriptor) => {
           resource._subscribeToStore(descriptor);
         });
 
-        const disposer = resource._disposeSubscriber;
-        expect(resource._disposeSubscriber).to.be.a('function');
         expect(onChange.callCount).to.equal(0);
+        expect(resource._disposers.length).to.equal(3);
 
         store.updateResource(descriptor, dataCollectionUsersUpdate, STATUS_COMPLETE);
 
-        // prove that our disposer changes beteween `change` events
-        expect(resource._disposeSubscriber).to.be.a('function');
-        expect(resource._disposeSubscriber).to.not.equal(disposer);
         expect(onChange.callCount).to.equal(1);
       });
     });
