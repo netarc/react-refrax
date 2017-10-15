@@ -5,11 +5,11 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
+import { isPlainObject } from 'RefraxTools';
 
 
 function validateConfig(config) {
-  if (!RefraxTools.isPlainObject(config)) {
+  if (!isPlainObject(config)) {
     throw new TypeError(
       'RefraxAdapter - You\'re attempting to pass an invalid config of type `' + typeof(config) + '`. ' +
       'A valid config type is a regular object.'

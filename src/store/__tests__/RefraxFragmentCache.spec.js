@@ -5,15 +5,14 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const RefraxFragmentCache = require('RefraxFragmentCache');
-const partialFragmentCacheFetch = require('RefraxFragmentCache-fetch.specp');
-const partialFragmentCacheInvalidate = require('RefraxFragmentCache-invalidate.specp');
-const partialFragmentCacheTouch = require('RefraxFragmentCache-touch.specp');
-const partialFragmentCacheDestroy = require('RefraxFragmentCache-destroy.specp');
-const partialFragmentCacheUpdateReplace = require('RefraxFragmentCache-updateReplace.specp');
-const partialFragmentCacheUpdateMerge = require('RefraxFragmentCache-updateMerge.specp');
-const expect = chai.expect;
+import { expect } from 'chai';
+import RefraxFragmentCache from 'RefraxFragmentCache';
+import partialFragmentCacheFetch from 'RefraxFragmentCache-fetch.specp';
+import partialFragmentCacheInvalidate from 'RefraxFragmentCache-invalidate.specp';
+import partialFragmentCacheTouch from 'RefraxFragmentCache-touch.specp';
+import partialFragmentCacheDestroy from 'RefraxFragmentCache-destroy.specp';
+import partialFragmentCacheUpdateReplace from 'RefraxFragmentCache-updateReplace.specp';
+import partialFragmentCacheUpdateMerge from 'RefraxFragmentCache-updateMerge.specp';
 
 
 describe('RefraxFragmentCache', function() {

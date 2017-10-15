@@ -5,11 +5,11 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const Promise = require('bluebird');
-const RefraxAdapter = require('RefraxAdapter');
-const RefraxTools = require('RefraxTools');
-const RequestError = require('RequestError');
-const processResponse = require('processResponse');
+import Promise from 'bluebird';
+import RefraxAdapter from 'RefraxAdapter';
+import { isPromise } from 'RefraxTools';
+import RequestError from 'RequestError';
+import processResponse from 'processResponse';
 
 
 // We only quietly consume RequestError's
@@ -44,7 +44,7 @@ function requestForDescriptor(descriptor, options = {}, callback = null) {
         result = data;
       }
       // If our result is a promise, lets chain off it to ensure we return the expected tuple
-      else if (RefraxTools.isPromise(result)) {
+      else if (isPromise(result)) {
         return result.then((data) => {
           return [data, response, descriptor];
         });

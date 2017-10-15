@@ -5,11 +5,12 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxTools = require('RefraxTools');
-const RefraxConstants = require('RefraxConstants');
-const parseNested = require('parseNested');
-const parseUnnested = require('parseUnnested');
+import RefraxResourceDescriptor from 'RefraxResourceDescriptor';
+import { isPlainObject } from 'RefraxTools';
+import RefraxConstants from 'RefraxConstants';
+import parseNested from 'parseNested';
+import parseUnnested from 'parseUnnested';
+
 const STATUS_COMPLETE = RefraxConstants.status.complete;
 const ACTION_DELETE = RefraxConstants.action.delete;
 
@@ -22,7 +23,7 @@ function processResponse(data, descriptor, handler = null, options = {}) {
     );
   }
 
-  if (RefraxTools.isPlainObject(handler)) {
+  if (isPlainObject(handler)) {
     options = handler;
     handler = null;
   }
@@ -34,7 +35,7 @@ function processResponse(data, descriptor, handler = null, options = {}) {
     );
   }
 
-  if (!RefraxTools.isPlainObject(options)) {
+  if (!isPlainObject(options)) {
     throw new TypeError(
       'processResponse: options of type `Object` expected but found `' + typeof(options) + '`.'
     );

@@ -5,40 +5,50 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
-const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxOptions = require('RefraxOptions');
-const RefraxParameters = require('RefraxParameters');
-const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxConstants = require('RefraxConstants');
-const mixinConfigurable = require('mixinConfigurable');
-const warning = require('warning');
+import {
+  extend,
+  select,
+  each,
+  cleanIdentifier,
+  isPlainObject,
+  warning
+} from 'RefraxTools';
+import RefraxSchemaNode from 'RefraxSchemaNode';
+import RefraxOptions from 'RefraxOptions';
+import RefraxParameters from 'RefraxParameters';
+import RefraxResourceDescriptor from 'RefraxResourceDescriptor';
+import RefraxConstants from 'RefraxConstants';
+import mixinConfigurable from 'mixinConfigurable';
+import createSchemaCollection from 'createSchemaCollection';
+import createSchemaResource from 'createSchemaResource';
+import createSchemaNamespace from 'createSchemaNamespace';
+
 const ACTION_INSPECT = RefraxConstants.action.inspect;
 const ACTION_GET = RefraxConstants.action.get;
 const SchemaAccescessorMixins = [];
-let createSchemaCollection = null
-  , createSchemaResource = null
-  , createSchemaNamespace = null;
+// let createSchemaCollection = null
+//   , createSchemaResource = null
+//   , createSchemaNamespace = null;
 
 
 // Circular dependency getters
 function memoCreateSchemaCollection() {
   if (!createSchemaCollection) {
-    createSchemaCollection = require('createSchemaCollection');
+
   }
   return createSchemaCollection;
 }
 
 function memoCreateSchemaResource() {
   if (!createSchemaResource) {
-    createSchemaResource = require('createSchemaResource');
+
   }
   return createSchemaResource;
 }
 
 function memoCreateSchemaNamespace() {
   if (!createSchemaNamespace) {
-    createSchemaNamespace = require('createSchemaNamespace');
+
   }
   return createSchemaNamespace;
 }
@@ -84,10 +94,10 @@ function memoCreateSchemaNamespace() {
 
 // Determine if a "part" of a stack is comparable to another based on nodes only
 function compareStackNodes(part, stack) {
-  part = RefraxTools.select(part, (obj) => {
+  part = select(part, (obj) => {
     return obj instanceof RefraxSchemaNode;
   });
-  stack = RefraxTools.select(stack, (obj) => {
+  stack = select(stack, (obj) => {
     return obj instanceof RefraxSchemaNode;
   });
   stack = stack.slice(Math.max(stack.length - part.length, 0));
@@ -106,7 +116,7 @@ function compareStackNodes(part, stack) {
 }
 
 function enumerateNodeLeafs(node, stack, action) {
-  RefraxTools.each(node.leafs, function(leaf, key) {
+  each(node.leafs, function(leaf, key) {
     if (leaf.stack === null || compareStackNodes(leaf.stack, stack)) {
       action(key, leaf.node, stack.concat(leaf.node));
     }
@@ -137,7 +147,7 @@ function createLeaf(schemaPath, detached, identifier, leafNode) {
     );
   }
 
-  identifier = RefraxTools.cleanIdentifier(identifier);
+  identifier = cleanIdentifier(identifier);
   node.leafs[identifier] = { node: leafNode, stack: detached ? stack : null };
 
   Object.defineProperty(schemaPath, identifier, {
@@ -164,8 +174,8 @@ class RefraxSchemaPath {
     Object.defineProperty(this, '__node', { value: node });
     Object.defineProperty(this, '__stack', { value: stack });
 
-    RefraxTools.each(SchemaAccescessorMixins, function(mixin) {
-      RefraxTools.extend(this, mixin);
+    each(SchemaAccescessorMixins, function(mixin) {
+      extend(this, mixin);
     });
 
     mixinConfigurable(this, clone);
@@ -209,7 +219,7 @@ class RefraxSchemaPath {
   }
 
   invalidate(options = {}) {
-    if (!RefraxTools.isPlainObject(options)) {
+    if (!isPlainObject(options)) {
       throw new TypeError(
         `invalidate expected argument of type \`Object\` but found ${options}`
       );
@@ -257,7 +267,7 @@ class RefraxSchemaPath {
   }
 
   invalidateLeafs(options = {}) {
-    if (!RefraxTools.isPlainObject(options)) {
+    if (!isPlainObject(options)) {
       throw new TypeError(
         `invalidateLeafs expected argument of type \`Object\` but found ${options}`
       );

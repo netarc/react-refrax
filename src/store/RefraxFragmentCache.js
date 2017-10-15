@@ -5,9 +5,18 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxConstants = require('RefraxConstants');
-const RefraxTools = require('RefraxTools');
-const RefraxFragmentResult = require('RefraxFragmentResult');
+import RefraxConstants from 'RefraxConstants';
+import RefraxFragmentResult from 'RefraxFragmentResult';
+import {
+  extend,
+  each,
+  map,
+  concatUnique,
+  isArray,
+  isObject,
+  isPlainObject
+} from 'RefraxTools';
+
 const STRATEGY_MERGE = RefraxConstants.strategy.merge;
 const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
@@ -54,7 +63,7 @@ class RefraxFragmentCache {
           fragmentCache = this._getFragment(fragments[i])[resourceId];
 
           if (fragmentCache && fragmentCache.data) {
-            result.data = RefraxTools.extend({}, result.data || {}, fragmentCache.data || {});
+            result.data = extend({}, result.data || {}, fragmentCache.data || {});
             result.status = STATUS_PARTIAL;
           }
         }
@@ -72,7 +81,7 @@ class RefraxFragmentCache {
       }
 
       if (descriptor.classify === CLASSIFY_COLLECTION) {
-        result.data = RefraxTools.map(data || [], function(id) {
+        result.data = map(data || [], function(id) {
           var entry = fragmentCache[id];
 
           if (!entry) {
@@ -81,7 +90,7 @@ class RefraxFragmentCache {
             );
           }
 
-          return RefraxTools.extend({}, entry.data);
+          return extend({}, entry.data);
         });
       }
       else if (descriptor.classify === CLASSIFY_ITEM) {
@@ -92,14 +101,14 @@ class RefraxFragmentCache {
           );
         }
 
-        result.data = RefraxTools.extend({}, entry.data);
+        result.data = extend({}, entry.data);
       }
       else {
-        if (RefraxTools.isArray(data)) {
+        if (isArray(data)) {
           data = [].concat(data);
         }
-        else if (RefraxTools.isObject(data)) {
-          data = RefraxTools.extend({}, data);
+        else if (isObject(data)) {
+          data = extend({}, data);
         }
 
         result.data = data;
@@ -129,11 +138,11 @@ class RefraxFragmentCache {
 
     if (touch) {
       if (resourceId) {
-        fragmentCache[resourceId] = RefraxTools.extend(fragmentCache[resourceId] || {}, touch);
+        fragmentCache[resourceId] = extend(fragmentCache[resourceId] || {}, touch);
         touchedFragments.push(resourceId);
       }
       else if (resourcePath) {
-        this.queries[resourcePath] = RefraxTools.extend(this.queries[resourcePath] || {}, touch);
+        this.queries[resourcePath] = extend(this.queries[resourcePath] || {}, touch);
         touchedQueries.push(resourcePath);
       }
     }
@@ -164,7 +173,7 @@ class RefraxFragmentCache {
 
     // Fragments
     if (descriptor.classify === CLASSIFY_COLLECTION && data) {
-      if (!RefraxTools.isArray(data) && !RefraxTools.isPlainObject(data)) {
+      if (!isArray(data) && !isPlainObject(data)) {
         throw new TypeError(
           'RefraxFragmentCache:update expected collection compatible type of Array/Object\n\r' +
           'basePath: ' + resourcePath + '\n\r' +
@@ -172,8 +181,8 @@ class RefraxFragmentCache {
         );
       }
 
-      if (RefraxTools.isArray(data)) {
-        dataId = RefraxTools.map(data, (item) => {
+      if (isArray(data)) {
+        dataId = map(data, (item) => {
           return this._updateFragmentCache(fragmentCache, descriptor, result, item, touchedFragments);
         });
       }
@@ -193,10 +202,10 @@ class RefraxFragmentCache {
       if (descriptor.classify === CLASSIFY_COLLECTION) {
         if (dataId) {
           if (descriptor.collectionStrategy === STRATEGY_MERGE) {
-            queryData = RefraxTools.concatUnique(queryData, dataId);
+            queryData = concatUnique(queryData, dataId);
           }
           else {
-            queryData = RefraxTools.isArray(dataId) ? dataId : [dataId];
+            queryData = isArray(dataId) ? dataId : [dataId];
           }
         }
         // if no data was received modifying a collection we can mark it as stale
@@ -207,8 +216,8 @@ class RefraxFragmentCache {
       }
       else if (descriptor.classify === CLASSIFY_ITEM) {
         // When updating an item, go through all queries we may be part of a collection of
-        RefraxTools.each(this.queries, function(query, path) {
-          if ((RefraxTools.isArray(query.data) &&
+        each(this.queries, function(query, path) {
+          if ((isArray(query.data) &&
                query.data.indexOf(dataId) != -1)) {
             touchedQueries.push(path);
           }
@@ -218,11 +227,11 @@ class RefraxFragmentCache {
       }
       else if (data) {
         if (descriptor.cacheStrategy === STRATEGY_MERGE) {
-          if (RefraxTools.isArray(queryData) || RefraxTools.isArray(data)) {
-            queryData = RefraxTools.concatUnique(queryData, data);
+          if (isArray(queryData) || isArray(data)) {
+            queryData = concatUnique(queryData, data);
           }
           else {
-            queryData = RefraxTools.extend(queryData || {}, data);
+            queryData = extend(queryData || {}, data);
           }
         }
         else {
@@ -230,7 +239,7 @@ class RefraxFragmentCache {
         }
       }
 
-      this.queries[resourcePath] = RefraxTools.extend({}, result, {
+      this.queries[resourcePath] = extend({}, result, {
         data: queryData
       });
     }
@@ -246,7 +255,7 @@ class RefraxFragmentCache {
       , fragmentData
       , snapshot = null;
 
-    if (data && !RefraxTools.isPlainObject(data)) {
+    if (data && !isPlainObject(data)) {
       throw new TypeError(
         'RefraxFragmentCache:update expected collection item of type Object\n\r' +
         'basePath: ' + descriptor.basePath + '\n\r' +
@@ -268,14 +277,14 @@ class RefraxFragmentCache {
     snapshot = JSON.stringify(fragmentData);
 
     if (descriptor.cacheStrategy === STRATEGY_MERGE) {
-      fragmentData = RefraxTools.extend(fragmentData, data);
+      fragmentData = extend(fragmentData, data);
     }
     // default replace strategy
     else {
       fragmentData = data || fragmentData;
     }
 
-    fragmentCache[itemId] = RefraxTools.extend({}, result, {
+    fragmentCache[itemId] = extend({}, result, {
       data: fragmentData
     });
 
@@ -315,7 +324,7 @@ class RefraxFragmentCache {
 
     if (descriptor) {
       if (options.noQueries !== true) {
-        RefraxTools.each(this.queries, function(query, path) {
+        each(this.queries, function(query, path) {
           const queryUrl = path.split('?')[0];
 
           // We compare descriptor base path against a query param stripped cache path
@@ -324,7 +333,7 @@ class RefraxFragmentCache {
           if (path == descriptor.basePath ||
               queryUrl === descriptor.basePath ||
               (descriptor.id &&
-                 RefraxTools.isArray(query.data) &&
+                 isArray(query.data) &&
                  query.data.indexOf(descriptor.id) != -1)) {
             touchedQueries.push(path);
             invalidator(query);
@@ -333,22 +342,22 @@ class RefraxFragmentCache {
       }
 
       if (options.noFragments !== true && descriptor.id) {
-        RefraxTools.each(this.fragments, function(fragment) {
+        each(this.fragments, function(fragment) {
           invalidator(fragment[descriptor.id]);
         });
       }
     }
     else {
       if (options.noQueries !== true) {
-        RefraxTools.each(this.queries, (query, path) => {
+        each(this.queries, (query, path) => {
           touchedQueries.push(path);
           invalidator(query);
         });
       }
 
       if (options.noFragments !== true) {
-        RefraxTools.each(this.fragments, function(fragment) {
-          RefraxTools.each(fragment, invalidator);
+        each(this.fragments, function(fragment) {
+          each(fragment, invalidator);
         });
       }
     }
@@ -377,8 +386,8 @@ class RefraxFragmentCache {
         touchedFragments.push(resourceID);
         fragmentCache[resourceID] = undefined;
         // Remove our-self from any collection queries we know about
-        RefraxTools.each(this.queries, function(query, path) {
-          if (RefraxTools.isArray(query.data)) {
+        each(this.queries, function(query, path) {
+          if (isArray(query.data)) {
             var i = query.data.indexOf(resourceID);
 
             if (i !== -1) {

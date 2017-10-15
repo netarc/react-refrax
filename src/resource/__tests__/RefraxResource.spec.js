@@ -5,21 +5,21 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const RefraxResource = require('RefraxResource');
-const RefraxOptions = require('RefraxOptions');
-const RefraxSchema = require('RefraxSchema');
-const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxFragmentResult = require('RefraxFragmentResult');
-const RefraxConstants = require('RefraxConstants');
-const createSchemaCollection = require('createSchemaCollection');
+import { expect } from 'chai';
+import sinon from 'sinon';
+import RefraxResource from 'RefraxResource';
+import RefraxOptions from 'RefraxOptions';
+import RefraxSchema from 'RefraxSchema';
+import RefraxResourceDescriptor from 'RefraxResourceDescriptor';
+import RefraxFragmentResult from 'RefraxFragmentResult';
+import RefraxConstants from 'RefraxConstants';
+import createSchemaCollection from 'createSchemaCollection';
+
 const ACTION_GET = RefraxConstants.action.get;
 const STATUS_COMPLETE = RefraxConstants.status.complete;
 const STATUS_STALE = RefraxConstants.status.stale;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
 const TIMESTAMP_STALE = RefraxConstants.timestamp.stale;
-const expect = chai.expect;
 
 const dataCollectionUsers = [
   { id: 1, name: 'foo bob' },
@@ -31,6 +31,7 @@ const dataCollectionUsersUpdate = [
   { id: 2, name: 'foo baz' },
   { id: 3, name: 'zip zoo' }
 ];
+
 
 /* global mock_get mock_reset mock_request_count wait_for_promise delay_for delay_for_resource_request */
 /* eslint-disable no-new, indent */

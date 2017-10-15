@@ -5,11 +5,10 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const eventemitter3 = require('eventemitter3');
-const mixinSubscribable = require('mixinSubscribable');
-const expect = chai.expect;
+import { expect } from 'chai';
+import sinon from 'sinon';
+import eventemitter3 from 'eventemitter3';
+import mixinSubscribable from 'mixinSubscribable';
 
 
 describe('mixinSubscribable', function() {

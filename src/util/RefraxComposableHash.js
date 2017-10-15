@@ -5,7 +5,14 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
+import {
+  each,
+  extend,
+  getPrototypeOf,
+  isFunction,
+  isPlainObject
+} from 'RefraxTools';
+
 
 /**
  * A RefraxComposableHash is a composable wrapper around an object supporting on demand hooks.
@@ -45,7 +52,7 @@ Object.defineProperty(RefraxComposableHash.prototype, 'clone', {
   enumerable: false,
   writable: false,
   value: function(...args) {
-    const copy = Object.create(RefraxTools.getPrototypeOf(this));
+    const copy = Object.create(getPrototypeOf(this));
 
     return copy.extend(this);
   }
@@ -55,16 +62,16 @@ Object.defineProperty(RefraxComposableHash.prototype, 'extend', {
   enumerable: false,
   writable: false,
   value: function(...args) {
-    RefraxTools.each(args, (arg) => {
-      if (RefraxTools.isPlainObject(arg)) {
-        RefraxTools.extend(this, arg);
+    each(args, (arg) => {
+      if (isPlainObject(arg)) {
+        extend(this, arg);
       }
-      else if (RefraxTools.isFunction(arg)) {
+      else if (isFunction(arg)) {
         this.__hooks.push(arg);
       }
       else if (arg instanceof RefraxComposableHash) {
         if (arg.__isWeak) {
-          RefraxTools.each(arg, (val, key) => {
+          each(arg, (val, key) => {
             if (this[key] === undefined) {
               this[key] = val;
             }
@@ -72,7 +79,7 @@ Object.defineProperty(RefraxComposableHash.prototype, 'extend', {
           this.__weakHooks = this.__weakHooks.concat(arg.__weakHooks, arg.__hooks);
         }
         else {
-          RefraxTools.extend(this, arg);
+          extend(this, arg);
           this.__weakHooks = this.__weakHooks.concat(arg.__weakHooks);
           this.__hooks = this.__hooks.concat(arg.__hooks);
         }
@@ -92,8 +99,8 @@ Object.defineProperty(RefraxComposableHash.prototype, 'hook', {
   enumerable: false,
   writable: false,
   value: function(...fns) {
-    RefraxTools.each(fns, (fn) => {
-      if (!RefraxTools.isFunction(fn)) {
+    each(fns, (fn) => {
+      if (!isFunction(fn)) {
         throw new TypeError(
           'RefraxComposableHash expected argument of type `Object`\n\r' +
           'found: `' + fn + '`'
@@ -114,19 +121,19 @@ Object.defineProperty(RefraxComposableHash.prototype, 'compose', {
     const iterator = (hook) => {
       const params = hook.call(target, result, target) || {};
 
-      if (!RefraxTools.isPlainObject(params)) {
+      if (!isPlainObject(params)) {
         throw new TypeError(
           'RefraxComposableHash expected hook result of type `Object`\n\r' +
           'found: `' + params + '`'
         );
       }
 
-      RefraxTools.extend(result, params);
+      extend(result, params);
     };
 
-    RefraxTools.each(this.__weakHooks, iterator);
-    RefraxTools.extend(result, this);
-    RefraxTools.each(this.__hooks, iterator);
+    each(this.__weakHooks, iterator);
+    extend(result, this);
+    each(this.__hooks, iterator);
 
     return result;
   }

@@ -5,11 +5,12 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxConstants = require('RefraxConstants');
-const RefraxTools = require('RefraxTools');
-const RefraxOptions = require('RefraxOptions');
-const RefraxResourceBase = require('RefraxResourceBase');
-const RefraxDisposable = require('RefraxDisposable');
+import RefraxConstants from 'RefraxConstants';
+import { extend } from 'RefraxTools';
+import RefraxOptions from 'RefraxOptions';
+import RefraxResourceBase from 'RefraxResourceBase';
+import RefraxDisposable from 'RefraxDisposable';
+
 const ACTION_GET = RefraxConstants.action.get;
 const STATUS_STALE = RefraxConstants.status.stale;
 const STATUS_COMPLETE = RefraxConstants.status.complete;
@@ -100,7 +101,7 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   _fetchFragment(options = {}) {
-    const fragment = this.fetch(RefraxTools.extend({}, options, {
+    const fragment = this.fetch(extend({}, options, {
       fragmentOnly: true
     }));
 

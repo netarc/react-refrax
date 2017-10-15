@@ -5,23 +5,24 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
-const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxSchemaPath = require('RefraxSchemaPath');
-const RefraxSchemaTools = require('RefraxSchemaTools');
-const RefraxConstants = require('RefraxConstants');
+import { extend, cleanIdentifier } from 'RefraxTools';
+import RefraxSchemaNode from 'RefraxSchemaNode';
+import RefraxSchemaPath from 'RefraxSchemaPath';
+import { validatePath } from 'RefraxSchemaTools';
+import RefraxConstants from 'RefraxConstants';
+
 const CLASSIFY_NAMESPACE = RefraxConstants.classify.namespace;
 
 
 function createSchemaNamespace(path, options) {
   var accessorNode, identifier;
 
-  path = RefraxSchemaTools.validatePath('createSchemaNamespace', path);
+  path = validatePath('createSchemaNamespace', path);
   options = options || {};
-  identifier = RefraxTools.cleanIdentifier(path);
+  identifier = cleanIdentifier(path);
 
   accessorNode = new RefraxSchemaPath(
-    new RefraxSchemaNode(CLASSIFY_NAMESPACE, identifier, RefraxTools.extend({
+    new RefraxSchemaNode(CLASSIFY_NAMESPACE, identifier, extend({
       path: path
     }, options.namespace))
   );

@@ -5,16 +5,17 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxParameters = require('RefraxParameters');
-const RefraxPath = require('RefraxPath');
-const RefraxQueryParameters = require('RefraxQueryParameters');
-const RefraxSchema = require('RefraxSchema');
-const createSchemaCollection = require('createSchemaCollection');
-const createSchemaNamespace = require('createSchemaNamespace');
-const createSchemaResource = require('createSchemaResource');
-const RefraxConstants = require('RefraxConstants');
+import { expect } from 'chai';
+import RefraxResourceDescriptor from 'RefraxResourceDescriptor';
+import RefraxParameters from 'RefraxParameters';
+import RefraxPath from 'RefraxPath';
+import RefraxQueryParameters from 'RefraxQueryParameters';
+import RefraxSchema from 'RefraxSchema';
+import createSchemaCollection from 'createSchemaCollection';
+import createSchemaNamespace from 'createSchemaNamespace';
+import createSchemaResource from 'createSchemaResource';
+import RefraxConstants from 'RefraxConstants';
+
 const ACTION_GET = RefraxConstants.action.get;
 const ACTION_CREATE = RefraxConstants.action.create;
 const ACTION_UPDATE = RefraxConstants.action.update;
@@ -26,7 +27,6 @@ const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
 const CLASSIFY_NAMESPACE = RefraxConstants.classify.namespace;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
-const expect = chai.expect;
 
 
 /* eslint-disable no-new */

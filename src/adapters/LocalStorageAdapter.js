@@ -5,12 +5,13 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const Promise = require('bluebird');
-const RequestError = require('RequestError');
-const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxAdapter = require('RefraxAdapter');
-const RefraxTools = require('RefraxTools');
-const RefraxConstants = require('RefraxConstants');
+import Promise from 'bluebird';
+import RequestError from 'RequestError';
+import RefraxResourceDescriptor from 'RefraxResourceDescriptor';
+import RefraxAdapter from 'RefraxAdapter';
+import { extend } from 'RefraxTools';
+import RefraxConstants from 'RefraxConstants';
+
 const ACTION_GET = RefraxConstants.action.get;
 const ACTION_CREATE = RefraxConstants.action.create;
 const ACTION_UPDATE = RefraxConstants.action.update;
@@ -90,7 +91,7 @@ class LocalStorageAdapter extends RefraxAdapter {
         const collection = getCollection(storage, descriptor.collectionPath);
 
         if (descriptor.action === ACTION_CREATE) {
-          data = RefraxTools.extend({}, data, { id: ++collection.guid });
+          data = extend({}, data, { id: ++collection.guid });
           collection.list.push(data);
           encodeSet(storage, descriptor.collectionPath + '/' + data.id, data);
         }
@@ -106,7 +107,7 @@ class LocalStorageAdapter extends RefraxAdapter {
               const itemKey = descriptor.collectionPath + '/' + item.id;
               const existingItem = decodeGet(storage, itemKey) || {};
 
-              collection.list[i] = item = RefraxTools.extend(item, existingItem);
+              collection.list[i] = item = extend(item, existingItem);
               encodeSet(storage, descriptor.collectionPath + '/' + item.id, item);
 
               // Attempt to maintain a proper GUID
@@ -126,7 +127,7 @@ class LocalStorageAdapter extends RefraxAdapter {
 
         // It's not really "proper" to create on the ITEM endpoint itself but we do it anyways..
         if (descriptor.action === ACTION_CREATE) {
-          data = RefraxTools.extend({}, data, { id: (parseInt(descriptor.id, 10) || ++collection.guid) });
+          data = extend({}, data, { id: (parseInt(descriptor.id, 10) || ++collection.guid) });
           collection.list.push(data);
           encodeSet(storage, descriptor.collectionPath + '/' + data.id, data);
         }
@@ -138,7 +139,7 @@ class LocalStorageAdapter extends RefraxAdapter {
           const item = collection.list[i];
 
           if (asString(item.id) === asString(descriptor.id)) {
-            data = collection.list[i] = RefraxTools.extend(item, data);
+            data = collection.list[i] = extend(item, data);
             encodeSet(storage, descriptor.basePath, data);
 
             // Attempt to maintain a proper GUID

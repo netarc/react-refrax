@@ -5,12 +5,13 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const pluralize = require('pluralize');
-const RefraxTools = require('RefraxTools');
-const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxSchemaPath = require('RefraxSchemaPath');
-const RefraxSchemaTools = require('RefraxSchemaTools');
-const RefraxConstants = require('RefraxConstants');
+import pluralize from 'pluralize';
+import { extend, cleanIdentifier, isPlainObject } from 'RefraxTools';
+import RefraxSchemaNode from 'RefraxSchemaNode';
+import RefraxSchemaPath from 'RefraxSchemaPath';
+import { validatePath, storeReference } from 'RefraxSchemaTools';
+import RefraxConstants from 'RefraxConstants';
+
 const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
 
@@ -20,20 +21,20 @@ function createSchemaCollection(path, store, options) {
     , memberIdentifier, memberId
     , identifier;
 
-  if (RefraxTools.isPlainObject(store) && !options) {
+  if (isPlainObject(store) && !options) {
     options = store;
     store = null;
   }
 
-  path = RefraxSchemaTools.validatePath('createSchemaCollection', path);
+  path = validatePath('createSchemaCollection', path);
   options = options || {};
-  identifier = options.identifier || RefraxTools.cleanIdentifier(path);
+  identifier = options.identifier || cleanIdentifier(path);
 
   // Collection Node
 
   collectionPath = new RefraxSchemaPath(
-    new RefraxSchemaNode(CLASSIFY_COLLECTION, identifier, RefraxTools.extend({
-      store: RefraxSchemaTools.storeReference('createSchemaCollection', identifier, store),
+    new RefraxSchemaNode(CLASSIFY_COLLECTION, identifier, extend({
+      store: storeReference('createSchemaCollection', identifier, store),
       path: path
     }, options.collection))
   );
@@ -50,7 +51,7 @@ function createSchemaCollection(path, store, options) {
   }
 
   collectionPath.addLeaf(
-    new RefraxSchemaNode(CLASSIFY_ITEM, memberIdentifier, RefraxTools.extend({
+    new RefraxSchemaNode(CLASSIFY_ITEM, memberIdentifier, extend({
       paramId: memberId
     }, options.member))
   );

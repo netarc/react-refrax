@@ -5,22 +5,22 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const Promise = require('bluebird');
-const LocalStorageAdapter = require('LocalStorageAdapter');
-const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxSchema = require('RefraxSchema');
-const RefraxParameters = require('RefraxParameters');
-const RefraxTools = require('RefraxTools');
-const RefraxConstants = require('RefraxConstants');
-const createSchemaCollection = require('createSchemaCollection');
-const createSchemaResource = require('createSchemaResource');
+import { expect } from 'chai';
+import sinon from 'sinon';
+import Promise from 'bluebird';
+import LocalStorageAdapter from 'LocalStorageAdapter';
+import RefraxResourceDescriptor from 'RefraxResourceDescriptor';
+import RefraxSchema from 'RefraxSchema';
+import RefraxParameters from 'RefraxParameters';
+import { each, keysFor } from 'RefraxTools';
+import RefraxConstants from 'RefraxConstants';
+import createSchemaCollection from 'createSchemaCollection';
+import createSchemaResource from 'createSchemaResource';
+
 const ACTION_GET = RefraxConstants.action.get;
 const ACTION_CREATE = RefraxConstants.action.create;
 const ACTION_DELETE = RefraxConstants.action.delete;
 const ACTION_UPDATE = RefraxConstants.action.update;
-const expect = chai.expect;
 
 const dataUser1 = { id: 1, name: 'foo bob' };
 const dataUser2 = { id: 2, name: 'foo baz' };
@@ -101,7 +101,7 @@ describe('LocalStorageAdapter', () => {
         descriptor.payload = payload;
 
         if (seed) {
-          RefraxTools.each(seed, (value, key) => {
+          each(seed, (value, key) => {
             global.window.localStorage.setItem(key, JSON.stringify(value));
           });
         }
@@ -127,15 +127,15 @@ describe('LocalStorageAdapter', () => {
             expect(result[2]).to.equal(descriptor);
 
             if (expectedStorage) {
-              if (RefraxTools.keysFor(expectedStorage).length === 0) {
+              if (keysFor(expectedStorage).length === 0) {
                 expect(window.localStorage.__storage).to.be.empty;
               }
               else {
                 expect(window.localStorage.__storage)
-                  .to.have.all.keys(RefraxTools.keysFor(expectedStorage));
+                  .to.have.all.keys(keysFor(expectedStorage));
               }
 
-              RefraxTools.each(window.localStorage.__storage, (encoded, key) => {
+              each(window.localStorage.__storage, (encoded, key) => {
                 expect(JSON.parse(encoded)).to.deep.equal(expectedStorage[key], key);
               });
             }

@@ -5,11 +5,10 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const mixinMutable = require('mixinMutable');
-const RefraxTools = require('RefraxTools');
-const expect = chai.expect;
+import { expect } from 'chai';
+import sinon from 'sinon';
+import mixinMutable from 'mixinMutable';
+import { extend } from 'RefraxTools';
 
 
 const mutableState = {
@@ -43,7 +42,7 @@ function createMutable(data, defaultState) {
     };
   }
 
-  RefraxTools.extend(mutable._state, data);
+  extend(mutable._state, data);
   return mutable;
 }
 
@@ -189,12 +188,12 @@ describe('mixinMutable', function() {
           mutable.set('zab');
 
           expect(mutable._state)
-            .to.deep.equal(RefraxTools.extend({}, mutableState, {
+            .to.deep.equal(extend({}, mutableState, {
               foo: 111,
               zab: undefined
             }));
           expect(mutable.data)
-            .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+            .to.deep.equal(extend({}, mutableDefaultState, mutableState, {
               foo: 111,
               zab: undefined
             }));
@@ -231,7 +230,7 @@ describe('mixinMutable', function() {
           mutable.set('nested.zab');
 
           expect(mutable._state)
-            .to.deep.equal(RefraxTools.extend({}, mutableState, {
+            .to.deep.equal(extend({}, mutableState, {
               nested: {
                 foo: 111,
                 fooz: {
@@ -241,7 +240,7 @@ describe('mixinMutable', function() {
               }
             }));
           expect(mutable.data)
-            .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+            .to.deep.equal(extend({}, mutableDefaultState, mutableState, {
               nested: {
                 foo: 111,
                 fooz: {
@@ -297,12 +296,12 @@ describe('mixinMutable', function() {
 
         it('will correctly update state', function() {
           expect(mutable._state)
-            .to.deep.equal(RefraxTools.extend({}, mutableState, {
+            .to.deep.equal(extend({}, mutableState, {
               foo: 111,
               baz: 222
             }));
           expect(mutable.data)
-            .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+            .to.deep.equal(extend({}, mutableDefaultState, mutableState, {
               foo: 111,
               baz: 222
             }));
@@ -338,13 +337,13 @@ describe('mixinMutable', function() {
               mutable.set('nested.zab', undefined, { shallow: true });
 
               expect(mutable._state)
-                .to.deep.equal(RefraxTools.extend({}, mutableState, {
+                .to.deep.equal(extend({}, mutableState, {
                   'nested.foo': 111,
                   'nested.fooz.bar': 321,
                   'nested.zab': undefined
                 }));
               expect(mutable.data)
-                .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+                .to.deep.equal(extend({}, mutableDefaultState, mutableState, {
                   'nested.foo': 111,
                   'nested.fooz.bar': 321,
                   'nested.zab': undefined
@@ -395,12 +394,12 @@ describe('mixinMutable', function() {
 
             it('will correctly update state', function() {
               expect(mutable._state)
-                .to.deep.equal(RefraxTools.extend({}, mutableState, {
+                .to.deep.equal(extend({}, mutableState, {
                   foo: 111,
                   baz: 222
                 }));
               expect(mutable.data)
-                .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+                .to.deep.equal(extend({}, mutableDefaultState, mutableState, {
                   foo: 111,
                   baz: 222
                 }));
@@ -434,12 +433,12 @@ describe('mixinMutable', function() {
 
             it('will correctly update state', function() {
               expect(mutable._state)
-                .to.deep.equal(RefraxTools.extend({}, mutableState, {
+                .to.deep.equal(extend({}, mutableState, {
                   foo: 111,
                   baz: 222
                 }));
               expect(mutable.data)
-                .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+                .to.deep.equal(extend({}, mutableDefaultState, mutableState, {
                   foo: 111,
                   baz: 222
                 }));
@@ -473,14 +472,14 @@ describe('mixinMutable', function() {
 
             it('will correctly update state', function() {
               expect(mutable._state)
-                .to.deep.equal(RefraxTools.extend({}, mutableState, {
+                .to.deep.equal(extend({}, mutableState, {
                   foo: 111,
                   baz: {
                     bar: 222
                   }
                 }));
               expect(mutable.data)
-                .to.deep.equal(RefraxTools.extend({}, mutableDefaultState, mutableState, {
+                .to.deep.equal(extend({}, mutableDefaultState, mutableState, {
                   foo: 111,
                   baz: {
                     bar: 222

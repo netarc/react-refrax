@@ -5,10 +5,10 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
-const RefraxOptions = require('RefraxOptions');
-const RefraxParameters = require('RefraxParameters');
-const RefraxQueryParameters = require('RefraxQueryParameters');
+import { extend } from 'RefraxTools';
+import RefraxOptions from 'RefraxOptions';
+import RefraxParameters from 'RefraxParameters';
+import RefraxQueryParameters from 'RefraxQueryParameters';
 
 
 const Mixin = {
@@ -47,7 +47,7 @@ function mixinConfigurable(target, from) {
   Object.defineProperty(target, '_parameters', {value: new RefraxParameters(from && from._parameters)});
   Object.defineProperty(target, '_queryParams', {value: new RefraxQueryParameters(from && from._queryParams)});
 
-  return RefraxTools.extend(target, Mixin);
+  return extend(target, Mixin);
 }
 
 export default mixinConfigurable;

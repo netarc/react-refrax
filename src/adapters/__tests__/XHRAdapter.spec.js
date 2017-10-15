@@ -5,21 +5,21 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const Promise = require('bluebird');
-const XHRAdapter = require('XHRAdapter');
-const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxSchema = require('RefraxSchema');
-const RefraxParameters = require('RefraxParameters');
-const RefraxConstants = require('RefraxConstants');
-const createSchemaCollection = require('createSchemaCollection');
-const createSchemaResource = require('createSchemaResource');
+import { expect } from 'chai';
+import sinon from 'sinon';
+import Promise from 'bluebird';
+import XHRAdapter from 'XHRAdapter';
+import RefraxResourceDescriptor from 'RefraxResourceDescriptor';
+import RefraxSchema from 'RefraxSchema';
+import RefraxParameters from 'RefraxParameters';
+import RefraxConstants from 'RefraxConstants';
+import createSchemaCollection from 'createSchemaCollection';
+import createSchemaResource from 'createSchemaResource';
+
 const ACTION_GET = RefraxConstants.action.get;
 const ACTION_CREATE = RefraxConstants.action.create;
 const ACTION_DELETE = RefraxConstants.action.delete;
 const ACTION_UPDATE = RefraxConstants.action.update;
-const expect = chai.expect;
 
 
 const dataUser1 = { id: 1, name: 'foo bob' };

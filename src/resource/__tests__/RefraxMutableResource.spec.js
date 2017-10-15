@@ -5,19 +5,20 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const Promise = require('bluebird');
-const RefraxResource = require('RefraxResource');
-const RefraxMutableResource = require('RefraxMutableResource');
-const RefraxOptions = require('RefraxOptions');
-const RefraxParameters = require('RefraxParameters');
-const RefraxQueryParameters = require('RefraxQueryParameters');
-const RefraxSchemaPath = require('RefraxSchemaPath');
-const RefraxSchema = require('RefraxSchema');
-const RefraxFragmentResult = require('RefraxFragmentResult');
-const RefraxConstants = require('RefraxConstants');
-const createSchemaCollection = require('createSchemaCollection');
+import { expect } from 'chai';
+import sinon from 'sinon';
+import Promise from 'bluebird';
+import RefraxResource from 'RefraxResource';
+import RefraxMutableResource from 'RefraxMutableResource';
+import RefraxOptions from 'RefraxOptions';
+import RefraxParameters from 'RefraxParameters';
+import RefraxQueryParameters from 'RefraxQueryParameters';
+import RefraxSchemaPath from 'RefraxSchemaPath';
+import RefraxSchema from 'RefraxSchema';
+import RefraxFragmentResult from 'RefraxFragmentResult';
+import RefraxConstants from 'RefraxConstants';
+import createSchemaCollection from 'createSchemaCollection';
+
 const ACTION_CREATE = RefraxConstants.action.create;
 const ACTION_DELETE = RefraxConstants.action.delete;
 const ACTION_UPDATE = RefraxConstants.action.update;
@@ -28,7 +29,6 @@ const STATUS_STALE = RefraxConstants.status.stale;
 const STRATEGY_MERGE = RefraxConstants.strategy.merge;
 const STRATEGY_REPLACE = RefraxConstants.strategy.replace;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
-const expect = chai.expect;
 
 const dataElement1 = { id: 1, name: 'foo bob' };
 const dataElement2 = { id: 2, name: 'foo baz' };

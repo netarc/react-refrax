@@ -1,5 +1,5 @@
-const chai = require('chai');
-const sinon = require('sinon');
+import chai from 'chai';
+
 
 function pluginDeepMatch(chai, utils) {
   function deepMatchObject(expect, actual, path) {

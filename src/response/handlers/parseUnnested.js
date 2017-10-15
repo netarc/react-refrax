@@ -5,11 +5,11 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
+import { each, isPlainObject, isArray } from 'RefraxTools';
 
 
 function parseObject(object) {
-  if (!RefraxTools.isPlainObject(object)) {
+  if (!isPlainObject(object)) {
     throw new TypeError(
       'parseUnnested:parseObject: expected object type but found `' + typeof(object) + '`.'
     );
@@ -18,7 +18,7 @@ function parseObject(object) {
   var result = {}
     , data = (result.data = {});
 
-  RefraxTools.each(object, function(value, key) {
+  each(object, function(value, key) {
     if (key[0] === '_') {
       if (key === '_type') {
         result.type = value;
@@ -35,7 +35,7 @@ function parseObject(object) {
 
     // while parsing an object, any array/object is considered embedded data
     // so we just treat it like the start of a unknown request
-    if (RefraxTools.isArray(value) || RefraxTools.isPlainObject(value)) {
+    if (isArray(value) || isPlainObject(value)) {
       parseUnnested(value);
     }
     else {
@@ -55,7 +55,7 @@ function parseUnnested(data, descriptor) {
   descriptor = descriptor || {};
 
   // collection
-  if (RefraxTools.isArray(data)) {
+  if (isArray(data)) {
     result = [];
 
     for (i = 0; i < data.length; i++) {

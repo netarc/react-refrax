@@ -5,10 +5,9 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const RefraxStore = require('RefraxStore');
-const RefraxSchemaTools = require('RefraxSchemaTools');
-const expect = chai.expect;
+import { expect } from 'chai';
+import RefraxStore from 'RefraxStore';
+import { defaultStore, validatePath } from 'RefraxSchemaTools';
 
 
 /* eslint-disable no-new */
@@ -17,20 +16,20 @@ describe('RefraxSchemaTools', function() {
     describe('validatePath', function() {
       it('should throw an error with an invalid path', function() {
         expect(function() {
-          RefraxSchemaTools.validatePath('', 123);
+          validatePath('', 123);
         }).to.throw(Error, 'A valid path must be passed');
 
         expect(function() {
-          RefraxSchemaTools.validatePath('', function() {});
+          validatePath('', function() {});
         }).to.throw(Error, 'A valid path must be passed');
 
         expect(function() {
-          RefraxSchemaTools.validatePath('', {foo: 'bar'});
+          validatePath('', {foo: 'bar'});
         }).to.throw(Error, 'A valid path must be passed');
       });
 
       it('should return a clean path', function() {
-        var result = RefraxSchemaTools.validatePath('', ' foobar ');
+        var result = validatePath('', ' foobar ');
 
         expect(result).to.equal('foobar');
       });
@@ -39,7 +38,7 @@ describe('RefraxSchemaTools', function() {
     describe('defaultStore', function() {
       describe('with an identifier argument', function() {
         it('should use an identifer with no store param', function() {
-          var result = RefraxSchemaTools.defaultStore('', 'users');
+          var result = defaultStore('', 'users');
 
           expect(result)
             .that.is.instanceof(RefraxStore)
@@ -53,20 +52,20 @@ describe('RefraxSchemaTools', function() {
       describe('with a store argument', function() {
         it('should throw an error with an invalid store', function() {
           expect(function() {
-            RefraxSchemaTools.defaultStore('', 'bar', 123);
+            defaultStore('', 'bar', 123);
           }).to.throw(Error, 'A valid store reference');
 
           expect(function() {
-            RefraxSchemaTools.defaultStore('', 'bar', function() {});
+            defaultStore('', 'bar', function() {});
           }).to.throw(Error, 'A valid store reference');
 
           expect(function() {
-            RefraxSchemaTools.defaultStore('', 'bar', {foo: 'bar'});
+            defaultStore('', 'bar', {foo: 'bar'});
           }).to.throw(Error, 'A valid store reference');
         });
 
         it('should use a specified string for a store type', function() {
-          var result = RefraxSchemaTools.defaultStore('', 'bar', 'users');
+          var result = defaultStore('', 'bar', 'users');
 
           expect(result)
             .that.is.instanceof(RefraxStore)
@@ -77,7 +76,7 @@ describe('RefraxSchemaTools', function() {
         });
 
         it('should use a store instance', function() {
-          var result = RefraxSchemaTools.defaultStore('', 'bar', new RefraxStore('users'));
+          var result = defaultStore('', 'bar', new RefraxStore('users'));
 
           expect(result)
             .that.is.instanceof(RefraxStore)

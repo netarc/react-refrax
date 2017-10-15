@@ -247,3 +247,32 @@ export function cleanIdentifier(identifier) {
 export function cleanPath(path) {
   return path.replace(/^[\/\s]+|[\/\s]+$/g, '');
 }
+
+export function format(message: string, ...args: Array<mixed>) {
+  let arg = 0;
+
+  if (!message) {
+    throw new Error(
+      '`format(message, ...args)` requires a message argument'
+    );
+  }
+
+  return message.replace(/%s/g, () => args[arg++]);
+}
+
+export function invariant(condition: mixed, message: string) {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
+
+export function warning(condition: mixed, message: string) {
+  if (!condition) {
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    else {
+      throw new Error(message);
+    }
+  }
+}

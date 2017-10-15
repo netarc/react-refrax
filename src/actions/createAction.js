@@ -5,23 +5,24 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const mixinConfigurable = require('mixinConfigurable');
-const RefraxResource = require('RefraxResource');
-const RefraxActionEntity = require('RefraxActionEntity');
-const RefraxTools = require('RefraxTools');
+import mixinConfigurable from 'mixinConfigurable';
+import RefraxResource from 'RefraxResource';
+import RefraxActionEntity from 'RefraxActionEntity';
+import { extend, setPrototypeOf, isFunction, isPlainObject } from 'RefraxTools';
+
 
 const MixinAction = {
   getDefault: function() {
     var result = this._options.default || {};
 
-    if (RefraxTools.isFunction(result)) {
+    if (isFunction(result)) {
       result = result();
     }
 
     if (result instanceof RefraxResource) {
       result = result.data || {};
     }
-    else if (!RefraxTools.isPlainObject(result)) {
+    else if (!isPlainObject(result)) {
       throw new TypeError('ActionInstance ' + this + ' failed to resolve default value');
     }
 
@@ -72,13 +73,13 @@ function _createAction(stack, from = null) {
   };
 
   // Action's represent its entity
-  RefraxTools.setPrototypeOf(Action, entity);
+  setPrototypeOf(Action, entity);
 
   Object.defineProperty(Action, '_entity', {value: entity});
   Object.defineProperty(Action, '_stack', {value: stack});
 
-  RefraxTools.extend(Action, MixinAction);
-  RefraxTools.extend(Action, MixinStatus);
+  extend(Action, MixinAction);
+  extend(Action, MixinStatus);
 
   mixinConfigurable(Action, from);
 
@@ -90,7 +91,7 @@ function createAction(method) {
     throw new TypeError('Cannot directly instantiate createAction');
   }
 
-  if (!RefraxTools.isFunction(method)) {
+  if (!isFunction(method)) {
     throw new TypeError('createAction: Expected function, but found `' + method + '`');
   }
 

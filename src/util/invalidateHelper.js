@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
+import { each } from 'RefraxTools';
 
 
 function invalidateHelper(items, options = {}) {
@@ -13,7 +13,7 @@ function invalidateHelper(items, options = {}) {
   options.params = undefined;
   items = [].concat(items || []);
 
-  RefraxTools.each(items, function(item) {
+  each(items, function(item) {
     if (params) {
       item = item.withParams(params);
     }

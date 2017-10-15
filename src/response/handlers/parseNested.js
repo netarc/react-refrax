@@ -5,17 +5,17 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
+import { each, objToString, isPlainObject, isArray } from 'RefraxTools';
 
 
 function parseObject(object) {
   var result = {}
     , data = (result.data = {});
 
-  if (!RefraxTools.isPlainObject(object)) {
+  if (!isPlainObject(object)) {
     throw new TypeError(
       'parseNested:parseObject: expected object type but found `' +
-      RefraxTools.objToString.call(object) + '`.'
+      objToString.call(object) + '`.'
     );
   }
 
@@ -26,7 +26,7 @@ function parseObject(object) {
   //   );
   // }
 
-  RefraxTools.each(object, function(value, key) {
+  each(object, function(value, key) {
     if (key[0] === '_') {
       if (key === '_type') {
         result.type = value;
@@ -54,7 +54,7 @@ function parseNested(data) {
     , i, resource;
 
   // collection
-  if (RefraxTools.isArray(data)) {
+  if (isArray(data)) {
     result = [];
 
     for (i = 0; i < data.length; i++) {

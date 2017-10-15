@@ -5,10 +5,9 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const RefraxComposableHash = require('RefraxComposableHash');
-const expect = chai.expect;
+import { expect } from 'chai';
+import sinon from 'sinon';
+import RefraxComposableHash from 'RefraxComposableHash';
 
 
 /* eslint-disable no-new */
