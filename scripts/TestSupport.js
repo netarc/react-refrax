@@ -1,20 +1,11 @@
 const Promise = require('bluebird');
-const JSDOM = require('jsdom').JSDOM;
 const axiosMock = require('AxiosMock.js');
 const axios = require('axios');
 const Utils = require('mocha/lib/utils.js');
 const map = Utils.map;
 
-// IMPORTANT: We need to setup our global window/document otherwise `fbjs` will
-// fail to init canUseDOM correctly when `react` or `enzyme` is loaded at the start
-// of a test spec file.
-const { window } = new JSDOM('<!doctype html><html><head><meta charset="utf-8"></head><body></body></html>');
-global.window = window;
-global.document = window.document;
-global.navigator = {
-  userAgent: 'node.js'
-};
-// JSDOM "polyfill" for storage
+global.window = {};
+// "polyfill" for storage
 window.localStorage = window.sessionStorage = {
   __storage: {},
   getItem: function(key) {
@@ -27,30 +18,6 @@ window.localStorage = window.sessionStorage = {
     delete this.__storage[key];
   }
 };
-
-let fn_mount = null
-  , mounted = [];
-
-global.mount_init = () => {
-  if (!fn_mount) {
-    fn_mount = require('enzyme').mount;
-  }
-};
-
-global.mount = (component) => {
-  const wrapper = fn_mount(component);
-  mounted.push(wrapper);
-  return wrapper;
-};
-
-global.mount_cleanup = () => {
-  for (var i = 0, l = mounted.length; i < l; i++) {
-    mounted[i].unmount();
-  }
-
-  mounted = [];
-};
-
 
 
 var isHooked = false;

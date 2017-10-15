@@ -9,6 +9,7 @@ const RefraxConstants = require('RefraxConstants');
 const RefraxTools = require('RefraxTools');
 const RefraxOptions = require('RefraxOptions');
 const RefraxResourceBase = require('RefraxResourceBase');
+const RefraxDisposable = require('RefraxDisposable');
 const ACTION_GET = RefraxConstants.action.get;
 const STATUS_STALE = RefraxConstants.status.stale;
 const STATUS_COMPLETE = RefraxConstants.status.complete;
@@ -44,10 +45,9 @@ class RefraxResource extends RefraxResourceBase {
   constructor(schemaPath, ...args) {
     super(schemaPath, ...args);
 
-    this.onDispose(() => {
+    this.addDisposable(new RefraxDisposable(() => {
       ResourceMap.delete(this);
-      this._disposeSubscriber && this._disposeSubscriber();
-    });
+    }));
 
     this._generateDescriptor(ACTION_GET, (descriptor, options) => {
       this._dispatchLoad = (data) => {
@@ -73,18 +73,7 @@ class RefraxResource extends RefraxResourceBase {
   }
 
   _subscribeToStore(descriptor) {
-    // We make use of .once instead of .subscribe so we remain weakly referenced
-    const subscriber = () => {
-      this._disposeSubscriber = descriptor.store.once(descriptor.event, onEvent);
-    };
-
     const onEvent = (event) => {
-      if (this.isDisposed) {
-        return;
-      }
-
-      subscriber();
-
       // 'touch' actions that originate from ourself come from `_fetchFragment` so we can
       // safely ignore them as that implicitly updates our cache state
       if (event.action === 'touch' && event.invoker === this) {
@@ -107,7 +96,7 @@ class RefraxResource extends RefraxResourceBase {
       }
     };
 
-    subscriber();
+    this.addDisposable(descriptor.store.subscribe(descriptor.event, onEvent));
   }
 
   _fetchFragment(options = {}) {

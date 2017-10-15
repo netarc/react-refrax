@@ -18,7 +18,6 @@ var babel = require('gulp-babel')
   , gulp = require('gulp')
   , gulpUtil = require('gulp-util')
   , header = require('gulp-header')
-  // , objectAssign = require('object-assign')
   , runSequence = require('run-sequence')
   , webpackStream = require('webpack-stream')
   , sourcemaps = require('gulp-sourcemaps')
@@ -63,9 +62,6 @@ const babelOpts = {
     // test modules
     'chai': 'chai',
     'sinon': 'sinon',
-    'jsdom': 'jsdom',
-    'jsdom/lib/old-api': 'jsdom/lib/old-api',
-    'enzyme': 'enzyme',
     'mocha/lib/utils.js': 'mocha/lib/utils.js'
   }
 };

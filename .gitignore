@@ -7,4 +7,4 @@ node_modules
 
 # workaround fix for
 # https://github.com/npm/npm/issues/16728
-.package-lock.json
+package-lock.json
