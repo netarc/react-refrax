@@ -5,23 +5,24 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const RefraxSchema = require('RefraxSchema');
-const RefraxConstants = require('RefraxConstants');
-const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxTools = require('RefraxTools');
-const createSchemaCollection = require('createSchemaCollection');
-const processResponse = require('processResponse');
+import { expect } from 'chai';
+import sinon from 'sinon';
+import RefraxSchema from 'RefraxSchema';
+import RefraxConstants from 'RefraxConstants';
+import RefraxResourceDescriptor from 'RefraxResourceDescriptor';
+import { each } from 'RefraxTools';
+import createSchemaCollection from 'createSchemaCollection';
+import processResponse from 'processResponse';
+
 const ACTION_GET = RefraxConstants.action.get;
 const ACTION_DELETE = RefraxConstants.action.delete;
 const STATUS_COMPLETE = RefraxConstants.status.complete;
-const expect = chai.expect;
 
 const dataCollectionUsers = [
   { id: 1, name: 'foo bob' },
   { id: 2, name: 'foo baz' }
 ];
+
 
 /* global mock_reset */
 /* eslint-disable no-new */
@@ -29,7 +30,7 @@ describe('processResponse', () => {
   describe('when invoked', () => {
     describe('with invalid arguments', () => {
       it('should error with an invalid descriptor', () => {
-        RefraxTools.each([
+        each([
           undefined, null, 123, 'foo', {}, () => {}
         ], (descriptor) => {
           expect(function() {
@@ -39,7 +40,7 @@ describe('processResponse', () => {
       });
 
       it('should error with an invalid handler', () => {
-        RefraxTools.each([123, 'foo'], (handler) => {
+        each([123, 'foo'], (handler) => {
           expect(function() {
             processResponse({}, new RefraxResourceDescriptor(null), handler);
           }).to.throw(TypeError, 'processResponse: expected handler `Function`');

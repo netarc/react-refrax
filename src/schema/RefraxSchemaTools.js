@@ -5,9 +5,9 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const pluralize = require('pluralize');
-const RefraxStore = require('RefraxStore');
-const RefraxTools = require('RefraxTools');
+import pluralize from 'pluralize';
+import RefraxStore from 'RefraxStore';
+import { cleanPath } from 'RefraxTools';
 
 
 export function validatePath(scope, path) {
@@ -17,7 +17,7 @@ export function validatePath(scope, path) {
     );
   }
 
-  return RefraxTools.cleanPath(path);
+  return cleanPath(path);
 }
 
 export function defaultStore(scope, identifier, store) {

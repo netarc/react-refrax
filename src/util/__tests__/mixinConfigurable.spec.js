@@ -5,13 +5,12 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const mixinConfigurable = require('mixinConfigurable');
-const RefraxOptions = require('RefraxOptions');
-const RefraxParameters = require('RefraxParameters');
-const RefraxQueryParameters = require('RefraxQueryParameters');
-const expect = chai.expect;
+import { expect } from 'chai';
+import sinon from 'sinon';
+import mixinConfigurable from 'mixinConfigurable';
+import RefraxOptions from 'RefraxOptions';
+import RefraxParameters from 'RefraxParameters';
+import RefraxQueryParameters from 'RefraxQueryParameters';
 
 
 describe('mixinConfigurable', function() {

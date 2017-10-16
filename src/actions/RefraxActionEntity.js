@@ -5,12 +5,13 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const Promise = require('bluebird');
-const mixinSubscribable = require('mixinSubscribable');
-const mixinMutable = require('mixinMutable');
-const RequestError = require('RequestError');
-const RefraxMutableResource = require('RefraxMutableResource');
-const RefraxTools = require('RefraxTools');
+import Promise from 'bluebird';
+import mixinSubscribable from 'mixinSubscribable';
+import mixinMutable from 'mixinMutable';
+import RequestError from 'RequestError';
+import RefraxMutableResource from 'RefraxMutableResource';
+import { each, extend, isPromise, isPlainObject } from 'RefraxTools';
+
 
 class ActionInvoker {
   constructor(action) {
@@ -33,7 +34,7 @@ class ActionInvoker {
     const action = this._action;
     items = [].concat(items || []);
 
-    RefraxTools.each(items, (item) => {
+    each(items, (item) => {
       item
         .withParams(action._parameters)
         .withQueryParams(action._queryParams)
@@ -64,7 +65,7 @@ class RefraxActionEntity {
 
     // reset errors on invocation
     Action.setErrors({});
-    const data = RefraxTools.extend(
+    const data = extend(
       {},
       options.includeDefault === true ? Action.getDefault() : null,
       this._state,
@@ -78,7 +79,7 @@ class RefraxActionEntity {
 
     promise = result = this._method.apply(invoker, [data].concat(args));
 
-    if (!RefraxTools.isPromise(result)) {
+    if (!isPromise(result)) {
       promise = new Promise(function(resolve, reject) {
         if (result instanceof Error) {
           reject(result);
@@ -105,8 +106,8 @@ class RefraxActionEntity {
     });
     promise.catch((err) => {
       if (err instanceof RequestError) {
-        if (RefraxTools.isPlainObject(err.response.data)) {
-          Action.setErrors(RefraxTools.extend({}, err.response.data));
+        if (isPlainObject(err.response.data)) {
+          Action.setErrors(extend({}, err.response.data));
         }
       }
 

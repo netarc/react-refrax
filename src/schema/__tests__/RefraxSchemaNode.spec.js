@@ -5,22 +5,23 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const RefraxTools = require('RefraxTools');
-const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxStore = require('RefraxStore');
-const RefraxStoreMap = require('RefraxStoreMap');
-const RefraxConstants = require('RefraxConstants');
+import { expect } from 'chai';
+import { each } from 'RefraxTools';
+import RefraxSchemaNode from 'RefraxSchemaNode';
+import RefraxStore from 'RefraxStore';
+import RefraxStoreMap from 'RefraxStoreMap';
+import RefraxConstants from 'RefraxConstants';
+
 const CLASSIFY_SCHEMA = RefraxConstants.classify.schema;
 const CLASSIFY_NAMESPACE = RefraxConstants.classify.namespace;
 const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
 const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
-const expect = chai.expect;
+
 
 const it_should_throw_for = (msg, types, options) => {
-  RefraxTools.each(types, (type) => {
-    RefraxTools.each([].concat(options), (option) => {
+  each(types, (type) => {
+    each([].concat(options), (option) => {
       it('should be invalid for type ' + type, () => {
         expect(() => {
           new RefraxSchemaNode(type, option);
@@ -31,8 +32,8 @@ const it_should_throw_for = (msg, types, options) => {
 };
 
 const it_should_not_throw_for = (types, options) => {
-  RefraxTools.each(types, (type) => {
-    RefraxTools.each([].concat(options), (option) => {
+  each(types, (type) => {
+    each([].concat(options), (option) => {
       it('should be invalid for type ' + type, () => {
         expect(() => {
           new RefraxSchemaNode(type, option);

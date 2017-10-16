@@ -5,14 +5,13 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const TestHelper = require('TestHelper');
-const RefraxConstants = require('RefraxConstants');
-const RefraxStore = require('RefraxStore');
-const RefraxStoreMap = require('RefraxStoreMap');
-const RefraxTools = require('RefraxTools');
-const expect = chai.expect;
+import { expect } from 'chai';
+import sinon from 'sinon';
+import { descriptorCollection } from 'TestHelper';
+import RefraxConstants from 'RefraxConstants';
+import RefraxStore from 'RefraxStore';
+import RefraxStoreMap from 'RefraxStoreMap';
+import { each } from 'RefraxTools';
 
 
 const dataSegmentId_1 = {
@@ -31,7 +30,7 @@ function fixtureStoreMap() {
   refStoreMap = new RefraxStoreMap();
   refStoreMap
     .add(new RefraxStore('project'))
-    .updateResource(TestHelper.descriptorCollection({
+    .updateResource(descriptorCollection({
       basePath: '/projects'
     }), [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.complete);
   refStoreMap.add(new RefraxStore('user'));
@@ -50,13 +49,13 @@ describe('RefraxStore', function() {
 
     describe('reset', function() {
       it('should properly call reset on all containing stores', function() {
-        RefraxTools.each(refStoreMap.__map, function(store) {
+        each(refStoreMap.__map, function(store) {
           sinon.spy(store, 'reset');
         });
 
         refStoreMap.reset();
 
-        RefraxTools.each(refStoreMap.__map, function(store) {
+        each(refStoreMap.__map, function(store) {
           expect(store.reset.callCount).to.equal(1);
         });
       });
@@ -64,7 +63,7 @@ describe('RefraxStore', function() {
 
     describe('invalidate', function() {
       beforeEach(function() {
-        RefraxTools.each(refStoreMap.__map, function(store) {
+        each(refStoreMap.__map, function(store) {
           sinon.spy(store, 'invalidate');
         });
       });
@@ -106,7 +105,7 @@ describe('RefraxStore', function() {
         it('should properly invalidate all stores', function() {
           refStoreMap.invalidate({ foo: 123 });
 
-          RefraxTools.each(refStoreMap.__map, function(store) {
+          each(refStoreMap.__map, function(store) {
             expect(store.invalidate.callCount).to.equal(1);
             expect(store.invalidate.getCall(0).args).to.deep.equal([{ foo: 123 }]);
           });

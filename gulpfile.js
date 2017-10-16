@@ -9,9 +9,8 @@
 'use strict';
 
 var babel = require('gulp-babel')
-  , babelPluginDEV = require('fbjs-scripts/babel/dev-expression')
-  , babelPluginModules = require('fbjs-scripts/babel/rewrite-modules')
-  , babelPluginAutoImporter = require('fbjs-scripts/babel/auto-importer')
+  , babelPluginDEV = require('./scripts/dev-expression')
+  , babelPluginRewriteModules = require('./scripts/rewrite-modules')
   , del = require('del')
   , derequire = require('gulp-derequire')
   , flatten = require('gulp-flatten')
@@ -36,54 +35,67 @@ const HEADER = [
 ].join('\n') + '\n';
 
 const babelOpts = {
-  nonStandard: true,
-  loose: [
-    'es6.classes'
-  ],
-  stage: 1,
-  // optional: ['runtime'],
   plugins: [
+    'babel-plugin-syntax-class-properties',
+    'babel-plugin-syntax-flow',
+    'babel-plugin-syntax-object-rest-spread',
+    'babel-plugin-transform-es2015-template-literals',
+    'babel-plugin-transform-es2015-literals',
+    'babel-plugin-transform-es2015-function-name',
+    'babel-plugin-transform-es2015-arrow-functions',
+    'babel-plugin-transform-es2015-block-scoped-functions',
+    'babel-plugin-transform-class-properties',
+    ['babel-plugin-transform-es2015-classes', { loose: true }],
+    'babel-plugin-transform-es2015-object-super',
+    'babel-plugin-transform-es2015-shorthand-properties',
+    'babel-plugin-transform-es2015-computed-properties',
+    'babel-plugin-transform-es2015-for-of',
+    'babel-plugin-check-es2015-constants',
+    ['babel-plugin-transform-es2015-spread', { loose: true }],
+    'babel-plugin-transform-es2015-parameters',
+    ['babel-plugin-transform-es2015-destructuring', { loose: true }],
+    'babel-plugin-transform-es2015-block-scoping',
+    'babel-plugin-transform-es2015-modules-commonjs',
+    'babel-plugin-transform-es3-member-expression-literals',
+    'babel-plugin-transform-es3-property-literals',
+    'babel-plugin-transform-flow-strip-types',
+    'babel-plugin-transform-object-rest-spread',
     babelPluginDEV,
-    {
-      position: 'before',
-      transformer: babelPluginAutoImporter
-    },
-    {
-      position: 'before',
-      transformer: babelPluginModules
-    }
-  ],
-  _moduleMap: {
-    'bluebird': 'bluebird',
-    'react': 'react',
-    'axios': 'axios',
-    'eventemitter3': 'eventemitter3',
-    'pluralize': 'pluralize',
-    // test modules
-    'chai': 'chai',
-    'sinon': 'sinon',
-    'mocha/lib/utils.js': 'mocha/lib/utils.js'
-  }
+    [babelPluginRewriteModules, {
+      modules: [
+        'bluebird',
+        'react',
+        /^axios/,
+        'eventemitter3',
+        'pluralize',
+        // test modules
+        'chai',
+        'sinon',
+        /^mocha/
+      ]
+    }]
+
+  ]
 };
 
 const buildDist = function(opts) {
   var webpackOpts = {
-    debug: opts.debug,
-    externals: {
-      'react': 'react'
-    },
+    externals: /^[-\/a-zA-Z0-9]+$/,
     output: {
       filename: opts.output,
       libraryTarget: 'umd',
       library: 'Refrax'
     },
     plugins: [
+      new webpackStream.webpack.LoaderOptionsPlugin({
+        debug: opts.debug
+      }),
       new webpackStream.webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(
           opts.debug ? 'development' : 'production'
         )
       }),
-      new webpackStream.webpack.optimize.OccurenceOrderPlugin(),
+      new webpackStream.webpack.optimize.OccurrenceOrderPlugin(),
       new webpackStream.webpack.optimize.DedupePlugin()
     ]
   };
@@ -114,27 +126,25 @@ const paths = {
   dist: 'dist',
   lib: 'lib',
   test: 'test',
-  entry: 'lib/RefraxBuild.js',
+  entry: 'lib/Refrax.js',
   src: [
     '*src/**/*.js',
     '!src/**/__tests__/**/*.js'
   ],
   srcTest: [
-    '*scripts/*.js',
+    '*scripts/test/*.js',
     '*src/**/*.js'
   ]
 };
 
 gulp.task('clean', function(cb) {
-  del([paths.dist, paths.lib, paths.test], cb);
+  return del([paths.dist, paths.lib, paths.test], cb);
 });
 
 gulp.task('modules', function() {
   return gulp
     .src(paths.src)
-    .pipe(babel(babelOpts).on('error', function(error) {
-      gulpUtil.log(gulpUtil.colors.red('Babel Error: '), error.message);
-    }))
+    .pipe(babel(babelOpts))
     .pipe(flatten())
     .pipe(gulp.dest(paths.lib));
 });
@@ -143,9 +153,7 @@ gulp.task('modules-test', function() {
   return gulp
     .src(paths.srcTest)
     .pipe(sourcemaps.init())
-    .pipe(babel(babelOpts).on('error', function(error) {
-      gulpUtil.log(gulpUtil.colors.red('Babel Error: '), error.message);
-    }))
+    .pipe(babel(babelOpts))
     .pipe(flatten())
     // NOTE: this is somewhat of a hack so mocha will load source maps
     .pipe(header("require('source-map-support').install();\n"))
@@ -172,7 +180,7 @@ gulp.task('dist:min', ['modules'], function() {
     debug: false,
     output: 'refrax.min.js'
   };
-  gulp.src(paths.entry)
+  return gulp.src(paths.entry)
     .pipe(buildDist(distOpts))
     .pipe(header(HEADER, {
       version: process.env.npm_package_version
@@ -181,7 +189,7 @@ gulp.task('dist:min', ['modules'], function() {
 });
 
 gulp.task('testMocha', ['modules-test'], function() {
-  gulp
+  return gulp
     .src([
       'test/*.spec.js'
     ], {read: false})
@@ -192,7 +200,7 @@ gulp.task('testMocha', ['modules-test'], function() {
           'test/ChaiDeepMatch.js',
           'test/TestSupport.js'
         ],
-        reporter: 'scripts/Reporter.js'
+        reporter: 'scripts/test/Reporter.js'
       })
         .on('error', function(error) {
           this.emit('end');

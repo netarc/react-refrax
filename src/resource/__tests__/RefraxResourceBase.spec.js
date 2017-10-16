@@ -5,26 +5,27 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const Promise = require('bluebird');
-const RefraxResourceBase = require('RefraxResourceBase');
-const RefraxOptions = require('RefraxOptions');
-const RefraxParameters = require('RefraxParameters');
-const RefraxPath = require('RefraxPath');
-const RefraxQueryParameters = require('RefraxQueryParameters');
-const RefraxSchemaPath = require('RefraxSchemaPath');
-const RefraxSchema = require('RefraxSchema');
-const RefraxFragmentResult = require('RefraxFragmentResult');
-const RefraxConstants = require('RefraxConstants');
-const createSchemaCollection = require('createSchemaCollection');
+import { expect } from 'chai';
+import Promise from 'bluebird';
+import RefraxResourceBase from 'RefraxResourceBase';
+import RefraxOptions from 'RefraxOptions';
+import RefraxParameters from 'RefraxParameters';
+import RefraxPath from 'RefraxPath';
+import RefraxQueryParameters from 'RefraxQueryParameters';
+import RefraxSchemaPath from 'RefraxSchemaPath';
+import RefraxSchema from 'RefraxSchema';
+import RefraxFragmentResult from 'RefraxFragmentResult';
+import RefraxConstants from 'RefraxConstants';
+import createSchemaCollection from 'createSchemaCollection';
+
 const ACTION_GET = RefraxConstants.action.get;
 const ACTION_CREATE = RefraxConstants.action.create;
-const expect = chai.expect;
 
 const dataCollectionUsers = [
   { id: 1, name: 'foo bob' },
   { id: 2, name: 'foo baz' }
 ];
+
 
 /* global mock_get mock_reset mock_request_count wait_for_promise delay_for */
 /* eslint-disable no-new, indent */

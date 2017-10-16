@@ -5,16 +5,18 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
-const RefraxStore = require('RefraxStore');
-const RefraxConstants = require('RefraxConstants');
-const RefraxStoreMap = require('RefraxStoreMap');
+import { extend, each, isPlainObject, isArray } from 'RefraxTools';
+import RefraxStore from 'RefraxStore';
+import RefraxConstants from 'RefraxConstants';
+import RefraxStoreMap from 'RefraxStoreMap';
+
 const CLASSIFY_SCHEMA = RefraxConstants.classify.schema;
 const CLASSIFY_NAMESPACE = RefraxConstants.classify.namespace;
 const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
 const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
 const validDefinitionKeys = {};
+
 
 validDefinitionKeys[CLASSIFY_SCHEMA] = [
   'storeMap',
@@ -58,14 +60,14 @@ function validateDefinition(type, definition) {
     );
   }
 
-  if (!RefraxTools.isPlainObject(definition)) {
+  if (!isPlainObject(definition)) {
     throw new TypeError(
       'RefraxSchemaNode - You\'re attempting to pass an invalid definition of type `' + typeof(definition) + '`. ' +
       'A valid definition type is a regular object.'
     );
   }
 
-  RefraxTools.each(definition, function(value, key) {
+  each(definition, function(value, key) {
     if (definitionKeys.indexOf(key) === -1) {
       throw new TypeError(
         'RefraxSchemaNode - Invalid definition option `' + key + '`.'
@@ -89,13 +91,13 @@ function validateDefinition(type, definition) {
 
   if ('fragments' in definition) {
     var fragments = definition.fragments;
-    if (!RefraxTools.isArray(fragments)) {
+    if (!isArray(fragments)) {
       throw new TypeError(
         'RefraxSchemaNode - Option `fragments` can only be of type Array but found type `' + typeof(fragments) + '`.'
       );
     }
 
-    RefraxTools.each(fragments, function(value) {
+    each(fragments, function(value) {
       if (typeof(value) !== 'string') {
         throw new TypeError(
           'RefraxSchemaNode - Option `fragments` contains a non-String value `' + typeof(value) + '`.'
@@ -116,7 +118,7 @@ function validateDefinition(type, definition) {
     );
   }
 
-  if ('paramMap' in definition && !RefraxTools.isPlainObject(definition.paramMap)) {
+  if ('paramMap' in definition && !isPlainObject(definition.paramMap)) {
     throw new TypeError(
       'RefraxSchemaNode - Option `paramMap` can only be of type Object but found type `' + typeof(definition.paramMap) + '`.'
     );
@@ -135,7 +137,7 @@ function validateDefinition(type, definition) {
 
 class RefraxSchemaNode {
   constructor(type = CLASSIFY_NAMESPACE, identifier = null, definition = null) {
-    if (RefraxTools.isPlainObject(identifier) && !definition) {
+    if (isPlainObject(identifier) && !definition) {
       definition = identifier;
       identifier = null;
     }
@@ -145,7 +147,7 @@ class RefraxSchemaNode {
     }
     else {
       // shallow copy since we mutate below
-      definition = RefraxTools.extend({}, definition);
+      definition = extend({}, definition);
     }
 
     if (identifier && typeof(identifier) !== 'string') {

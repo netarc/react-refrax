@@ -5,16 +5,17 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
-const RefraxConfig = require('RefraxConfig');
-const RefraxStore = require('RefraxStore');
-const RefraxStoreMap = require('RefraxStoreMap');
-const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxParameters = require('RefraxParameters');
-const RefraxQueryParameters = require('RefraxQueryParameters');
-const RefraxPath = require('RefraxPath');
-const RefraxOptions = require('RefraxOptions');
-const RefraxConstants = require('RefraxConstants');
+import { extend, map, select, each, isPlainObject, isArray } from 'RefraxTools';
+import RefraxConfig from 'RefraxConfig';
+import RefraxStore from 'RefraxStore';
+import RefraxStoreMap from 'RefraxStoreMap';
+import RefraxSchemaNode from 'RefraxSchemaNode';
+import RefraxParameters from 'RefraxParameters';
+import RefraxQueryParameters from 'RefraxQueryParameters';
+import RefraxPath from 'RefraxPath';
+import RefraxOptions from 'RefraxOptions';
+import RefraxConstants from 'RefraxConstants';
+
 const ACTION_GET = RefraxConstants.action.get;
 const ACTION_CREATE = RefraxConstants.action.create;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
@@ -26,6 +27,7 @@ const CLASSIFY_ITEM = RefraxConstants.classify.item;
 const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 
 const GlobalStoreMap = new RefraxStoreMap();
+
 
 // simple-depth serialize to avoid circular references for error debugging
 function serializer() {
@@ -79,7 +81,7 @@ function fillURI(uri, params, paramMap) {
 }
 
 function encodeURIValue(value) {
-  if (RefraxTools.isPlainObject(value)) {
+  if (isPlainObject(value)) {
     value = JSON.stringify(value);
   }
 
@@ -89,9 +91,9 @@ function encodeURIValue(value) {
 function encodeURIData(data) {
   var result = [];
 
-  RefraxTools.each(data || [], function(value, key) {
-    if (RefraxTools.isArray(value)) {
-      RefraxTools.each(value, function(v) {
+  each(data || [], function(value, key) {
+    if (isArray(value)) {
+      each(value, function(v) {
         result.push(key + '[]=' + encodeURIValue(v));
       });
     }
@@ -121,7 +123,7 @@ function resolveOptions(resourceDescriptor, resolver, options) {
   }
 
   if (options.paramMap) {
-    RefraxTools.extend(resolver.paramMap, options.paramMap);
+    extend(resolver.paramMap, options.paramMap);
   }
 
   if (options.paramId) {
@@ -194,16 +196,16 @@ function processStack(invoker, resourceDescriptor, stack) {
       resolveOptions(resourceDescriptor, resolver, item.compose(invoker));
     }
     else if (item instanceof RefraxParameters) {
-      RefraxTools.extend(resourceDescriptor.params, item.compose(invoker));
+      extend(resourceDescriptor.params, item.compose(invoker));
     }
     else if (item instanceof RefraxQueryParameters) {
-      RefraxTools.extend(resolver.queryParams, item.compose(invoker));
+      extend(resolver.queryParams, item.compose(invoker));
     }
     else if (item instanceof RefraxPath) {
       resolver.appendPaths.push(item);
     }
-    else if (RefraxTools.isPlainObject(item)) {
-      RefraxTools.extend(resourceDescriptor.payload, item);
+    else if (isPlainObject(item)) {
+      extend(resourceDescriptor.payload, item);
     }
     else {
       throw new TypeError('processStack: Uknown stack object `' + item + '`');
@@ -243,7 +245,7 @@ function processStack(invoker, resourceDescriptor, stack) {
         pathErrors = pathErrors.concat(result.errors);
         resolver.paths.push(result.uri);
         lastURIParamId = result.lastParamKey;
-        RefraxTools.extend(resourceDescriptor.pathParams, result.paramsUsed);
+        extend(resourceDescriptor.pathParams, result.paramsUsed);
       }
 
       if (item.type === CLASSIFY_COLLECTION) {
@@ -252,7 +254,7 @@ function processStack(invoker, resourceDescriptor, stack) {
     }
   }
 
-  resolver.appendPaths = RefraxTools.map(RefraxTools.select(resolver.appendPaths, function(rPath) {
+  resolver.appendPaths = map(select(resolver.appendPaths, function(rPath) {
     return rPath.isModifier || (resolver.paths.push(rPath.path) && false);
   }), function(rPath) {
     return rPath.path;
@@ -326,7 +328,7 @@ class RefraxResourceDescriptor {
     this.type = null;
     this.valid = true;
 
-    if (!RefraxTools.isArray(stack)) {
+    if (!isArray(stack)) {
       stack = [stack];
     }
 

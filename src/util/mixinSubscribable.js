@@ -5,9 +5,9 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
-const RefraxDisposable = require('RefraxDisposable');
-const EventEmitter = require('eventemitter3');
+import EventEmitter from 'eventemitter3';
+import { extend } from 'RefraxTools';
+import RefraxDisposable from 'RefraxDisposable';
 
 
 const Mixin = {
@@ -86,7 +86,7 @@ function mixinSubscribable(target) {
     value: new EventEmitter()
   });
 
-  return RefraxTools.extend(target, Mixin);
+  return extend(target, Mixin);
 }
 
 export default mixinSubscribable;

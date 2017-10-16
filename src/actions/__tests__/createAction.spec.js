@@ -5,14 +5,13 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const Promise = require('bluebird');
-const createAction = require('createAction');
-const RefraxActionEntity = require('RefraxActionEntity');
-const RequestError = require('RequestError');
-const RefraxTools = require('RefraxTools');
-const expect = chai.expect;
+import { expect } from 'chai';
+import sinon from 'sinon';
+import Promise from 'bluebird';
+import createAction from 'createAction';
+import RefraxActionEntity from 'RefraxActionEntity';
+import RequestError from 'RequestError';
+import { getPrototypeOf } from 'RefraxTools';
 
 
 describe('createAction', () => {
@@ -108,7 +107,7 @@ describe('createAction', () => {
               errors: {}
             });
             expect(spyEmit.getCall(1).args[0]).to.equal('start');
-            expect(RefraxTools.getPrototypeOf(spyEmit.getCall(1).args[1]).constructor.name).to.equal('ActionInvoker');
+            expect(getPrototypeOf(spyEmit.getCall(1).args[1]).constructor.name).to.equal('ActionInvoker');
             expect(spyEmit.getCall(2).args[0]).to.equal('mutated');
             expect(spyEmit.getCall(2).args[1]).to.deep.equal({
               type: 'attribute',
@@ -116,7 +115,7 @@ describe('createAction', () => {
               value: null
             });
             expect(spyEmit.getCall(3).args[0]).to.equal('finish');
-            expect(RefraxTools.getPrototypeOf(spyEmit.getCall(3).args[1]).constructor.name).to.equal('ActionInvoker');
+            expect(getPrototypeOf(spyEmit.getCall(3).args[1]).constructor.name).to.equal('ActionInvoker');
           });
       });
 

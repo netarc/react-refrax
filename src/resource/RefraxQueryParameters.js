@@ -5,7 +5,8 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const ComposableHash = require('RefraxComposableHash');
+import ComposableHash from 'RefraxComposableHash';
+
 
 /**
  * A RefraxQueryParameters is a simple subclass to identify a uniuqe ComposableHash class.

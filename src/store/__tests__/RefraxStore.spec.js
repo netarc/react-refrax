@@ -5,13 +5,12 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const TestHelper = require('TestHelper');
-const RefraxConstants = require('RefraxConstants');
-const RefraxStore = require('RefraxStore');
-const RefraxTools = require('RefraxTools');
-const expect = chai.expect;
+import { expect } from 'chai';
+import sinon from 'sinon';
+import { descriptorFrom, descriptorCollection } from 'TestHelper';
+import RefraxConstants from 'RefraxConstants';
+import RefraxStore from 'RefraxStore';
+import { extend } from 'RefraxTools';
 
 
 const dataSegmentId_1 = {
@@ -29,7 +28,7 @@ var refStore;
 function fixtureStore() {
   refStore = new RefraxStore();
 
-  refStore.updateResource(TestHelper.descriptorCollection({
+  refStore.updateResource(descriptorCollection({
     basePath: '/projects'
   }), [dataSegmentId_1, dataSegmentId_2], RefraxConstants.status.complete);
 }
@@ -56,7 +55,7 @@ function testInvalidateSubscriber(args, expectedEmits) {
     for (var i = 0; i < expectedEmits.length; i++) {
       expect(refStore.emit.getCall(i).args[1])
         .to.be.a('object')
-        .to.deep.equal(RefraxTools.extend({
+        .to.deep.equal(extend({
           type: refStore.definition.type
         }, expectedEmits[i]));
     }
@@ -99,7 +98,7 @@ describe('RefraxStore', function() {
       });
 
       describe('with a descriptor argument', function() {
-        var descriptor = TestHelper.descriptorFrom({
+        var descriptor = descriptorFrom({
           basePath: '/projects'
         });
 
@@ -137,7 +136,7 @@ describe('RefraxStore', function() {
 
       describe('with descriptor and options argument', function() {
         var options = {foo: 123}
-          , descriptor = TestHelper.descriptorFrom({
+          , descriptor = descriptorFrom({
             basePath: '/projects'
           });
 
@@ -166,7 +165,7 @@ describe('RefraxStore', function() {
 
     describe('fetchResource', function() {
       it('should properly invoke cache fetch', function() {
-        var descriptor = TestHelper.descriptorFrom({
+        var descriptor = descriptorFrom({
           basePath: '/projects'
         });
 
@@ -183,7 +182,7 @@ describe('RefraxStore', function() {
       it('should properly invoke cache touch', function() {
         var disposer
           , callback = sinon.spy()
-          , descriptor = TestHelper.descriptorFrom({
+          , descriptor = descriptorFrom({
             basePath: '/projects'
           });
 
@@ -203,7 +202,7 @@ describe('RefraxStore', function() {
       it('should properly invoke cache update', function() {
         var disposer
           , callback = sinon.spy()
-          , descriptor = TestHelper.descriptorFrom({
+          , descriptor = descriptorFrom({
             basePath: '/projects'
           });
 
@@ -223,7 +222,7 @@ describe('RefraxStore', function() {
       it('should properly invoke cache destroy', function() {
         var disposer
           , callback = sinon.spy()
-          , descriptor = TestHelper.descriptorFrom({
+          , descriptor = descriptorFrom({
             basePath: '/projects'
           });
 

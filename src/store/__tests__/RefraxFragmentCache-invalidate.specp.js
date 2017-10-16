@@ -5,11 +5,15 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const TestHelper = require('TestHelper');
-const RefraxConstants = require('RefraxConstants');
-const RefraxFragmentCache = require('RefraxFragmentCache');
-const expect = chai.expect;
+import { expect } from 'chai';
+import {
+  descriptorFrom,
+  descriptorCollection,
+  descriptorCollectionItem
+} from 'TestHelper';
+import RefraxConstants from 'RefraxConstants';
+import RefraxFragmentCache from 'RefraxFragmentCache';
+
 const DefaultPartial = RefraxConstants.defaultFragment;
 const MinimalPartial = 'minimal';
 const STATUS_STALE = RefraxConstants.status.stale;
@@ -53,22 +57,22 @@ export default function() {
     beforeEach(function() {
       fragmentCache = new RefraxFragmentCache();
 
-      fragmentCache.update(TestHelper.descriptorCollection({
+      fragmentCache.update(descriptorCollection({
         path: '/projects',
         partial: MinimalPartial
       }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_2], STATUS_COMPLETE);
-      fragmentCache.update(TestHelper.descriptorCollection({
+      fragmentCache.update(descriptorCollection({
         path: '/projects?filter=123',
         partial: MinimalPartial
       }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_3], STATUS_COMPLETE);
 
-      fragmentCache.update(TestHelper.descriptorCollectionItem({
+      fragmentCache.update(descriptorCollectionItem({
         path: '/projects/1'
       }), dataSegmentFull__ID_1, STATUS_COMPLETE);
-      fragmentCache.update(TestHelper.descriptorCollectionItem({
+      fragmentCache.update(descriptorCollectionItem({
         path: '/projects/2'
       }), dataSegmentFull__ID_2, STATUS_COMPLETE);
-      fragmentCache.update(TestHelper.descriptorCollectionItem({
+      fragmentCache.update(descriptorCollectionItem({
         path: '/projects/3'
       }), dataSegmentFull__ID_3, STATUS_COMPLETE);
 
@@ -78,7 +82,7 @@ export default function() {
 
     describe('when passed a descriptor', function() {
       describe('describing nothing', function() {
-        const descriptor = TestHelper.descriptorFrom({});
+        const descriptor = descriptorFrom({});
 
         it('should not touch data', function() {
           fragmentCache.invalidate(descriptor);
@@ -117,7 +121,7 @@ export default function() {
       });
 
       describe('describing an existing collection', function() {
-        const descriptor = TestHelper.descriptorCollection({
+        const descriptor = descriptorCollection({
           path: '/projects'
         });
 
@@ -168,7 +172,7 @@ export default function() {
       });
 
       describe('describing an existing id-resource by path', function() {
-        const descriptor = TestHelper.descriptorCollectionItem({
+        const descriptor = descriptorCollectionItem({
           path: '/projects/1'
         });
 
@@ -215,11 +219,11 @@ export default function() {
       });
 
       describe('describing an existing id-resource by id', function() {
-        const descriptor = TestHelper.descriptorCollectionItem({
+        const descriptor = descriptorCollectionItem({
           id: '1'
         });
 
-        const descriptor2 = TestHelper.descriptorCollectionItem({
+        const descriptor2 = descriptorCollectionItem({
           id: '2'
         });
 
@@ -313,7 +317,7 @@ export default function() {
       });
 
       describe('describing a non-existing collection', function() {
-        const descriptor = TestHelper.descriptorFrom({
+        const descriptor = descriptorFrom({
           path: '/foobars'
         });
 
@@ -354,7 +358,7 @@ export default function() {
       });
 
       describe('describing a non-existing id-resource by path', function() {
-        const descriptor = TestHelper.descriptorFrom({
+        const descriptor = descriptorFrom({
           path: '/projects/11'
         });
 
@@ -395,7 +399,7 @@ export default function() {
       });
 
       describe('describing a non-existing id-resource by id', function() {
-        const descriptor = TestHelper.descriptorFrom({
+        const descriptor = descriptorFrom({
           id: '11'
         });
 

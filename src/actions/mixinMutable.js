@@ -5,7 +5,8 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
+import { extend, setPrototypeOf, isPlainObject } from 'RefraxTools';
+
 
 function setState(state, attribute, value, options, emit) {
   const attributes = options.shallow === true ? [attribute] : attribute.split('.');
@@ -23,7 +24,7 @@ function setState(state, attribute, value, options, emit) {
       }
 
       state = state[attr];
-      if (!RefraxTools.isPlainObject(state)) {
+      if (!isPlainObject(state)) {
         throw new TypeError(`mixinMutable - set expected deep attribute \`${attributes.slice(0, i + 1).join('.')}\` to be an object but found \`${state}\``);
       }
     }
@@ -51,7 +52,7 @@ function getState(state, attribute, options) {
     else {
       state = state[attr];
 
-      if (!RefraxTools.isPlainObject(state)) {
+      if (!isPlainObject(state)) {
         break;
       }
     }
@@ -174,7 +175,7 @@ const MixinMutable = {
   setErrors: function(errors, options = {}) {
     const canEmit = options.noPropagate !== true && this.emit;
 
-    if (errors && !RefraxTools.isPlainObject(errors)) {
+    if (errors && !isPlainObject(errors)) {
       throw new TypeError('mixinMutable - setErrors expected errors object');
     }
 
@@ -189,8 +190,8 @@ const MixinMutable = {
     }
   },
   getErrors: function(attribute) {
-    return typeof(attribute) === 'string' ? getState(this.errors, attribute, {})
-                                          : this.errors;
+    return typeof(attribute) === 'string' ?
+      getState(this.errors, attribute, {}) : this.errors;
   }
 };
 
@@ -213,14 +214,14 @@ function mixinMutable(target) {
   });
   Object.defineProperty(target, 'data', {
     get: function() {
-      var state = RefraxTools.extend({}, target._state)
+      var state = extend({}, target._state)
         , defaultState = this.getDefault && this.getDefault() || {};
 
-      return RefraxTools.setPrototypeOf(state, defaultState);
+      return setPrototypeOf(state, defaultState);
     }
   });
 
-  return RefraxTools.extend(target, MixinMutable);
+  return extend(target, MixinMutable);
 }
 
 export default mixinMutable;

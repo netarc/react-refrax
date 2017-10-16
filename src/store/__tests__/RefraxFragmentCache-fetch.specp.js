@@ -5,12 +5,17 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const TestHelper = require('TestHelper');
-const RefraxConstants = require('RefraxConstants');
-const RefraxFragmentCache = require('RefraxFragmentCache');
-const RefraxFragmentResult = require('RefraxFragmentResult');
-const expect = chai.expect;
+import { expect } from 'chai';
+import {
+  descriptorResource,
+  descriptorFrom,
+  descriptorCollection,
+  descriptorCollectionItem
+} from 'TestHelper';
+import RefraxConstants from 'RefraxConstants';
+import RefraxFragmentCache from 'RefraxFragmentCache';
+import RefraxFragmentResult from 'RefraxFragmentResult';
+
 const STATUS_STALE = RefraxConstants.status.stale;
 const STATUS_COMPLETE = RefraxConstants.status.complete;
 const TIMESTAMP_STALE = RefraxConstants.timestamp.stale;
@@ -50,7 +55,7 @@ const dataSegmentResource_Object = {
   }
 };
 
-const dataSegmentResource_String = "the foo went to the zoo";
+const dataSegmentResource_String = 'the foo went to the zoo';
 
 function expectResultDefault(result) {
   expect(result).to.be.an.instanceof(RefraxFragmentResult);
@@ -79,24 +84,24 @@ export default function() {
     beforeEach(function() {
       fragmentCache = new RefraxFragmentCache();
 
-      fragmentCache.update(TestHelper.descriptorCollection({
+      fragmentCache.update(descriptorCollection({
         path: '/projects',
         partial: 'minimal'
       }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_2], STATUS_COMPLETE);
-      fragmentCache.update(TestHelper.descriptorCollectionItem({
+      fragmentCache.update(descriptorCollectionItem({
         path: '/projects/1'
       }), dataSegmentFull__ID_1, STATUS_COMPLETE);
-      fragmentCache.update(TestHelper.descriptorCollectionItem({
+      fragmentCache.update(descriptorCollectionItem({
         path: '/projects/2'
       }), dataSegmentFull__ID_2, STATUS_COMPLETE);
 
-      fragmentCache.update(TestHelper.descriptorResource({
+      fragmentCache.update(descriptorResource({
         path: '/resource-array'
       }), dataSegmentResource_Array, STATUS_COMPLETE);
-      fragmentCache.update(TestHelper.descriptorResource({
+      fragmentCache.update(descriptorResource({
         path: '/resource-object'
       }), dataSegmentResource_Object, STATUS_COMPLETE);
-      fragmentCache.update(TestHelper.descriptorResource({
+      fragmentCache.update(descriptorResource({
         path: '/resource-string'
       }), dataSegmentResource_String, STATUS_COMPLETE);
     });
@@ -104,7 +109,7 @@ export default function() {
     describe('when passed a descriptor', function() {
       describe('describing nothing', function() {
         it('should return a default result', function() {
-          var descriptor = TestHelper.descriptorFrom({})
+          var descriptor = descriptorFrom({})
             , result = fragmentCache.fetch(descriptor);
 
           expectResultDefault(result);
@@ -113,7 +118,7 @@ export default function() {
 
       describe('describing a collection', function() {
         it('should return expected result', function() {
-          var descriptor = TestHelper.descriptorCollection({
+          var descriptor = descriptorCollection({
               path: '/projects'
             })
             , result = fragmentCache.fetch(descriptor);
@@ -125,7 +130,7 @@ export default function() {
         });
 
         it('should return expected result for a partial', function() {
-          var descriptor = TestHelper.descriptorCollection({
+          var descriptor = descriptorCollection({
               path: '/projects',
               partial: 'minimal'
             })
@@ -138,7 +143,7 @@ export default function() {
         });
 
         it('should return default result for non-existing path', function() {
-          var descriptor = TestHelper.descriptorCollection({
+          var descriptor = descriptorCollection({
               path: '/projectz',
               partial: 'minimal'
             })
@@ -150,7 +155,7 @@ export default function() {
 
       describe('describing an id-resource by path', function() {
         it('should return expected result', function() {
-          var descriptor = TestHelper.descriptorCollectionItem({
+          var descriptor = descriptorCollectionItem({
               path: '/projects/1'
             })
             , result = fragmentCache.fetch(descriptor);
@@ -159,7 +164,7 @@ export default function() {
         });
 
         it('should return expected result for a partial', function() {
-          var descriptor = TestHelper.descriptorCollectionItem({
+          var descriptor = descriptorCollectionItem({
               path: '/projects/1',
               partial: 'minimal'
             })
@@ -169,7 +174,7 @@ export default function() {
         });
 
         it('should return default result for non-existing path', function() {
-          var descriptor = TestHelper.descriptorCollectionItem({
+          var descriptor = descriptorCollectionItem({
               path: '/projects/11',
               partial: 'minimal'
             })
@@ -181,7 +186,7 @@ export default function() {
 
       describe('describing an id-resource by id', function() {
         it('should return expected result', function() {
-          var descriptor = TestHelper.descriptorCollectionItem({
+          var descriptor = descriptorCollectionItem({
               id: '1'
             })
             , result = fragmentCache.fetch(descriptor);
@@ -190,7 +195,7 @@ export default function() {
         });
 
         it('should return expected result for a partial', function() {
-          var descriptor = TestHelper.descriptorCollectionItem({
+          var descriptor = descriptorCollectionItem({
               id: '1',
               partial: 'minimal'
             })
@@ -200,7 +205,7 @@ export default function() {
         });
 
         it('should return default result for non-existing id', function() {
-          var descriptor = TestHelper.descriptorCollectionItem({
+          var descriptor = descriptorCollectionItem({
               id: '11',
               partial: 'minimal'
             })
@@ -212,7 +217,7 @@ export default function() {
 
       describe('describing an array resource', function() {
         it('should return expected result', function() {
-          var descriptor = TestHelper.descriptorFrom({
+          var descriptor = descriptorFrom({
               path: '/resource-array'
             })
             , result = fragmentCache.fetch(descriptor);
@@ -223,7 +228,7 @@ export default function() {
 
       describe('describing an object resource', function() {
         it('should return expected result', function() {
-          var descriptor = TestHelper.descriptorFrom({
+          var descriptor = descriptorFrom({
               path: '/resource-object'
             })
             , result = fragmentCache.fetch(descriptor);
@@ -234,7 +239,7 @@ export default function() {
 
       describe('describing a string resource', function() {
         it('should return expected result', function() {
-          var descriptor = TestHelper.descriptorFrom({
+          var descriptor = descriptorFrom({
               path: '/resource-string'
             })
             , result = fragmentCache.fetch(descriptor);

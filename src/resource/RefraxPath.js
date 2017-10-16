@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
+import { cleanPath } from 'RefraxTools';
 
 
 /**
@@ -20,7 +20,7 @@ class RefraxPath {
       );
     }
 
-    this.path = RefraxTools.cleanPath(path);
+    this.path = cleanPath(path);
     this.isModifier = !!isModifier;
   }
 }

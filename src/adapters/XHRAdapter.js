@@ -5,20 +5,21 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const Promise = require('bluebird');
-const Axios = require('axios');
-const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxAdapter = require('RefraxAdapter');
-const RefraxTools = require('RefraxTools');
-const RequestError = require('RequestError');
-const RefraxConstants = require('RefraxConstants');
+import Promise from 'bluebird';
+import Axios from 'axios';
+import RefraxResourceDescriptor from 'RefraxResourceDescriptor';
+import RefraxAdapter from 'RefraxAdapter';
+import { any, each } from 'RefraxTools';
+import RequestError from 'RequestError';
+import RefraxConstants from 'RefraxConstants';
+
 const ACTION_GET = RefraxConstants.action.get;
 const STATUS_STALE = RefraxConstants.status.stale;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
 
 
 function containsMultipart(data) {
-  return data && RefraxTools.any(data, function(value) {
+  return data && any(data, function(value) {
     return global.File && value instanceof global.File;
   });
 }
@@ -26,7 +27,7 @@ function containsMultipart(data) {
 function composeFormData(data) {
   const result = new global.FormData();
 
-  RefraxTools.each(data, function(value, key) {
+  each(data, function(value, key) {
     result.append(key, value);
   });
 

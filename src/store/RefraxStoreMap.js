@@ -5,8 +5,8 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxTools = require('RefraxTools');
-const RefraxStore = require('RefraxStore');
+import { each, isPlainObject, isArray, randomString } from 'RefraxTools';
+import RefraxStore from 'RefraxStore';
 
 
 class RefraxStoreMap {
@@ -51,7 +51,7 @@ class RefraxStoreMap {
     }
     else {
       // Specifying no type name will fill a random string
-      while (this.__map[(type = RefraxTools.randomString(12))]) {}
+      while (this.__map[(type = randomString(12))]) {}
     }
 
     if (!store) {
@@ -62,13 +62,13 @@ class RefraxStoreMap {
   }
 
   reset() {
-    RefraxTools.each(this.__map, function(store) {
+    each(this.__map, function(store) {
       store.reset();
     });
   }
 
   invalidate(stores, options = {}) {
-    if (RefraxTools.isPlainObject(stores)) {
+    if (isPlainObject(stores)) {
       options = stores;
       stores = null;
     }
@@ -77,9 +77,9 @@ class RefraxStoreMap {
       stores = [stores];
     }
 
-    if (RefraxTools.isArray(stores)) {
-      RefraxTools.each(stores, (store) => {
-        RefraxTools.each(this.__map, (mapStore) => {
+    if (isArray(stores)) {
+      each(stores, (store) => {
+        each(this.__map, (mapStore) => {
           if ((typeof(store) === 'string' && store === mapStore.definition.type) ||
               store === mapStore) {
             mapStore.invalidate(options);
@@ -88,7 +88,7 @@ class RefraxStoreMap {
       });
     }
     else {
-      RefraxTools.each(this.__map, (mapStore) => {
+      each(this.__map, (mapStore) => {
         mapStore.invalidate(options);
       });
     }

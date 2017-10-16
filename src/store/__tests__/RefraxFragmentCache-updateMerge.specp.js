@@ -5,13 +5,18 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const TestHelper = require('TestHelper');
-const RefraxTools = require('RefraxTools');
-const RefraxConstants = require('RefraxConstants');
-const RefraxFragmentCache = require('RefraxFragmentCache');
-const expect = chai.expect;
+import { expect } from 'chai';
+import sinon from 'sinon';
+import {
+  descriptorFrom,
+  descriptorResource,
+  descriptorCollection,
+  descriptorCollectionItem
+} from 'TestHelper';
+import { extend } from 'RefraxTools';
+import RefraxConstants from 'RefraxConstants';
+import RefraxFragmentCache from 'RefraxFragmentCache';
+
 const DefaultPartial = RefraxConstants.defaultFragment;
 const MinimalPartial = 'minimal';
 const STATUS_COMPLETE = RefraxConstants.status.complete;
@@ -80,7 +85,7 @@ export default function() {
 
     // eslint-disable-next-line no-undef
     before(function() {
-      sinon.stub(Date, 'now', function() {
+      sinon.stub(Date, 'now').callsFake(() => {
         return mockTimestamp;
       });
     });
@@ -93,18 +98,18 @@ export default function() {
     beforeEach(function() {
       fragmentCache = new RefraxFragmentCache();
 
-      fragmentCache.update(TestHelper.descriptorCollection({
+      fragmentCache.update(descriptorCollection({
         path: '/other-projects',
         partial: MinimalPartial
       }), [dataSegmentPartial__ID_3, dataSegmentPartial__ID_4], STATUS_COMPLETE);
-      fragmentCache.update(TestHelper.descriptorCollectionItem({
+      fragmentCache.update(descriptorCollectionItem({
         path: '/projects/3'
       }), dataSegmentFull__ID_3, STATUS_COMPLETE);
-      fragmentCache.update(TestHelper.descriptorCollectionItem({
+      fragmentCache.update(descriptorCollectionItem({
         path: '/projects/4'
       }), dataSegmentFull__ID_4, STATUS_COMPLETE);
 
-      fragmentCache.update(TestHelper.descriptorFrom({
+      fragmentCache.update(descriptorFrom({
         path: '/other-resource'
       }), dataSegmentFull_Resource, STATUS_COMPLETE);
 
@@ -117,7 +122,7 @@ export default function() {
         describe('describing nothing', function() {
           describe('with no specified partial', function() {
             it('should not modify cache', function() {
-              fragmentCache.update(TestHelper.descriptorFrom({
+              fragmentCache.update(descriptorFrom({
                 cacheStrategy: STRATEGY_MERGE,
                 collectionStrategy: STRATEGY_MERGE
               }));
@@ -131,7 +136,7 @@ export default function() {
 
           describe('with a specified partial', function() {
             it('should not modify cache', function() {
-              fragmentCache.update(TestHelper.descriptorFrom({
+              fragmentCache.update(descriptorFrom({
                 partial: MinimalPartial,
                 cacheStrategy: STRATEGY_MERGE,
                 collectionStrategy: STRATEGY_MERGE
@@ -150,13 +155,13 @@ export default function() {
           describe('with invalid data', function() {
             it('should throw an error for non collection type data', function() {
               expect(function() {
-                fragmentCache.update(TestHelper.descriptorCollection({
+                fragmentCache.update(descriptorCollection({
                   path: '/projects'
                 }), 123);
               }).to.throw(TypeError, 'expected collection compatible type of Array/Object');
 
               expect(function() {
-                fragmentCache.update(TestHelper.descriptorCollection({
+                fragmentCache.update(descriptorCollection({
                   path: '/projects'
                 }), 'foobar');
               }).to.throw(TypeError, 'expected collection compatible type of Array/Object');
@@ -164,7 +169,7 @@ export default function() {
 
             it('should throw an error for non id based item', function() {
               expect(function() {
-                fragmentCache.update(TestHelper.descriptorCollection({
+                fragmentCache.update(descriptorCollection({
                   path: '/projects'
                 }), {foo: 'bar'});
               }).to.throw(TypeError, 'could not resolve collection item id');
@@ -172,7 +177,7 @@ export default function() {
 
             it('should throw an error for collection of non objects', function() {
               expect(function() {
-                fragmentCache.update(TestHelper.descriptorCollection({
+                fragmentCache.update(descriptorCollection({
                   path: '/projects'
                 }), [123, 'foo']);
               }).to.throw(TypeError, 'expected collection item of type Object');
@@ -180,7 +185,7 @@ export default function() {
 
             it('should throw an error for collection of objects with no id', function() {
               expect(function() {
-                fragmentCache.update(TestHelper.descriptorCollection({
+                fragmentCache.update(descriptorCollection({
                   path: '/projects'
                 }), [{foo: 'bar'}]);
               }).to.throw(TypeError, 'could not resolve collection item id');
@@ -189,7 +194,7 @@ export default function() {
 
           describe('with no specified partial', function() {
             it('should add new cache data', function() {
-              fragmentCache.update(TestHelper.descriptorCollection({
+              fragmentCache.update(descriptorCollection({
                 path: '/projects',
                 cacheStrategy: STRATEGY_MERGE,
                 collectionStrategy: STRATEGY_MERGE
@@ -218,7 +223,7 @@ export default function() {
             });
 
             it('should update existing cache data', function() {
-              fragmentCache.update(TestHelper.descriptorCollection({
+              fragmentCache.update(descriptorCollection({
                 path: '/other-projects',
                 cacheStrategy: STRATEGY_MERGE,
                 collectionStrategy: STRATEGY_MERGE
@@ -249,7 +254,7 @@ export default function() {
 
           describe('with a specified partial', function() {
             it('should add new cache data', function() {
-              fragmentCache.update(TestHelper.descriptorCollection({
+              fragmentCache.update(descriptorCollection({
                 path: '/projects',
                 partial: MinimalPartial,
                 cacheStrategy: STRATEGY_MERGE,
@@ -279,7 +284,7 @@ export default function() {
             });
 
             it('should update existing cache data', function() {
-              fragmentCache.update(TestHelper.descriptorCollection({
+              fragmentCache.update(descriptorCollection({
                 path: '/other-projects',
                 partial: MinimalPartial,
                 cacheStrategy: STRATEGY_MERGE,
@@ -314,7 +319,7 @@ export default function() {
         describe('describing an id-resource', function() {
           describe('with no specified partial', function() {
             it('should add new cache data', function() {
-              fragmentCache.update(TestHelper.descriptorCollection({
+              fragmentCache.update(descriptorCollection({
                 path: '/projects',
                 cacheStrategy: STRATEGY_MERGE,
                 collectionStrategy: STRATEGY_MERGE
@@ -338,7 +343,7 @@ export default function() {
             });
 
             it('should update existing cache data', function() {
-              fragmentCache.update(TestHelper.descriptorCollectionItem({
+              fragmentCache.update(descriptorCollectionItem({
                 path: '/projects/3',
                 cacheStrategy: STRATEGY_MERGE,
                 collectionStrategy: STRATEGY_MERGE
@@ -347,7 +352,7 @@ export default function() {
               expectedFragments[DefaultPartial]['3'] = {
                 timestamp: mockTimestamp,
                 status: STATUS_COMPLETE,
-                data: RefraxTools.extend({}, dataSegmentFull__ID_3, dataSegmentUpdated__ID_3)
+                data: extend({}, dataSegmentFull__ID_3, dataSegmentUpdated__ID_3)
               };
               expectedQueries['/projects/3'] = {
                 timestamp: mockTimestamp,
@@ -364,7 +369,7 @@ export default function() {
 
           describe('with a specified partial', function() {
             it('should add new cache data', function() {
-              fragmentCache.update(TestHelper.descriptorCollection({
+              fragmentCache.update(descriptorCollection({
                 path: '/projects',
                 partial: MinimalPartial,
                 cacheStrategy: STRATEGY_MERGE,
@@ -389,7 +394,7 @@ export default function() {
             });
 
             it('should update existing cache data', function() {
-              fragmentCache.update(TestHelper.descriptorCollectionItem({
+              fragmentCache.update(descriptorCollectionItem({
                 path: '/projects/3',
                 partial: MinimalPartial,
                 cacheStrategy: STRATEGY_MERGE,
@@ -399,7 +404,7 @@ export default function() {
               expectedFragments[MinimalPartial]['3'] = {
                 timestamp: mockTimestamp,
                 status: STATUS_COMPLETE,
-                data: RefraxTools.extend({}, dataSegmentPartial__ID_3, dataSegmentUpdated__ID_3)
+                data: extend({}, dataSegmentPartial__ID_3, dataSegmentUpdated__ID_3)
               };
               expectedQueries['/projects/3'] = {
                 timestamp: mockTimestamp,
@@ -419,7 +424,7 @@ export default function() {
         describe('describing a resource', function() {
           describe('with no specified partial', function() {
             it('should add new cache data', function() {
-              fragmentCache.update(TestHelper.descriptorResource({
+              fragmentCache.update(descriptorResource({
                 path: '/resource',
                 cacheStrategy: STRATEGY_MERGE,
                 collectionStrategy: STRATEGY_MERGE
@@ -438,7 +443,7 @@ export default function() {
             });
 
             it('should update existing cache data', function() {
-              fragmentCache.update(TestHelper.descriptorResource({
+              fragmentCache.update(descriptorResource({
                 path: '/other-resource',
                 cacheStrategy: STRATEGY_MERGE,
                 collectionStrategy: STRATEGY_MERGE
@@ -447,7 +452,7 @@ export default function() {
               expectedQueries['/other-resource'] = {
                 timestamp: mockTimestamp,
                 status: STATUS_COMPLETE,
-                data: RefraxTools.extend({}, dataSegmentFull_Resource, dataSegmentUpdated_Resource)
+                data: extend({}, dataSegmentFull_Resource, dataSegmentUpdated_Resource)
               };
 
               expect(fragmentCache).to.have.property('fragments')
@@ -459,7 +464,7 @@ export default function() {
 
           describe('with a specified partial', function() {
             it('should add new cache data', function() {
-              fragmentCache.update(TestHelper.descriptorResource({
+              fragmentCache.update(descriptorResource({
                 path: '/resource',
                 partial: MinimalPartial
               }), dataSegmentFull_Resource);
@@ -477,7 +482,7 @@ export default function() {
             });
 
             it('should update existing cache data', function() {
-              fragmentCache.update(TestHelper.descriptorResource({
+              fragmentCache.update(descriptorResource({
                 path: '/other-resource',
                 partial: MinimalPartial,
                 cacheStrategy: STRATEGY_MERGE,
@@ -487,7 +492,7 @@ export default function() {
               expectedQueries['/other-resource'] = {
                 timestamp: mockTimestamp,
                 status: STATUS_COMPLETE,
-                data: RefraxTools.extend({}, dataSegmentFull_Resource, dataSegmentUpdated_Resource)
+                data: extend({}, dataSegmentFull_Resource, dataSegmentUpdated_Resource)
               };
 
               expect(fragmentCache).to.have.property('fragments')
@@ -507,7 +512,7 @@ export default function() {
       describe('describing nothing', function() {
         describe('with no specified partial', function() {
           it('should not modify cache', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(descriptorFrom({
               cacheStrategy: STRATEGY_MERGE,
               collectionStrategy: STRATEGY_MERGE
             }));
@@ -521,7 +526,7 @@ export default function() {
 
         describe('with a specified partial', function() {
           it('should not modify cache', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(descriptorFrom({
               partial: MinimalPartial,
               cacheStrategy: STRATEGY_MERGE,
               collectionStrategy: STRATEGY_MERGE
@@ -539,7 +544,7 @@ export default function() {
       describe('describing a collection resource', function() {
         describe('with no specified partial', function() {
           it('should mark new cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(descriptorFrom({
               path: '/projects',
               cacheStrategy: STRATEGY_MERGE,
               collectionStrategy: STRATEGY_MERGE
@@ -558,7 +563,7 @@ export default function() {
           });
 
           it('should mark existing cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(descriptorFrom({
               path: '/other-projects',
               cacheStrategy: STRATEGY_MERGE,
               collectionStrategy: STRATEGY_MERGE
@@ -579,7 +584,7 @@ export default function() {
 
         describe('with a specified partial', function() {
           it('should mark new cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(descriptorFrom({
               path: '/projects',
               partial: MinimalPartial,
               cacheStrategy: STRATEGY_MERGE,
@@ -599,7 +604,7 @@ export default function() {
           });
 
           it('should mark existing cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorFrom({
+            fragmentCache.update(descriptorFrom({
               path: '/other-projects',
               partial: MinimalPartial,
               cacheStrategy: STRATEGY_MERGE,
@@ -624,7 +629,7 @@ export default function() {
       describe('describing an id-resource', function() {
         describe('with no specified partial', function() {
           it('should mark new cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorCollection({
+            fragmentCache.update(descriptorCollection({
               path: '/projects',
               cacheStrategy: STRATEGY_MERGE,
               collectionStrategy: STRATEGY_MERGE
@@ -643,7 +648,7 @@ export default function() {
           });
 
           it('should mark existing cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorCollectionItem({
+            fragmentCache.update(descriptorCollectionItem({
               path: '/projects/3',
               id: 3,
               cacheStrategy: STRATEGY_MERGE,
@@ -670,7 +675,7 @@ export default function() {
 
         describe('with a specified partial', function() {
           it('should mark new cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorCollection({
+            fragmentCache.update(descriptorCollection({
               path: '/projects',
               partial: MinimalPartial,
               cacheStrategy: STRATEGY_MERGE,
@@ -690,7 +695,7 @@ export default function() {
           });
 
           it('should mark existing cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorCollectionItem({
+            fragmentCache.update(descriptorCollectionItem({
               path: '/projects/3',
               id: 3,
               partial: MinimalPartial,
@@ -721,7 +726,7 @@ export default function() {
       describe('describing a resource', function() {
         describe('with no specified partial', function() {
           it('should mark new cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorResource({
+            fragmentCache.update(descriptorResource({
               path: '/resource',
               cacheStrategy: STRATEGY_MERGE,
               collectionStrategy: STRATEGY_MERGE
@@ -740,7 +745,7 @@ export default function() {
           });
 
           it('should mark existing cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorResource({
+            fragmentCache.update(descriptorResource({
               path: '/other-resource',
               cacheStrategy: STRATEGY_MERGE,
               collectionStrategy: STRATEGY_MERGE
@@ -761,7 +766,7 @@ export default function() {
 
         describe('with a specified partial', function() {
           it('should mark new cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorResource({
+            fragmentCache.update(descriptorResource({
               path: '/resource',
               partial: MinimalPartial,
               cacheStrategy: STRATEGY_MERGE,
@@ -781,7 +786,7 @@ export default function() {
           });
 
           it('should mark existing cache data as stale', function() {
-            fragmentCache.update(TestHelper.descriptorResource({
+            fragmentCache.update(descriptorResource({
               path: '/other-resource',
               partial: MinimalPartial,
               cacheStrategy: STRATEGY_MERGE,

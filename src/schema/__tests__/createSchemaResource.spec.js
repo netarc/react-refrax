@@ -5,14 +5,14 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const RefraxSchemaPath = require('RefraxSchemaPath');
-const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxStore = require('RefraxStore');
-const createSchemaResource = require('createSchemaResource');
-const RefraxConstants = require('RefraxConstants');
+import { expect } from 'chai';
+import RefraxSchemaPath from 'RefraxSchemaPath';
+import RefraxSchemaNode from 'RefraxSchemaNode';
+import RefraxStore from 'RefraxStore';
+import createSchemaResource from 'createSchemaResource';
+import RefraxConstants from 'RefraxConstants';
+
 const CLASSIFY_RESOURCE = RefraxConstants.classify.resource;
-const expect = chai.expect;
 
 
 /* eslint-disable no-new */

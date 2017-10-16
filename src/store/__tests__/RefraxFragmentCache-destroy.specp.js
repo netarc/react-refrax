@@ -5,11 +5,15 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const TestHelper = require('TestHelper');
-const RefraxConstants = require('RefraxConstants');
-const RefraxFragmentCache = require('RefraxFragmentCache');
-const expect = chai.expect;
+import { expect } from 'chai';
+import {
+  descriptorFrom,
+  descriptorCollection,
+  descriptorCollectionItem
+} from 'TestHelper';
+import RefraxConstants from 'RefraxConstants';
+import RefraxFragmentCache from 'RefraxFragmentCache';
+
 const DefaultPartial = RefraxConstants.defaultFragment;
 const STATUS_COMPLETE = RefraxConstants.status.complete;
 
@@ -41,14 +45,14 @@ export default function() {
     beforeEach(function() {
       fragmentCache = new RefraxFragmentCache();
 
-      fragmentCache.update(TestHelper.descriptorCollection({
+      fragmentCache.update(descriptorCollection({
         path: '/projects',
         partial: 'minimal'
       }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_2], STATUS_COMPLETE);
-      fragmentCache.update(TestHelper.descriptorCollectionItem({
+      fragmentCache.update(descriptorCollectionItem({
         path: '/projects/1'
       }), dataSegmentFull__ID_1, STATUS_COMPLETE);
-      fragmentCache.update(TestHelper.descriptorCollectionItem({
+      fragmentCache.update(descriptorCollectionItem({
         path: '/projects/2'
       }), dataSegmentFull__ID_2, STATUS_COMPLETE);
     });
@@ -57,14 +61,14 @@ export default function() {
       var expectedFragments, expectedQueries;
 
       beforeEach(function() {
-        fragmentCache.update(TestHelper.descriptorCollection({
+        fragmentCache.update(descriptorCollection({
           path: '/projects',
           partial: 'minimal'
         }), [dataSegmentPartial__ID_1, dataSegmentPartial__ID_2], STATUS_COMPLETE);
-        fragmentCache.update(TestHelper.descriptorFrom({
+        fragmentCache.update(descriptorFrom({
           path: '/projects/1'
         }), dataSegmentFull__ID_1, STATUS_COMPLETE);
-        fragmentCache.update(TestHelper.descriptorFrom({
+        fragmentCache.update(descriptorFrom({
           path: '/projects/2'
         }), dataSegmentFull__ID_2, STATUS_COMPLETE);
 
@@ -74,7 +78,7 @@ export default function() {
 
       describe('describing nothing', function() {
         it('should not touch data', function() {
-          fragmentCache.destroy(TestHelper.descriptorFrom({}));
+          fragmentCache.destroy(descriptorFrom({}));
 
           expect(fragmentCache).to.have.property('fragments')
             .that.deep.equals(expectedFragments);
@@ -85,7 +89,7 @@ export default function() {
 
       describe('describing an existing collection', function() {
         it('should update cache', function() {
-          fragmentCache.destroy(TestHelper.descriptorCollection({
+          fragmentCache.destroy(descriptorCollection({
             path: '/projects'
           }), {
             timestamp: 1234
@@ -102,7 +106,7 @@ export default function() {
 
       describe('describing an existing id-resource by path', function() {
         it('should update cache', function() {
-          fragmentCache.destroy(TestHelper.descriptorCollectionItem({
+          fragmentCache.destroy(descriptorCollectionItem({
             path: '/projects/1'
           }), {
             timestamp: 1234
@@ -119,7 +123,7 @@ export default function() {
 
       describe('describing an existing id-resource by id', function() {
         it('should update cache', function() {
-          fragmentCache.destroy(TestHelper.descriptorCollectionItem({
+          fragmentCache.destroy(descriptorCollectionItem({
             id: '1'
           }), {
             timestamp: 1234
@@ -137,7 +141,7 @@ export default function() {
 
       describe('describing a non-existing collection', function() {
         it('should update cache', function() {
-          fragmentCache.destroy(TestHelper.descriptorFrom({
+          fragmentCache.destroy(descriptorFrom({
             path: '/foobars'
           }), {
             timestamp: 1234
@@ -152,7 +156,7 @@ export default function() {
 
       describe('describing a non-existing id-resource by path', function() {
         it('should update cache', function() {
-          fragmentCache.destroy(TestHelper.descriptorFrom({
+          fragmentCache.destroy(descriptorFrom({
             path: '/projects/11'
           }), {
             timestamp: 1234
@@ -167,7 +171,7 @@ export default function() {
 
       describe('describing a non-existing id-resource by id', function() {
         it('should update cache', function() {
-          fragmentCache.destroy(TestHelper.descriptorFrom({
+          fragmentCache.destroy(descriptorFrom({
             id: '11'
           }), {
             timestamp: 1234

@@ -1,8 +1,8 @@
-const Promise = require('bluebird');
-const axiosMock = require('AxiosMock.js');
-const axios = require('axios');
-const Utils = require('mocha/lib/utils.js');
-const map = Utils.map;
+import Promise from 'bluebird';
+import axiosMock from 'AxiosMock.js';
+import axios from 'axios';
+import { map } from 'mocha/lib/utils.js';
+
 
 global.window = {};
 // "polyfill" for storage

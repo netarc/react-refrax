@@ -5,19 +5,20 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const Promise = require('bluebird');
-const mixinSubscribable = require('mixinSubscribable');
-const mixinConfigurable = require('mixinConfigurable');
-const RefraxDisposable = require('RefraxDisposable');
-const RefraxOptions = require('RefraxOptions');
-const RefraxParameters = require('RefraxParameters');
-const RefraxQueryParameters = require('RefraxQueryParameters');
-const RefraxPath = require('RefraxPath');
-const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxSchemaPath = require('RefraxSchemaPath');
-const RefraxTools = require('RefraxTools');
-const RefraxConstants = require('RefraxConstants');
-const requestForDescriptor = require('requestForDescriptor');
+import Promise from 'bluebird';
+import mixinSubscribable from 'mixinSubscribable';
+import mixinConfigurable from 'mixinConfigurable';
+import RefraxDisposable from 'RefraxDisposable';
+import RefraxOptions from 'RefraxOptions';
+import RefraxParameters from 'RefraxParameters';
+import RefraxQueryParameters from 'RefraxQueryParameters';
+import RefraxPath from 'RefraxPath';
+import RefraxResourceDescriptor from 'RefraxResourceDescriptor';
+import RefraxSchemaPath from 'RefraxSchemaPath';
+import { extend, isPlainObject, isFunction, isArray } from 'RefraxTools';
+import RefraxConstants from 'RefraxConstants';
+import requestForDescriptor from 'requestForDescriptor';
+
 const ACTION_GET = RefraxConstants.action.get;
 const TIMESTAMP_LOADING = RefraxConstants.timestamp.loading;
 
@@ -63,7 +64,7 @@ class RefraxResourceBase {
         parameters.extend(arg);
       }
       else if (arg instanceof RefraxQueryParameters ||
-               RefraxTools.isPlainObject(arg)) {
+               isPlainObject(arg)) {
         queryParams.extend(arg);
       }
       else {
@@ -148,13 +149,13 @@ class RefraxResourceBase {
     while (args.length > 0) {
       const arg = args.pop();
 
-      if (RefraxTools.isFunction(arg)) {
+      if (isFunction(arg)) {
         onValid = arg;
       }
-      else if (RefraxTools.isArray(arg)) {
+      else if (isArray(arg)) {
         stackAppend = arg;
       }
-      else if (RefraxTools.isPlainObject(arg)) {
+      else if (isPlainObject(arg)) {
         options = arg;
       }
       else {
@@ -166,7 +167,7 @@ class RefraxResourceBase {
 
     const stack = this._generateStack().concat(stackAppend);
     const descriptor = new RefraxResourceDescriptor(this, action, stack);
-    options = RefraxTools.extend({}, this._options.compose(this), options, {
+    options = extend({}, this._options.compose(this), options, {
       invoker: this
     });
 

@@ -5,16 +5,17 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const chai = require('chai');
-const sinon = require('sinon');
-const RefraxResourceDescriptor = require('RefraxResourceDescriptor');
-const RefraxSchemaPath = require('RefraxSchemaPath');
-const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxSchema = require('RefraxSchema');
-const createSchemaCollection = require('createSchemaCollection');
-const createSchemaNamespace = require('createSchemaNamespace');
-const RefraxParameters = require('RefraxParameters');
-const RefraxConstants = require('RefraxConstants');
+import { expect } from 'chai';
+import sinon from 'sinon';
+import RefraxResourceDescriptor from 'RefraxResourceDescriptor';
+import RefraxSchemaPath from 'RefraxSchemaPath';
+import RefraxSchemaNode from 'RefraxSchemaNode';
+import RefraxSchema from 'RefraxSchema';
+import createSchemaCollection from 'createSchemaCollection';
+import createSchemaNamespace from 'createSchemaNamespace';
+import RefraxParameters from 'RefraxParameters';
+import RefraxConstants from 'RefraxConstants';
+
 const CLASSIFY_COLLECTION = RefraxConstants.classify.collection;
 const CLASSIFY_NAMESPACE = RefraxConstants.classify.namespace;
 const CLASSIFY_ITEM = RefraxConstants.classify.item;
@@ -23,7 +24,6 @@ const ACTION_INSPECT = RefraxConstants.action.inspect;
 const STATUS_COMPLETE = RefraxConstants.status.complete;
 const STRATEGY_REPLACE = RefraxConstants.strategy.replace;
 const FRAGMENT_DEFAULT = RefraxConstants.defaultFragment;
-const expect = chai.expect;
 
 
 const dataCollectionProjects = [

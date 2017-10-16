@@ -5,17 +5,11 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const mixinSubscribable = require('mixinSubscribable');
-const RefraxFragmentCache = require('RefraxFragmentCache');
-const RefraxTools = require('RefraxTools');
-var RefraxResourceDescriptor = null;
+import mixinSubscribable from 'mixinSubscribable';
+import RefraxFragmentCache from 'RefraxFragmentCache';
+import { extend, isPlainObject, randomString } from 'RefraxTools';
+import RefraxResourceDescriptor from 'RefraxResourceDescriptor';
 
-
-// circular dependency hack
-function getResourceDescriptor() {
-  return RefraxResourceDescriptor ||
-    (RefraxResourceDescriptor = require('RefraxResourceDescriptor'));
-}
 
 function validateDefinition(definition = {}) {
   if (typeof(definition) === 'string') {
@@ -24,7 +18,7 @@ function validateDefinition(definition = {}) {
     };
   }
 
-  if (!RefraxTools.isPlainObject(definition)) {
+  if (!isPlainObject(definition)) {
     throw new TypeError(
       'RefraxStore - You\'re attempting to pass an invalid definition of type `' + typeof(definition) + '`. ' +
       'A valid definition type is a regular object.'
@@ -49,7 +43,7 @@ class RefraxStore {
     if (!definition) {
       // We accept no definitions and just use an anonymous type name
       definition = {
-        type: RefraxTools.randomString(12)
+        type: randomString(12)
       };
     }
     definition = validateDefinition(definition);
@@ -78,8 +72,8 @@ class RefraxStore {
   }
 
   invalidate(resourceDescriptor, options) {
-    if (!(resourceDescriptor instanceof getResourceDescriptor())) {
-      if (!options && RefraxTools.isPlainObject(resourceDescriptor)) {
+    if (!(resourceDescriptor instanceof RefraxResourceDescriptor)) {
+      if (!options && isPlainObject(resourceDescriptor)) {
         options = resourceDescriptor;
       }
       else if (resourceDescriptor) {
@@ -93,7 +87,7 @@ class RefraxStore {
     }
 
     options = options || {};
-    if (!RefraxTools.isPlainObject(options)) {
+    if (!isPlainObject(options)) {
       throw new TypeError(
         'RefraxStore:invalidate - Argument `options` has invalid value `' + options + '`.\n' +
         'Expected type `Object`, found `' + typeof(options) + '`.'
@@ -135,7 +129,7 @@ class RefraxStore {
       return;
     }
 
-    const event = RefraxTools.extend({}, options, {
+    const event = extend({}, options, {
       type: this.definition.type,
       action: action
     });
@@ -143,12 +137,12 @@ class RefraxStore {
     // fragments
     for (i = 0, len = touched.fragments.length; i < len; i++) {
       const id = touched.fragments[i];
-      this.emit(id, RefraxTools.extend({}, event, { fragment: id }));
+      this.emit(id, extend({}, event, { fragment: id }));
     }
     // queries
     for (i = 0, len = touched.queries.length; i < len; i++) {
       const id = touched.queries[i];
-      this.emit(id, RefraxTools.extend({}, event, { query: id }));
+      this.emit(id, extend({}, event, { query: id }));
     }
   }
 }

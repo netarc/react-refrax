@@ -5,20 +5,21 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-const RefraxStoreMap = require('RefraxStoreMap');
-const RefraxSchemaNode = require('RefraxSchemaNode');
-const RefraxSchemaPath = require('RefraxSchemaPath');
-const RefraxAdapter = require('RefraxAdapter');
-const XHRAdapter = require('XHRAdapter');
-const LocalStorageAdapter = require('LocalStorageAdapter');
-const SessionStorageAdapter = require('SessionStorageAdapter');
-const RefraxTools = require('RefraxTools');
-const RefraxConstants = require('RefraxConstants');
+import RefraxStoreMap from 'RefraxStoreMap';
+import RefraxSchemaNode from 'RefraxSchemaNode';
+import RefraxSchemaPath from 'RefraxSchemaPath';
+import RefraxAdapter from 'RefraxAdapter';
+import XHRAdapter from 'XHRAdapter';
+import LocalStorageAdapter from 'LocalStorageAdapter';
+import SessionStorageAdapter from 'SessionStorageAdapter';
+import { extend, isPlainObject } from 'RefraxTools';
+import RefraxConstants from 'RefraxConstants';
+
 const CLASSIFY_SCHEMA = RefraxConstants.classify.schema;
 
 
 function validateDefinition(definition) {
-  if (!RefraxTools.isPlainObject(definition)) {
+  if (!isPlainObject(definition)) {
     throw new TypeError(
       'RefraxSchema - You\'re attempting to pass an invalid definition of type `' + typeof(definition) + '`. ' +
       'A valid definition type is a regular object.'
@@ -26,7 +27,7 @@ function validateDefinition(definition) {
   }
 
   // Shallow copy so modifications don't affect the source
-  definition = RefraxTools.extend({}, definition);
+  definition = extend({}, definition);
 
   if ('storeMap' in definition && !(definition.storeMap instanceof RefraxStoreMap)) {
     throw new TypeError(
