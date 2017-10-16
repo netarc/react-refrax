@@ -26,32 +26,7 @@ import createSchemaNamespace from 'createSchemaNamespace';
 const ACTION_INSPECT = RefraxConstants.action.inspect;
 const ACTION_GET = RefraxConstants.action.get;
 const SchemaAccescessorMixins = [];
-// let createSchemaCollection = null
-//   , createSchemaResource = null
-//   , createSchemaNamespace = null;
 
-
-// Circular dependency getters
-function memoCreateSchemaCollection() {
-  if (!createSchemaCollection) {
-
-  }
-  return createSchemaCollection;
-}
-
-function memoCreateSchemaResource() {
-  if (!createSchemaResource) {
-
-  }
-  return createSchemaResource;
-}
-
-function memoCreateSchemaNamespace() {
-  if (!createSchemaNamespace) {
-
-  }
-  return createSchemaNamespace;
-}
 
 // @todo Do we need serialization comparison or is strict equality good enough?
 // function serializer() {
@@ -328,19 +303,19 @@ class RefraxSchemaPath {
   }
 
   addCollection(path, store, options) {
-    const collection = memoCreateSchemaCollection()(path, store, options);
+    const collection = createSchemaCollection()(path, store, options);
     createLeaf(this, true, collection);
     return collection;
   }
 
   addResource(path, store, options) {
-    const resource = memoCreateSchemaResource()(path, store, options);
+    const resource = createSchemaResource()(path, store, options);
     createLeaf(this, true, resource);
     return resource;
   }
 
   addNamespace(path, store, options) {
-    const namespace = memoCreateSchemaNamespace()(path, store, options);
+    const namespace = createSchemaNamespace()(path, store, options);
     createLeaf(this, true, namespace);
     return namespace;
   }
