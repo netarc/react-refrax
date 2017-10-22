@@ -10,17 +10,17 @@
 
 var babel = require('gulp-babel')
   , babelPluginDEV = require('./scripts/dev-expression')
-  , babelPluginRewriteModules = require('./scripts/rewrite-modules')
+  // , babelPluginRewriteModules = require('./scripts/rewrite-modules')
   , del = require('del')
-  , derequire = require('gulp-derequire')
-  , flatten = require('gulp-flatten')
   , gulp = require('gulp')
+  , derequire = require('gulp-derequire')
   , gulpUtil = require('gulp-util')
   , header = require('gulp-header')
   , runSequence = require('run-sequence')
   , webpackStream = require('webpack-stream')
   , sourcemaps = require('gulp-sourcemaps')
-  , mocha = require('gulp-mocha');
+  , mocha = require('gulp-mocha')
+  , ts = require('gulp-typescript');
 
 const HEADER = [
   '/**',
@@ -34,51 +34,7 @@ const HEADER = [
   ' */'
 ].join('\n') + '\n';
 
-const babelOpts = {
-  plugins: [
-    'babel-plugin-syntax-class-properties',
-    'babel-plugin-syntax-flow',
-    'babel-plugin-syntax-object-rest-spread',
-    'babel-plugin-transform-es2015-template-literals',
-    'babel-plugin-transform-es2015-literals',
-    'babel-plugin-transform-es2015-function-name',
-    'babel-plugin-transform-es2015-arrow-functions',
-    'babel-plugin-transform-es2015-block-scoped-functions',
-    'babel-plugin-transform-class-properties',
-    ['babel-plugin-transform-es2015-classes', { loose: true }],
-    'babel-plugin-transform-es2015-object-super',
-    'babel-plugin-transform-es2015-shorthand-properties',
-    'babel-plugin-transform-es2015-computed-properties',
-    'babel-plugin-transform-es2015-for-of',
-    'babel-plugin-check-es2015-constants',
-    ['babel-plugin-transform-es2015-spread', { loose: true }],
-    'babel-plugin-transform-es2015-parameters',
-    ['babel-plugin-transform-es2015-destructuring', { loose: true }],
-    'babel-plugin-transform-es2015-block-scoping',
-    'babel-plugin-transform-es2015-modules-commonjs',
-    'babel-plugin-transform-es3-member-expression-literals',
-    'babel-plugin-transform-es3-property-literals',
-    'babel-plugin-transform-flow-strip-types',
-    'babel-plugin-transform-object-rest-spread',
-    babelPluginDEV,
-    [babelPluginRewriteModules, {
-      modules: [
-        'bluebird',
-        'react',
-        /^axios/,
-        'eventemitter3',
-        'pluralize',
-        // test modules
-        'chai',
-        'sinon',
-        /^mocha/
-      ]
-    }]
-
-  ]
-};
-
-const buildDist = function(opts) {
+const buildDist = (opts) => {
   var webpackOpts = {
     externals: /^[-\/a-zA-Z0-9]+$/,
     output: {
@@ -110,14 +66,14 @@ const buildDist = function(opts) {
       })
     );
   }
-  return webpackStream(webpackOpts, null, function(err, stats) {
+  return webpackStream(webpackOpts, null, (err, stats) => {
     if (err) {
       throw new gulpUtil.PluginError('webpack', err);
     }
     if (stats.compilation.errors.length) {
       throw new gulpUtil.PluginError('webpack', stats.toString());
     }
-  }).on('error', function(error) {
+  }).on('error', (error) => {
     gulpUtil.log(gulpUtil.colors.red('JS Compile Error: '), error.message);
   });
 };
@@ -126,42 +82,78 @@ const paths = {
   dist: 'dist',
   lib: 'lib',
   test: 'test',
-  entry: 'lib/Refrax.js',
+  entry: 'lib/refrax.js',
   src: [
-    '*src/**/*.js',
-    '!src/**/__tests__/**/*.js'
+    'src/**/*.ts',
+    'src/**/*.tsx',
+    '!src/**/*.d.ts'
   ],
   srcTest: [
-    '*scripts/test/*.js',
-    '*src/**/*.js'
+    'src/**/*.ts',
+    'src/**/*.tsx',
+    'scripts/**/*.ts',
+    '!src/**/*.d.ts'
   ]
 };
 
-gulp.task('clean', function(cb) {
+gulp.task('clean', (cb) => {
   return del([paths.dist, paths.lib, paths.test], cb);
 });
 
-gulp.task('modules', function() {
+gulp.task('modules', () => {
   return gulp
     .src(paths.src)
-    .pipe(babel(babelOpts))
-    .pipe(flatten())
+    .pipe(ts.createProject('tsconfig.json', {
+    })())
+    .pipe(babel({
+      ignore: ['*.d.ts'],
+      plugins: [
+        babelPluginDEV,
+        ['babel-plugin-module-resolver', {
+          alias: {
+            'actions': './lib/actions',
+            'adapters': './lib/adapters',
+            'resource': './lib/resource',
+            'response': './lib/response',
+            'schema': './lib/schema',
+            'store': './lib/store',
+            'util': './lib/util'
+          }
+        }]
+      ]
+    }))
     .pipe(gulp.dest(paths.lib));
 });
 
-gulp.task('modules-test', function() {
+gulp.task('modules-test', () => {
   return gulp
     .src(paths.srcTest)
     .pipe(sourcemaps.init())
-    .pipe(babel(babelOpts))
-    .pipe(flatten())
-    // NOTE: this is somewhat of a hack so mocha will load source maps
-    .pipe(header("require('source-map-support').install();\n"))
-    .pipe(sourcemaps.write({sourceRoot: ''}))
-    .pipe(gulp.dest('test'));
+    .pipe(ts.createProject('tsconfig.json', {
+      declaration: false
+    })())
+    .pipe(babel({
+      plugins: [
+        babelPluginDEV,
+        ['babel-plugin-module-resolver', {
+          alias: {
+            'actions': './test/actions',
+            'adapters': './test/adapters',
+            'resource': './test/resource',
+            'response': './test/response',
+            'schema': './test/schema',
+            'store': './test/store',
+            'util': './test/util',
+            'test': './test/test'
+          }
+        }]
+      ]
+    }))
+    .pipe(sourcemaps.write({ sourceRoot: '/src' }))
+    .pipe(gulp.dest(paths.test));
 });
 
-gulp.task('dist', ['modules'], function() {
+gulp.task('dist', ['modules'], () => {
   var distOpts = {
     debug: true,
     output: 'refrax.js'
@@ -175,7 +167,7 @@ gulp.task('dist', ['modules'], function() {
     .pipe(gulp.dest(paths.dist));
 });
 
-gulp.task('dist:min', ['modules'], function() {
+gulp.task('dist:min', ['modules'], () => {
   var distOpts = {
     debug: false,
     output: 'refrax.min.js'
@@ -188,34 +180,28 @@ gulp.task('dist:min', ['modules'], function() {
     .pipe(gulp.dest(paths.dist));
 });
 
-gulp.task('testMocha', ['modules-test'], function() {
+gulp.task('testMocha', () => {
   return gulp
     .src([
-      'test/*.spec.js'
+      'test/**/*.spec.js'
     ], {read: false})
-    .pipe(header("require('source-map-support').install();\n"))
     .pipe(
       mocha({
         require: [
-          'test/ChaiDeepMatch.js',
-          'test/TestSupport.js'
-        ],
-        reporter: 'scripts/test/Reporter.js'
+          'test/test/ChaiDeepMatch.js',
+          'test/test/TestSupport.js'
+        ]
       })
-        .on('error', function(error) {
+        .on('error', (error) => {
           this.emit('end');
         })
     );
 });
 
-gulp.task('watch', function() {
-  gulp.watch(paths.src, ['modules']);
+gulp.task('test', (cb) => {
+  runSequence('clean', 'modules-test', 'testMocha', cb);
 });
 
-gulp.task('test', function(cb) {
-  runSequence('clean', 'testMocha', cb);
-});
-
-gulp.task('default', function(cb) {
+gulp.task('default', (cb) => {
   runSequence('clean', ['dist', 'dist:min'], cb);
 });
