@@ -2,7 +2,7 @@
 
 ## [v0.7.0]
 - **Major** Removed addons (React) support to external lib `refrax-react`
-
+- **Major** Rewrite library in typescript
 
 # Released
 

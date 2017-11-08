@@ -1,0 +1,94 @@
+{
+  "extends": [
+    "tslint-eslint-rules",
+    "tslint:all"
+  ],
+  "rules": {
+    // eslint rules
+    "object-curly-spacing": [true, "always"],
+
+    // TODO: more strict?
+    "no-any": false,
+
+    "align": [true, "parameters", "statements", "members", "elements"],
+    "comment-format": [true, "check-space"],
+    "forin": false,
+    "indent": [
+      true, "spaces", 2
+    ],
+    "max-classes-per-file": false,
+    "member-access": [true, "no-public"],
+    "member-ordering": [true, {
+      "order": "statics-first",
+      "alphabetize": false
+    }],
+    "no-conditional-assignment": false,
+    "no-implicit-dependencies": false,
+    "no-null-keyword": false,
+    "no-non-null-assertion": false,
+    "no-parameter-reassignment": false,
+    "no-switch-case-fall-through": true,
+    "no-submodule-imports": false,
+    "object-literal-sort-keys": [
+      true,
+      "ignore-case",
+      "match-declaration-order"
+    ],
+    "one-line": [
+      true,
+      "check-open-brace",
+      "check-whitespace",
+      "check-catch"
+    ],
+    "prefer-switch": false,
+    "prefer-template": [true, "allow-single-concat"],
+    "prefer-function-over-method": false,
+    "quotemark": [
+      true, "single", "avoid-template"
+    ],
+    "semicolon": true,
+    "trailing-comma": [
+      true,
+      {
+        "multiline": "never",
+        "singleline": "never"
+      }
+    ],
+    "triple-equals": [
+      true,
+      "allow-null-check"
+    ],
+    "typedef": [
+      true,
+      "call-signature",
+      "parameter",
+      "property-declaration",
+      "member-variable-declaration",
+      "object-destructuring",
+      "array-destructuring"
+    ],
+    "typedef-whitespace": [
+      true,
+      {
+        "call-signature": "nospace",
+        "index-signature": "nospace",
+        "parameter": "nospace",
+        "property-declaration": "nospace",
+        "variable-declaration": "nospace"
+      }
+    ],
+    "variable-name": [
+      true,
+      "ban-keywords"
+    ],
+    "unified-signatures": false,
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-separator",
+      "check-type"
+    ]
+  }
+}

@@ -66,7 +66,9 @@ module.exports = function(babel) {
           if (node[SEEN_SYMBOL]) {
             return;
           }
-          if (path.get('callee').isIdentifier({name: 'invariant'})) {
+
+          if (path.get('callee').isIdentifier({name: 'invariant'}) ||
+              path.get('callee').get('property').isIdentifier({name: 'invariant'})) {
             // Turns this code:
             //
             // invariant(condition, argument, argument);
@@ -112,7 +114,9 @@ module.exports = function(babel) {
                 ),
               ])
             ));
-          } else if (path.get('callee').isIdentifier({name: 'warning'})) {
+          }
+          else if (path.get('callee').isIdentifier({name: 'warning'}) ||
+                   path.get('callee').get('property').isIdentifier({name: 'invariant'})) {
             // Turns this code:
             //
             // warning(condition, argument, argument);

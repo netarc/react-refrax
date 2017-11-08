@@ -1,0 +1,30 @@
+{
+  "version": "2.0.10",
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "declaration": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "baseUrl": "./src",
+    "paths": {
+      "*": [
+        "*",
+        "../scripts/*"
+      ]
+    },
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "newLine": "LF",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "target": "ES5"
+  }
+}
