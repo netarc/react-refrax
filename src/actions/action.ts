@@ -21,10 +21,10 @@ import {
   setPrototypeOf
 } from '../util/tools';
 import { IStatusActionable } from '../util/types';
-import { ActionEntity } from './entity';
+import { ActionEntity, ActionInvoker } from './entity';
 import { IMutable } from './mutable';
 
-export type ActionMethod = (data: object, ...args: any[]) => PromiseLike<object> | Error | void;
+export type ActionMethod = (this: ActionInvoker, data: object, ...args: any[]) => PromiseLike<object> | Error | void;
 export type ActionParam = RefraxOptions | RefraxParameters | RefraxQueryParameters | string | object;
 
 export interface IAction extends IStatusActionable, Configurable, IMutable, Eventable {

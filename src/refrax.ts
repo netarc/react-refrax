@@ -13,8 +13,8 @@ import { processResponse } from './response/processResponse';
 import { createSchemaCollection } from './schema/createSchemaCollection';
 import { createSchemaNamespace } from './schema/createSchemaNamespace';
 import { createSchemaResource } from './schema/createSchemaResource';
-import { SchemaPath } from './schema/path';
-import { Schema } from './schema/schema';
+import * as SchemaPath from './schema/path';
+import * as Schema from './schema/schema';
 import { Store } from './store/store';
 import Config from './util/config';
 import { invalidateHelper as invalidate } from './util/invalidateHelper';
@@ -25,12 +25,15 @@ export * from './util/composableHash';
 export * from './util/disposable';
 export * from './actions/action';
 
-export {
+// tslint:disable-next-line:no-default-export
+export default {
   ActionEntity,
   MutableResource,
   Resource,
   Schema,
+  createSchema: Schema.createSchema,
   SchemaPath,
+  createSchemaPath: SchemaPath.createSchemaPath,
   Store,
   Config,
   Tools,
