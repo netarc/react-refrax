@@ -17,7 +17,7 @@ import { LocalStorageAdapter } from '../../adapters/localStorage';
 import { ResourceDescriptor } from '../../resource/descriptor';
 import { createSchemaCollection } from '../../schema/createSchemaCollection';
 import { createSchemaResource } from '../../schema/createSchemaResource';
-import { Schema } from '../../schema/schema';
+import { createSchema, Schema } from '../../schema/schema';
 import { RefraxParameters } from '../../util/composableHash';
 import { each, keysFor } from '../../util/tools';
 import { IActionType, IKeyValue } from '../../util/types';
@@ -50,7 +50,7 @@ describe('LocalStorageAdapter', () => {
     mock_reset();
 
     adapter = new LocalStorageAdapter();
-    schema = new Schema({ adapter });
+    schema = createSchema({ adapter });
     schema.addLeaf(createSchemaCollection('users'));
     schema.addLeaf(createSchemaResource('rules'));
 

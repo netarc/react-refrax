@@ -9,7 +9,7 @@ import { expect } from 'chai';
 
 import { createSchemaNamespace } from '../../schema/createSchemaNamespace';
 import { SchemaNode } from '../../schema/node';
-import { SchemaPath } from '../../schema/path';
+import { SchemaPathClass } from '../../schema/path';
 import { IClassification } from '../../util/types';
 
 // tslint:disable no-magic-numbers no-empty
@@ -47,7 +47,7 @@ describe('createSchemaNamespace', () => {
         const namespaceAPI = createSchemaNamespace('api');
 
         expect(namespaceAPI)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(namespaceAPI.__node)
@@ -70,7 +70,7 @@ describe('createSchemaNamespace', () => {
         });
 
         expect(namespaceAPI)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(namespaceAPI.__node)

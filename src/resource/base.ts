@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { SchemaPath } from '../schema/path';
+import { SchemaPath, SchemaPathClass } from '../schema/path';
 import {
   RefraxOptions,
   RefraxParameters,
@@ -50,7 +50,9 @@ export class BaseResource extends mixinEventable(mixinConfigurable(CompoundDispo
   constructor(schemaPath: SchemaPath, ...args: TResourceArgument[]) {
     super();
 
-    invariant(schemaPath instanceof SchemaPath, `BaseResource expected valid SchemaPath\n\rfound: \`${schemaPath}\``);
+    invariant(schemaPath instanceof SchemaPathClass,
+      `BaseResource expected valid SchemaPath\n\rfound: \`${schemaPath}\``
+    );
 
     const paths = [];
 

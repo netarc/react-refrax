@@ -16,6 +16,7 @@
         "../scripts/*"
       ]
     },
+    "importHelpers": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "newLine": "LF",

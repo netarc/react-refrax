@@ -20,7 +20,7 @@ import {
 import { ResourceDescriptor } from '../../resource/descriptor';
 import { Resource } from '../../resource/resource';
 import { createSchemaCollection } from '../../schema/createSchemaCollection';
-import { Schema } from '../../schema/schema';
+import { createSchema, Schema } from '../../schema/schema';
 import { FragmentResult } from '../../store/fragmentResult';
 import { RefraxOptions } from '../../util/composableHash';
 import {
@@ -50,7 +50,7 @@ describe('resource', () => {
     mock_reset();
     mock_get('/users', dataCollectionUsers);
 
-    schema = new Schema();
+    schema = createSchema();
     schema.addLeaf(createSchemaCollection('users'));
   });
 

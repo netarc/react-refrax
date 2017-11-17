@@ -9,7 +9,7 @@ import { expect } from 'chai';
 
 import { createSchemaCollection } from '../../schema/createSchemaCollection';
 import { SchemaNode } from '../../schema/node';
-import { SchemaPath } from '../../schema/path';
+import { SchemaPathClass } from '../../schema/path';
 import { Store } from '../../store/store';
 import { IClassification } from '../../util/types';
 
@@ -48,7 +48,7 @@ describe('schema/createSchemaCollection', () => {
         const collectionUsers = createSchemaCollection('users');
 
         expect(collectionUsers)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(collectionUsers.__node)
@@ -62,7 +62,7 @@ describe('schema/createSchemaCollection', () => {
             });
 
         expect(collectionUsers).to.have.property('user')
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(collectionUsers.user.__node)
@@ -91,7 +91,7 @@ describe('schema/createSchemaCollection', () => {
         const collectionUsers = createSchemaCollection('users', { store: 'foo_user' });
 
         expect(collectionUsers)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(collectionUsers.__node)
@@ -105,7 +105,7 @@ describe('schema/createSchemaCollection', () => {
             });
 
         expect(collectionUsers).to.have.property('user')
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(collectionUsers.user.__node)
@@ -123,7 +123,7 @@ describe('schema/createSchemaCollection', () => {
         const collectionUsers = createSchemaCollection('users', { store });
 
         expect(collectionUsers)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(collectionUsers.__node)
@@ -137,7 +137,7 @@ describe('schema/createSchemaCollection', () => {
             });
 
         expect(collectionUsers).to.have.property('user')
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(collectionUsers.user.__node)
@@ -159,7 +159,7 @@ describe('schema/createSchemaCollection', () => {
         });
 
         expect(collectionUsers)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(collectionUsers.__node)
@@ -173,7 +173,7 @@ describe('schema/createSchemaCollection', () => {
             });
 
         expect(collectionUsers).to.have.property('client')
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(collectionUsers.client.__node)
@@ -195,7 +195,7 @@ describe('schema/createSchemaCollection', () => {
         });
 
         expect(collectionUsers)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(collectionUsers.__node)
@@ -210,7 +210,7 @@ describe('schema/createSchemaCollection', () => {
             });
 
         expect(collectionUsers).to.have.property('user')
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(collectionUsers.user.__node)
@@ -232,7 +232,7 @@ describe('schema/createSchemaCollection', () => {
         });
 
         expect(collectionUsers)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(collectionUsers.__node)
@@ -246,7 +246,7 @@ describe('schema/createSchemaCollection', () => {
             });
 
         expect(collectionUsers).to.have.property('user')
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(collectionUsers.user.__node)
@@ -266,12 +266,12 @@ describe('schema/createSchemaCollection', () => {
         });
 
         expect(collectionUsers)
-          .that.is.an.instanceof(SchemaPath)
+          .that.is.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode)
             .to.have.property('identifier', 'clients');
         expect(collectionUsers).to.have.property('client')
-          .that.is.an.instanceof(SchemaPath)
+          .that.is.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode)
             .to.have.property('identifier', 'client');

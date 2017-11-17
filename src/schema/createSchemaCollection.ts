@@ -7,7 +7,7 @@
  */
 import { singular } from 'pluralize';
 
-import { SchemaPath } from '../schema/path';
+import { createSchemaPath, SchemaPath } from '../schema/path';
 import { cleanIdentifier, extend, invariant, isPlainObject } from '../util/tools';
 import { IClassification, IKeyValue } from '../util/types';
 import { SchemaNode } from './node';
@@ -28,7 +28,7 @@ export const createSchemaCollection = (path: string, options: IKeyValue = {}): S
 
   // Collection Node
 
-  collectionPath = new SchemaPath(
+  collectionPath = createSchemaPath(
     new SchemaNode(IClassification.collection, identifier, extend({
       store: storeReference('schema/createSchemaCollection', identifier, options.store),
       path

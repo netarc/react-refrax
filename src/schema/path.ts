@@ -108,12 +108,12 @@ const createLeaf = (parent: SchemaPath,
     leafNode = identifier;
     identifier = null!;
   }
-  else if (identifier instanceof SchemaPath) {
+  else if (identifier instanceof SchemaPathClass) {
     leafNode = identifier.__node;
     identifier = null!;
   }
 
-  if (leafNode instanceof SchemaPath) {
+  if (leafNode instanceof SchemaPathClass) {
     leafNode = leafNode.__node;
   }
   else if (!(leafNode instanceof SchemaNode)) {
@@ -133,19 +133,14 @@ const createLeaf = (parent: SchemaPath,
 
   Object.defineProperty(parent, identifier, {
     get: () =>
-      new SchemaPath(leafNode as SchemaNode, stack.concat(leafNode!))
+      createSchemaPath(leafNode as SchemaNode, stack.concat(leafNode!))
   });
 };
 
-export class SchemaPath extends Configurable {
+export class SchemaPathClass extends Configurable {
   static mixins: IKeyValue[] = SchemaAccescessorMixins;
 
-  // @ts-ignore we want any unknown property to act as a SchemaPath
-  readonly [key: string]: SchemaPath;
-
-  // @ts-ignore @todo proper fallback index signature?
   __node: SchemaNode;
-  // @ts-ignore @todo proper fallback index signature?
   __stack: TStackItem[];
 
   constructor(node: SchemaNode, stack?: TStackItem[], clone?: SchemaPath) {
@@ -174,36 +169,32 @@ export class SchemaPath extends Configurable {
     enumerateNodeLeafs(node, stack, (key: string, leafNode: SchemaNode, leafStack: TStackItem[]) => {
       Object.defineProperty(this, key, {
         get: () =>
-          new SchemaPath(leafNode, leafStack)
+          createSchemaPath(leafNode, leafStack)
       });
     });
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   toString(): string {
     return 'SchemaPath';
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   clone(): SchemaPath {
-    return new SchemaPath(this.__node, this.__stack, this);
+    return createSchemaPath(this.__node, this.__stack, this as any as SchemaPath) as any as SchemaPath;
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   enumerateLeafs(iterator: (key: string, path: SchemaPath) => void): void {
     enumerateNodeLeafs(this.__node, this.__stack, (key: string,
                                                    leafNode: SchemaNode,
                                                    leafStack: TStackItem[]) => {
-      const schemaPath = new SchemaPath(leafNode, leafStack.concat([
+      const schemaPath = createSchemaPath(leafNode, leafStack.concat([
         this._options,
         this._parameters,
         this._queryParams
       ]));
-      iterator(key, schemaPath);
+      iterator(key, schemaPath as any as SchemaPath);
     });
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   inspect(result: IKeyValue = {}): IKeyValue {
     this.enumerateLeafs((_key: string, schemaPath: SchemaPath) => {
       const descriptor = new ResourceDescriptor(null, IActionType.inspect, schemaPath.__stack);
@@ -214,7 +205,6 @@ export class SchemaPath extends Configurable {
     return result;
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   invalidate(options: IKeyValue = {}): void {
     invariant(isPlainObject(options), `invalidate expected argument of type \`Object\` but found ${options}`);
 
@@ -259,7 +249,6 @@ export class SchemaPath extends Configurable {
     }
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   invalidateLeafs(options: IKeyValue = {}): void {
     invariant(isPlainObject(options), `invalidateLeafs expected argument of type \`Object\` but found ${options}`);
 
@@ -307,45 +296,49 @@ export class SchemaPath extends Configurable {
     });
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   addLeaf(leaf: SchemaPath | SchemaNode): this;
   addLeaf(identifier: string, leaf: SchemaPath | SchemaNode): this;
   addLeaf(identifier: SchemaPath | SchemaNode | string, leaf?: SchemaPath | SchemaNode): this {
-    createLeaf(this, false, identifier, leaf);
+    createLeaf(this as any as SchemaPath, false, identifier, leaf);
 
     return this;
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   addDetachedLeaf(leaf: SchemaPath): this;
   addDetachedLeaf(identifier: string, leaf: SchemaPath | SchemaNode): this;
   addDetachedLeaf(identifier: SchemaPath | SchemaNode | string, leaf?: SchemaPath | SchemaNode): this {
-    createLeaf(this, true, identifier, leaf);
+    createLeaf(this as any as SchemaPath, true, identifier, leaf);
 
     return this;
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   addCollection(path: string, options?: IKeyValue): SchemaPath {
     const collection = createSchemaCollection(path, options);
-    createLeaf(this, true, collection);
+    createLeaf(this as any as SchemaPath, true, collection);
 
     return collection;
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   addResource(path: string, options?: IKeyValue): SchemaPath {
     const resource = createSchemaResource(path, options);
-    createLeaf(this, true, resource);
+    createLeaf(this as any as SchemaPath, true, resource);
 
     return resource;
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   addNamespace(path: string, options?: IKeyValue): SchemaPath {
     const namespace = createSchemaNamespace(path, options);
-    createLeaf(this, true, namespace);
+    createLeaf(this as any as SchemaPath, true, namespace);
 
     return namespace;
   }
 }
+
+export interface ISchemaPathAccessor {
+  [key: string]: SchemaPath;
+}
+
+export type SchemaPath = SchemaPathClass & ISchemaPathAccessor;
+
+export const createSchemaPath = (node: SchemaNode, stack?: TStackItem[], clone?: SchemaPath) =>
+  new SchemaPathClass(node, stack, clone) as any as SchemaPath;

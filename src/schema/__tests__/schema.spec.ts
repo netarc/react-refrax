@@ -8,14 +8,14 @@
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
-import { Schema } from '../../schema/schema';
+import { createSchema } from '../../schema/schema';
 
 /* eslint-disable no-new */
 describe('Schema', () => {
   describe('instance method', () => {
     describe('reset', () => {
       it('correctly forwards to storeMap', () => {
-        let schema = new Schema();
+        const schema = createSchema();
         spy(schema.__node.definition.storeMap, 'reset');
 
         schema.reset();
@@ -25,7 +25,7 @@ describe('Schema', () => {
 
     describe('invalidate', () => {
       it('correctly forwards to storeMap', () => {
-        let schema = new Schema();
+        const schema = createSchema();
         spy(schema.__node.definition.storeMap, 'invalidate');
 
         schema.invalidate();

@@ -10,8 +10,8 @@ import { expect } from 'chai';
 import { BaseResource } from '../../resource/base';
 import { RefraxPath } from '../../resource/path';
 import { createSchemaCollection } from '../../schema/createSchemaCollection';
-import { SchemaPath } from '../../schema/path';
-import { Schema } from '../../schema/schema';
+import { SchemaPathClass } from '../../schema/path';
+import { createSchema, Schema } from '../../schema/schema';
 import {
   RefraxOptions,
   RefraxParameters,
@@ -25,7 +25,7 @@ describe('BaseResource', () => {
   let schema: Schema;
 
   beforeEach(() => {
-    schema = new Schema();
+    schema = createSchema();
 
     schema.addLeaf(createSchemaCollection('users'));
   });
@@ -70,7 +70,7 @@ describe('BaseResource', () => {
         .to.be.instanceof(BaseResource);
       expect(resource)
         .to.have.property('_schemaPath')
-          .that.is.an.instanceof(SchemaPath);
+          .that.is.an.instanceof(SchemaPathClass);
       expect(resource)
         .to.have.property('_paths')
           .that.is.an.instanceof(Array);

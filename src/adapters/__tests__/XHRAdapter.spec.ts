@@ -20,13 +20,13 @@ import {
 import { ResourceDescriptor } from '../../resource/descriptor';
 import { createSchemaCollection } from '../../schema/createSchemaCollection';
 import { createSchemaResource } from '../../schema/createSchemaResource';
-import { Schema } from '../../schema/schema';
+import { createSchema, Schema } from '../../schema/schema';
 import { Store } from '../../store/store';
 import { RefraxParameters } from '../../util/composableHash';
 import { IActionType, IKeyValue, TStackItem } from '../../util/types';
 import { XHRAdapter } from '../XHR';
 
-// tslint:disable: no-magic-numbers
+// tslint:disable: no-magic-numbers no-unused-expression no-empty
 
 const dataUser1 = { id: 1, name: 'foo bob' };
 const dataUser2 = { id: 2, name: 'foo baz' };
@@ -54,7 +54,7 @@ describe('XHRAdapter', () => {
     mock_reset();
 
     adapter = new XHRAdapter();
-    schema = new Schema({ adapter });
+    schema = createSchema({ adapter });
     schema.addLeaf(createSchemaCollection('users'));
     schema.addLeaf(createSchemaResource('rules'));
 

@@ -15,7 +15,7 @@ import {
 import { ResourceDescriptor } from '../../resource/descriptor';
 import { processResponse } from '../../response/processResponse';
 import { createSchemaCollection } from '../../schema/createSchemaCollection';
-import { Schema } from '../../schema/schema';
+import { createSchema, Schema } from '../../schema/schema';
 import { each } from '../../util/tools';
 import { IActionType, IStatus } from '../../util/types';
 
@@ -55,7 +55,7 @@ describe('processResponse', () => {
       beforeEach(() => {
         mock_reset();
 
-        schema = new Schema();
+        schema = createSchema();
         schema.addLeaf(createSchemaCollection('users'));
 
         spy_defaultHandler = spy(processResponse, 'defaultHandler');

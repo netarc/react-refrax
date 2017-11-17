@@ -21,8 +21,8 @@ import {
 import { MutableResource } from '../../resource/mutableResource';
 import { Resource } from '../../resource/resource';
 import { createSchemaCollection } from '../../schema/createSchemaCollection';
-import { SchemaPath } from '../../schema/path';
-import { Schema } from '../../schema/schema';
+import { SchemaPathClass } from '../../schema/path';
+import { createSchema, Schema } from '../../schema/schema';
 import { FragmentResult } from '../../store/fragmentResult';
 import { Store } from '../../store/store';
 import {
@@ -41,6 +41,8 @@ import {
   TRequestResult
 } from '../../util/types';
 
+// tslint:disable: no-unused-expression no-empty no-magic-numbers
+
 const FRAGMENT_DEFAULT = RefraxConfig.defaultFragment;
 
 const dataElement1 = { id: 1, name: 'foo bob' };
@@ -57,7 +59,7 @@ describe('MutableResource', () => {
     beforeEach(() => {
       mock_reset();
 
-      schema = new Schema();
+      schema = createSchema();
       schema.addLeaf(createSchemaCollection('users'));
     });
 
@@ -79,7 +81,7 @@ describe('MutableResource', () => {
 
       expect(() => {
         // @ts-ignore
-        new MutableResource({foo: 'bar'});
+        new MutableResource({ foo: 'bar' });
       }).to.throw(Error, 'BaseResource expected valid SchemaPath');
 
       expect(() => {
@@ -100,7 +102,7 @@ describe('MutableResource', () => {
         .to.be.instanceof(MutableResource);
       expect(mutableUsers)
         .to.have.property('_schemaPath')
-          .that.is.an.instanceof(SchemaPath);
+          .that.is.an.instanceof(SchemaPathClass);
       expect(mutableUsers)
         .to.have.property('_paths')
           .that.is.an.instanceof(Array);
@@ -122,7 +124,7 @@ describe('MutableResource', () => {
     beforeEach(() => {
       mock_reset();
 
-      schema = new Schema();
+      schema = createSchema();
       schema.addLeaf(createSchemaCollection('users'));
     });
 
@@ -575,7 +577,7 @@ describe('MutableResource', () => {
     beforeEach(() => {
       mock_reset();
 
-      schema = new Schema();
+      schema = createSchema();
       schema.addLeaf(createSchemaCollection('users'));
     });
 

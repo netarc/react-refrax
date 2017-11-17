@@ -12,8 +12,8 @@ import { ResourceDescriptor } from '../../resource/descriptor';
 import { createSchemaCollection } from '../../schema/createSchemaCollection';
 import { createSchemaNamespace } from '../../schema/createSchemaNamespace';
 import { SchemaNode } from '../../schema/node';
-import { SchemaPath } from '../../schema/path';
-import { Schema } from '../../schema/schema';
+import { createSchemaPath, SchemaPathClass } from '../../schema/path';
+import { createSchema, Schema } from '../../schema/schema';
 import { RefraxParameters } from '../../util/composableHash';
 import RefraxConfig from '../../util/config';
 import {
@@ -43,29 +43,29 @@ describe('SchemaPath', () => {
     it('should throw an error when passed invalid arguments', () => {
       expect(() => {
         // @ts-ignore - invalid argument
-        new SchemaPath();
+        createSchemaPath();
       }).to.throw(Error, 'Expected node of type SchemaNode but found');
 
       expect(() => {
         // @ts-ignore - invalid argument
-        new SchemaPath(123);
+        createSchemaPath(123);
       }).to.throw(Error, 'Expected node of type SchemaNode but found');
 
       expect(() => {
         // @ts-ignore - invalid argument
-        new SchemaPath('foo');
+        createSchemaPath('foo');
       }).to.throw(Error, 'Expected node of type SchemaNode but found');
 
       expect(() => {
         // @ts-ignore - invalid argument
-        new SchemaPath({ bar: 23 });
+        createSchemaPath({ bar: 23 });
       }).to.throw(Error, 'Expected node of type SchemaNode but found');
     });
 
     it('should not throw an error when passed valid arguments', () => {
       expect(() => {
         // @ts-ignore - invalid argument
-        new SchemaPath(new SchemaNode());
+        createSchemaPath(new SchemaNode());
       }).to.not.throw(Error);
     });
   });
@@ -73,7 +73,7 @@ describe('SchemaPath', () => {
   describe('methods', () => {
     describe('enumerateLeafs', () => {
       it('should only enumerate shallow leafs', () => {
-        const nodeAccessor = new SchemaPath(new SchemaNode());
+        const nodeAccessor = createSchemaPath(new SchemaNode());
         const schemaNode = new SchemaNode();
         const schemaNodeWithLiteral = new SchemaNode(IClassification.namespace, 'foo');
         const schemaNodeNested = new SchemaNode();
@@ -97,7 +97,7 @@ describe('SchemaPath', () => {
 
     describe('addLeaf', () => {
       it('should only accept a leaf object optionally preceeded by an identifier', () => {
-        const nodeAccessor = new SchemaPath(new SchemaNode());
+        const nodeAccessor = createSchemaPath(new SchemaNode());
         const schemaNode = new SchemaNode();
 
         expect(() => {
@@ -122,7 +122,7 @@ describe('SchemaPath', () => {
       });
 
       it('should not throw an error on valid arguments', () => {
-        const nodeAccessor = new SchemaPath(new SchemaNode());
+        const nodeAccessor = createSchemaPath(new SchemaNode());
         const schemaNode = new SchemaNode();
         const schemaNodeWithLiteral = new SchemaNode(IClassification.namespace, 'foo');
 
@@ -133,19 +133,19 @@ describe('SchemaPath', () => {
       });
 
       it('should correctly add an accessible leaf', () => {
-        const rootAccessor = new SchemaPath(new SchemaNode());
+        const rootAccessor = createSchemaPath(new SchemaNode());
         const schemaNode1 = new SchemaNode();
         const schemaNode2 = new SchemaNode();
 
         rootAccessor.addLeaf('foo', schemaNode1);
         expect(rootAccessor).to.have.property('foo')
-          .that.is.an.instanceof(SchemaPath);
+          .that.is.an.instanceof(SchemaPathClass);
         expect(rootAccessor.foo.__node).to.equal(schemaNode1);
 
         rootAccessor.foo.addLeaf('bar', schemaNode2);
         expect(rootAccessor).to.not.have.property('bar');
         expect(rootAccessor.foo).to.have.property('bar')
-          .that.is.an.instanceof(SchemaPath);
+          .that.is.an.instanceof(SchemaPathClass);
         expect(rootAccessor.foo.bar.__node).to.equal(schemaNode2);
 
         expect(rootAccessor.foo.bar).to.not.have.property('foo');
@@ -154,7 +154,7 @@ describe('SchemaPath', () => {
 
     describe(IActionType.inspect, () => {
       it('should correctly describe hierarchy', () => {
-        const schema = new Schema();
+        const schema = createSchema();
         schema.addLeaf(createSchemaNamespace('api'));
         schema.api.addLeaf(createSchemaCollection('projects'));
         schema.api.projects.addLeaf(createSchemaNamespace('bar'));
@@ -239,7 +239,7 @@ describe('SchemaPath', () => {
       beforeEach(() => {
         let descriptor;
 
-        schema = new Schema();
+        schema = createSchema();
         schema.addLeaf(createSchemaNamespace('api'));
         schema.api.addLeaf(createSchemaCollection('projects'));
         schema.api.projects.addLeaf(createSchemaNamespace('bar'));
@@ -366,7 +366,7 @@ describe('SchemaPath', () => {
       beforeEach(() => {
         let descriptor;
 
-        schema = new Schema();
+        schema = createSchema();
         schema.addLeaf(createSchemaNamespace('api'));
         schema.api.addLeaf(createSchemaCollection('projects'));
         schema.api.projects.addLeaf(createSchemaNamespace('bar'));
@@ -461,7 +461,7 @@ describe('SchemaPath', () => {
   describe('behavior', () => {
     describe('detached', () => {
       it('should not circular reference', () => {
-        const schema = new Schema();
+        const schema = createSchema();
         const projects = createSchemaCollection('projects');
         const users = createSchemaCollection('users');
 
@@ -469,19 +469,19 @@ describe('SchemaPath', () => {
         schema.projects.project.addDetachedLeaf(users);
         users.user.addLeaf(projects);
 
-        expect(schema.projects.project.users.user.projects.project).to.be.an.instanceof(SchemaPath);
+        expect(schema.projects.project.users.user.projects.project).to.be.an.instanceof(SchemaPathClass);
         expect(schema.projects.project.users.user.projects.project.users).to.equal(undefined);
       });
 
       it('should circular reference', () => {
-        const schema = new Schema();
+        const schema = createSchema();
         const projects = createSchemaCollection('projects');
         const users = createSchemaCollection('users');
         projects.project.addLeaf(users);
         users.user.addLeaf(projects);
         schema.addLeaf(projects);
 
-        expect(schema.projects.project.users.user.projects.project.users).to.be.an.instanceof(SchemaPath);
+        expect(schema.projects.project.users.user.projects.project.users).to.be.an.instanceof(SchemaPathClass);
       });
     });
   });

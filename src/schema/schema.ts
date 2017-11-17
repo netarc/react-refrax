@@ -13,7 +13,7 @@ import { StoreMap } from '../store/storeMap';
 import { extend, invariant, isPlainObject } from '../util/tools';
 import { IClassification, IKeyValue } from '../util/types';
 import { SchemaNode } from './node';
-import { SchemaPath } from './path';
+import { ISchemaPathAccessor, SchemaPathClass } from './path';
 
 const validateDefinition = (definition: IKeyValue) => {
   invariant(isPlainObject(definition),
@@ -31,7 +31,7 @@ const validateDefinition = (definition: IKeyValue) => {
   definition.storeMap = definition.storeMap || new StoreMap();
 
   if ('adapter' in definition) {
-    invariant(typeof(definition.adapter) !== 'string' || (definition.adapter = Schema.adapters[definition.adapter]),
+    invariant(typeof(definition.adapter) !== 'string' || (definition.adapter = Adapters[definition.adapter]),
       `Schema - No adapter found named \`${definition.adapter}\``
     );
 
@@ -46,34 +46,36 @@ const validateDefinition = (definition: IKeyValue) => {
   return definition;
 };
 
-export class Schema extends SchemaPath {
-  static adapters: IKeyValue = {
-    base: BaseAdapter,
-    xhr: XHRAdapter,
-    localStorage: LocalStorageAdapter,
-    sessionStorage: SessionStorageAdapter
-  };
+export const Adapters: IKeyValue = {
+  base: BaseAdapter,
+  xhr: XHRAdapter,
+  localStorage: LocalStorageAdapter,
+  sessionStorage: SessionStorageAdapter
+};
 
+export type Schema = SchemaClass & ISchemaPathAccessor;
+
+export class SchemaClass extends SchemaPathClass {
   constructor(definition: IKeyValue = {}) {
     definition = validateDefinition(definition);
 
     super(new SchemaNode(IClassification.schema, null, definition));
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   toString(): string {
     return 'Schema';
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   invalidate(): void {
     const storeMap = this.__node.definition.storeMap;
     storeMap.invalidate.apply(storeMap, arguments);
   }
 
-  // @ts-ignore @todo proper fallback index signature?
   reset(): void {
     const storeMap = this.__node.definition.storeMap;
     storeMap.reset.apply(storeMap, arguments);
   }
 }
+
+export const createSchema = (definition: IKeyValue = {}) =>
+  new SchemaClass(definition) as any as Schema;

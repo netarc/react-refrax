@@ -9,7 +9,7 @@ import { expect } from 'chai';
 
 import { createSchemaResource } from '../../schema/createSchemaResource';
 import { SchemaNode } from '../../schema/node';
-import { SchemaPath } from '../../schema/path';
+import { SchemaPathClass } from '../../schema/path';
 import { Store } from '../../store/store';
 import { IClassification } from '../../util/types';
 
@@ -48,7 +48,7 @@ describe('schema/createSchemaResource', () => {
         const resourceSettings = createSchemaResource('settings');
 
         expect(resourceSettings)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(resourceSettings.__node)
@@ -79,7 +79,7 @@ describe('schema/createSchemaResource', () => {
         const resourceSettings = createSchemaResource('settings', { store: 'settings_foo' });
 
         expect(resourceSettings)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(resourceSettings.__node)
@@ -98,7 +98,7 @@ describe('schema/createSchemaResource', () => {
         const resourceSettings = createSchemaResource('settings', { store });
 
         expect(resourceSettings)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(resourceSettings.__node)
@@ -121,7 +121,7 @@ describe('schema/createSchemaResource', () => {
         });
 
         expect(resourceSettings)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(resourceSettings.__node)
@@ -144,7 +144,7 @@ describe('schema/createSchemaResource', () => {
         });
 
         expect(resourceSettings)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(resourceSettings.__node)
@@ -165,7 +165,7 @@ describe('schema/createSchemaResource', () => {
         });
 
         expect(resourceSettings)
-          .to.be.an.instanceof(SchemaPath)
+          .to.be.an.instanceof(SchemaPathClass)
           .to.have.property('__node')
             .that.is.instanceof(SchemaNode);
         expect(resourceSettings.__node)
