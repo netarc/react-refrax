@@ -7,16 +7,16 @@
  */
 import * as Promise from 'bluebird';
 
-import { requestForDescriptor } from 'resource/requestForDescriptor';
-import { SchemaPath } from 'schema/path';
-import { map } from 'util/tools';
+import { requestForDescriptor } from '../resource/requestForDescriptor';
+import { SchemaPath } from '../schema/path';
+import { map } from '../util/tools';
 import {
   IActionType,
   IKeyValue,
   TDescriptorRequestHook,
   TRequestResult,
   TResourceArgument
-} from 'util/types';
+} from '../util/types';
 import { BaseResource } from './base';
 import { ResourceDescriptor } from './descriptor';
 import { RefraxPath } from './path';

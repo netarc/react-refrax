@@ -5,22 +5,22 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { Resource } from 'resource/resource';
+import { Resource } from '../resource/resource';
 import {
   RefraxOptions,
   RefraxParameters,
   RefraxQueryParameters
-} from 'util/composableHash';
-import { Configurable } from 'util/configurable';
-import { Eventable } from 'util/eventable';
+} from '../util/composableHash';
+import { Configurable } from '../util/configurable';
+import { Eventable } from '../util/eventable';
 import {
   extend,
   invariant,
   isFunction,
   isPlainObject,
   setPrototypeOf
-} from 'util/tools';
-import { IStatusActionable } from 'util/types';
+} from '../util/tools';
+import { IStatusActionable } from '../util/types';
 import { ActionEntity } from './entity';
 import { IMutable } from './mutable';
 

@@ -5,9 +5,9 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { ResourceDescriptor } from 'resource/descriptor';
-import { invariant, isPlainObject } from 'util/tools';
-import { IActionType, IKeyValue, IStatus, TResponseHandler } from 'util/types';
+import { ResourceDescriptor } from '../resource/descriptor';
+import { invariant, isPlainObject } from '../util/tools';
+import { IActionType, IKeyValue, IStatus, TResponseHandler } from '../util/types';
 import { parseNested } from './handlers/parseNested';
 import { parseUnnested } from './handlers/parseUnnested';
 

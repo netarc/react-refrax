@@ -7,10 +7,10 @@
  */
 import { expect } from 'chai';
 
-import { createSchemaNamespace } from 'schema/createSchemaNamespace';
-import { SchemaNode } from 'schema/node';
-import { SchemaPath } from 'schema/path';
-import { IClassification } from 'util/types';
+import { createSchemaNamespace } from '../../schema/createSchemaNamespace';
+import { SchemaNode } from '../../schema/node';
+import { SchemaPath } from '../../schema/path';
+import { IClassification } from '../../util/types';
 
 // tslint:disable no-magic-numbers no-empty
 

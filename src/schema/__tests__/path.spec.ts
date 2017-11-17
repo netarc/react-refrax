@@ -8,21 +8,21 @@
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
-import { ResourceDescriptor } from 'resource/descriptor';
-import { createSchemaCollection } from 'schema/createSchemaCollection';
-import { createSchemaNamespace } from 'schema/createSchemaNamespace';
-import { SchemaNode } from 'schema/node';
-import { SchemaPath } from 'schema/path';
-import { Schema } from 'schema/schema';
-import { RefraxParameters } from 'util/composableHash';
-import RefraxConfig from 'util/config';
+import { ResourceDescriptor } from '../../resource/descriptor';
+import { createSchemaCollection } from '../../schema/createSchemaCollection';
+import { createSchemaNamespace } from '../../schema/createSchemaNamespace';
+import { SchemaNode } from '../../schema/node';
+import { SchemaPath } from '../../schema/path';
+import { Schema } from '../../schema/schema';
+import { RefraxParameters } from '../../util/composableHash';
+import RefraxConfig from '../../util/config';
 import {
   IActionType,
   IClassification,
   IStatus,
   IStrategy,
   TStackItem
-} from 'util/types';
+} from '../../util/types';
 
 // tslint:disable: no-unused-expression no-magic-numbers no-string-literal object-literal-shorthand
 

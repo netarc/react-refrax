@@ -7,11 +7,11 @@
  */
 import { expect } from 'chai';
 
-import { createSchemaResource } from 'schema/createSchemaResource';
-import { SchemaNode } from 'schema/node';
-import { SchemaPath } from 'schema/path';
-import { Store } from 'store/store';
-import { IClassification } from 'util/types';
+import { createSchemaResource } from '../../schema/createSchemaResource';
+import { SchemaNode } from '../../schema/node';
+import { SchemaPath } from '../../schema/path';
+import { Store } from '../../store/store';
+import { IClassification } from '../../util/types';
 
 // tslint:disable no-magic-numbers no-empty
 

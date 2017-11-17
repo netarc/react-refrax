@@ -8,16 +8,17 @@
 import { expect } from 'chai';
 import { stub } from 'sinon';
 
-import { FragmentCache } from 'store/fragmentCache';
 import {
   descriptorCollection,
   descriptorCollectionItem,
   descriptorFrom,
   descriptorResource
 } from 'test/TestHelper';
-import RefraxConfig from 'util/config';
-import { extend } from 'util/tools';
-import { IStatus, IStrategy, ITimestamp } from 'util/types';
+
+import { FragmentCache } from '../../store/fragmentCache';
+import RefraxConfig from '../../util/config';
+import { extend } from '../../util/tools';
+import { IStatus, IStrategy, ITimestamp } from '../../util/types';
 
 // tslint:disable no-magic-numbers align
 

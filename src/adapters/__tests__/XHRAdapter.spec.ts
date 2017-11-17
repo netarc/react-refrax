@@ -17,13 +17,13 @@ import {
   mock_reset
 } from 'test/TestSupport';
 
-import { ResourceDescriptor } from 'resource/descriptor';
-import { createSchemaCollection } from 'schema/createSchemaCollection';
-import { createSchemaResource } from 'schema/createSchemaResource';
-import { Schema } from 'schema/schema';
-import { Store } from 'store/store';
-import { RefraxParameters } from 'util/composableHash';
-import { IActionType, IKeyValue, TStackItem } from 'util/types';
+import { ResourceDescriptor } from '../../resource/descriptor';
+import { createSchemaCollection } from '../../schema/createSchemaCollection';
+import { createSchemaResource } from '../../schema/createSchemaResource';
+import { Schema } from '../../schema/schema';
+import { Store } from '../../store/store';
+import { RefraxParameters } from '../../util/composableHash';
+import { IActionType, IKeyValue, TStackItem } from '../../util/types';
 import { XHRAdapter } from '../XHR';
 
 // tslint:disable: no-magic-numbers

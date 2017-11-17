@@ -12,8 +12,8 @@ import {
   RefraxOptions,
   RefraxParameters,
   RefraxQueryParameters
-} from 'util/composableHash';
-import { Configurable, extendConfigurable } from 'util/configurable';
+} from '../composableHash';
+import { Configurable, extendConfigurable } from '../configurable';
 
 // tslint:disable no-empty
 

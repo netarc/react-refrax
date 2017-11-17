@@ -7,15 +7,16 @@
  */
 import { expect } from 'chai';
 
-import { FragmentCache } from 'store/fragmentCache';
-import { FragmentResult } from 'store/fragmentResult';
 import {
   descriptorCollection,
   descriptorCollectionItem,
   descriptorFrom,
   descriptorResource
 } from 'test/TestHelper';
-import { IStatus, ITimestamp } from 'util/types';
+
+import { FragmentCache } from '../../store/fragmentCache';
+import { FragmentResult } from '../../store/fragmentResult';
+import { IStatus, ITimestamp } from '../../util/types';
 
 // tslint:disable no-magic-numbers align
 

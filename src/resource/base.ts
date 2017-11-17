@@ -5,36 +5,36 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { SchemaPath } from 'schema/path';
+import { SchemaPath } from '../schema/path';
 import {
   RefraxOptions,
   RefraxParameters,
   RefraxQueryParameters
-} from 'util/composableHash';
+} from '../util/composableHash';
 import {
   // @ts-ignore - Exported variable .. cannot be named https://github.com/Microsoft/TypeScript/issues/9944
   Configurable,
   mixinConfigurable
-} from 'util/configurable';
-import { CompoundDisposable, Disposable } from 'util/disposable';
+} from '../util/configurable';
+import { CompoundDisposable, Disposable } from '../util/disposable';
 import {
   // @ts-ignore - Exported variable .. cannot be named https://github.com/Microsoft/TypeScript/issues/9944
   Eventable,
   mixinEventable
-} from 'util/eventable';
+} from '../util/eventable';
 import {
   extend,
   invariant,
   isArray,
   isFunction,
   isPlainObject
-} from 'util/tools';
+} from '../util/tools';
 import {
   IActionType,
   IKeyValue,
   TResourceArgument,
   TStackItem
-} from 'util/types';
+} from '../util/types';
 import { ResourceDescriptor } from './descriptor';
 import { RefraxPath } from './path';
 

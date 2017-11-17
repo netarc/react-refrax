@@ -8,10 +8,11 @@
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
-import { Store } from 'store/store';
 import { descriptorCollection, descriptorFrom } from 'test/TestHelper';
-import { extend } from 'util/tools';
-import { IKeyValue, IStatus } from 'util/types';
+
+import { Store } from '../../store/store';
+import { extend } from '../../util/tools';
+import { IKeyValue, IStatus } from '../../util/types';
 
 // tslint:disable no-magic-numbers
 

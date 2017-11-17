@@ -8,11 +8,12 @@
 import { expect } from 'chai';
 import { SinonSpy, spy } from 'sinon';
 
-import { Store } from 'store/store';
-import { StoreMap } from 'store/storeMap';
 import { descriptorCollection } from 'test/TestHelper';
-import { each } from 'util/tools';
-import { IStatus } from 'util/types';
+
+import { Store } from '../../store/store';
+import { StoreMap } from '../../store/storeMap';
+import { each } from '../../util/tools';
+import { IStatus } from '../../util/types';
 
 // tslint:disable no-string-literal
 

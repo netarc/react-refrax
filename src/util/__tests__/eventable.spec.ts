@@ -9,8 +9,8 @@ import { expect } from 'chai';
 import { EventEmitter } from 'eventemitter3';
 import { spy } from 'sinon';
 
-import { Disposable } from 'util/disposable';
-import { extendEventable } from 'util/eventable';
+import { Disposable } from '../disposable';
+import { extendEventable } from '../eventable';
 
 // tslint:disable no-empty no-magic-numbers
 

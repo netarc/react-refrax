@@ -18,19 +18,19 @@ import {
   mock_reset
 } from 'test/TestSupport';
 
-import { MutableResource } from 'resource/mutableResource';
-import { Resource } from 'resource/resource';
-import { createSchemaCollection } from 'schema/createSchemaCollection';
-import { SchemaPath } from 'schema/path';
-import { Schema } from 'schema/schema';
-import { FragmentResult } from 'store/fragmentResult';
-import { Store } from 'store/store';
+import { MutableResource } from '../../resource/mutableResource';
+import { Resource } from '../../resource/resource';
+import { createSchemaCollection } from '../../schema/createSchemaCollection';
+import { SchemaPath } from '../../schema/path';
+import { Schema } from '../../schema/schema';
+import { FragmentResult } from '../../store/fragmentResult';
+import { Store } from '../../store/store';
 import {
   RefraxOptions,
   RefraxParameters,
   RefraxQueryParameters
-} from 'util/composableHash';
-import RefraxConfig from 'util/config';
+} from '../../util/composableHash';
+import RefraxConfig from '../../util/config';
 import {
   IActionType,
   IClassification,
@@ -39,7 +39,7 @@ import {
   IStrategy,
   ITimestamp,
   TRequestResult
-} from 'util/types';
+} from '../../util/types';
 
 const FRAGMENT_DEFAULT = RefraxConfig.defaultFragment;
 

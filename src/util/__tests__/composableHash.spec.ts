@@ -8,8 +8,8 @@
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
-import { ComposableHash } from 'util/composableHash';
-import { IKeyValue, TComposableHashHook } from 'util/types';
+import { ComposableHash } from '../composableHash';
+import { IKeyValue, TComposableHashHook } from '../types';
 
 // tslint:disable no-magic-numbers align no-unused-expression no-empty
 

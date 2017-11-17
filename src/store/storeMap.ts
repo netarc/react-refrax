@@ -11,8 +11,8 @@ import {
   isArray,
   isPlainObject,
   randomString
-} from 'util/tools';
-import { IKeyValue } from 'util/types';
+} from '../util/tools';
+import { IKeyValue } from '../util/types';
 import { Store } from './store';
 
 const RandomUIDSize = 12;

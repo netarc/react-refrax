@@ -7,17 +7,17 @@
  */
 import * as Promise from 'bluebird';
 
-import { BaseAdapter } from 'adapters/base';
-import { processResponse } from 'response/processResponse';
-import { RequestError } from 'util/requestError';
-import { invariant, isPromise } from 'util/tools';
+import { BaseAdapter } from '../adapters/base';
+import { processResponse } from '../response/processResponse';
+import { RequestError } from '../util/requestError';
+import { invariant, isPromise } from '../util/tools';
 import {
   // @ts-ignore - Exported variable .. cannot be named https://github.com/Microsoft/TypeScript/issues/9944
   IAdapterResponse,
   IKeyValue,
   TDescriptorRequestHook,
   TRequestResult
-} from 'util/types';
+} from '../util/types';
 import { ResourceDescriptor } from './descriptor';
 
 // We only quietly consume RequestError's

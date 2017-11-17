@@ -5,16 +5,16 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { BaseAdapter } from 'adapters/base';
-import { SchemaNode } from 'schema/node';
-import { Store } from 'store/store';
-import { StoreMap } from 'store/storeMap';
+import { BaseAdapter } from '../adapters/base';
+import { SchemaNode } from '../schema/node';
+import { Store } from '../store/store';
+import { StoreMap } from '../store/storeMap';
 import {
   RefraxOptions,
   RefraxParameters,
   RefraxQueryParameters
-} from 'util/composableHash';
-import RefraxConfig from 'util/config';
+} from '../util/composableHash';
+import RefraxConfig from '../util/config';
 import {
   each,
   extend,
@@ -23,13 +23,13 @@ import {
   isPlainObject,
   map,
   select
-} from 'util/tools';
+} from '../util/tools';
 import {
   IActionType ,
   IClassification,
   IKeyValue,
   IStrategy
-} from 'util/types';
+} from '../util/types';
 import { RefraxPath } from './path';
 
 const GlobalStoreMap = new StoreMap();

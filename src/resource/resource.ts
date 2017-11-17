@@ -7,11 +7,11 @@
  */
 import * as Promise from 'bluebird';
 
-import { SchemaPath } from 'schema/path';
-import { FragmentResult } from 'store/fragmentResult';
-import { Store } from 'store/store';
-import { RefraxOptions } from 'util/composableHash';
-import { Disposable } from 'util/disposable';
+import { SchemaPath } from '../schema/path';
+import { FragmentResult } from '../store/fragmentResult';
+import { Store } from '../store/store';
+import { RefraxOptions } from '../util/composableHash';
+import { Disposable } from '../util/disposable';
 import {
   IActionType ,
   IClassification,
@@ -20,7 +20,7 @@ import {
   IStoreEvent,
   ITimestamp,
   TRequestResult
-} from 'util/types';
+} from '../util/types';
 import { BaseResource } from './base';
 import { ResourceDescriptor } from './descriptor';
 import { requestForDescriptor } from './requestForDescriptor';

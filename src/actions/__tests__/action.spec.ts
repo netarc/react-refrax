@@ -9,11 +9,11 @@ import * as Promise from 'bluebird';
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
-import { createAction, IAction } from 'actions/action';
-import { ActionEntity } from 'actions/entity';
-import { RequestError } from 'util/requestError';
-import { getPrototypeOf } from 'util/tools';
-import { IKeyValue } from 'util/types';
+import { createAction, IAction } from '../../actions/action';
+import { ActionEntity } from '../../actions/entity';
+import { RequestError } from '../../util/requestError';
+import { getPrototypeOf } from '../../util/tools';
+import { IKeyValue } from '../../util/types';
 
 // tslint:disable no-magic-numbers align no-unused-expression
 

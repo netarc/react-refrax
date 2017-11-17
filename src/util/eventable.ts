@@ -6,6 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 import { EventEmitter, ListenerFn } from 'eventemitter3';
+
 import { Disposable } from './disposable';
 import { invariant } from './tools';
 

@@ -7,15 +7,15 @@
  */
 import { expect } from 'chai';
 
-import { ResourceDescriptor } from 'resource/descriptor';
-import { RefraxPath } from 'resource/path';
-import { createSchemaCollection } from 'schema/createSchemaCollection';
-import { createSchemaNamespace } from 'schema/createSchemaNamespace';
-import { createSchemaResource } from 'schema/createSchemaResource';
-import { Schema } from 'schema/schema';
-import { RefraxParameters, RefraxQueryParameters } from 'util/composableHash';
-import RefraxConfig from 'util/config';
-import { IActionType, IClassification, IStrategy } from 'util/types';
+import { ResourceDescriptor } from '../../resource/descriptor';
+import { RefraxPath } from '../../resource/path';
+import { createSchemaCollection } from '../../schema/createSchemaCollection';
+import { createSchemaNamespace } from '../../schema/createSchemaNamespace';
+import { createSchemaResource } from '../../schema/createSchemaResource';
+import { Schema } from '../../schema/schema';
+import { RefraxParameters, RefraxQueryParameters } from '../../util/composableHash';
+import RefraxConfig from '../../util/config';
+import { IActionType, IClassification, IStrategy } from '../../util/types';
 
 // tslint:disable: no-string-literal no-magic-numbers
 

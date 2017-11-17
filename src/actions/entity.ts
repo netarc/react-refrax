@@ -7,11 +7,11 @@
  */
 import * as Promise from 'bluebird';
 
-import { MutableResource } from 'resource/mutableResource';
-import { SchemaPath } from 'schema/path';
-import { Eventable } from 'util/eventable';
-import { RequestError } from 'util/requestError';
-import { each, extend, isPlainObject, isPromise } from 'util/tools';
+import { MutableResource } from '../resource/mutableResource';
+import { SchemaPath } from '../schema/path';
+import { Eventable } from '../util/eventable';
+import { RequestError } from '../util/requestError';
+import { each, extend, isPlainObject, isPromise } from '../util/tools';
 import { ActionMethod, IAction } from './action';
 import * as mutable from './mutable';
 

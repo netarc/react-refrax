@@ -7,8 +7,8 @@
  */
 import { singular } from 'pluralize';
 
-import { Store } from 'store/store';
-import { cleanPath, invariant } from 'util/tools';
+import { Store } from '../store/store';
+import { cleanPath, invariant } from '../util/tools';
 
 export const validatePath = (scope: string, path: string) => {
   invariant(typeof(path) === 'string' && path.length >= 0,

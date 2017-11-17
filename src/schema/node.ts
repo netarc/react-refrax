@@ -5,10 +5,10 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { Store } from 'store/store';
-import { StoreMap } from 'store/storeMap';
-import { each, extend, invariant, isArray, isPlainObject } from 'util/tools';
-import { IClassification, IKeyValue } from 'util/types';
+import { Store } from '../store/store';
+import { StoreMap } from '../store/storeMap';
+import { each, extend, invariant, isArray, isPlainObject } from '../util/tools';
+import { IClassification, IKeyValue } from '../util/types';
 
 const validDefinitionKeys: { [key: string]: object } = {};
 

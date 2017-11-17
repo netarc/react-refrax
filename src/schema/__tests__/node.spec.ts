@@ -7,11 +7,11 @@
  */
 import { expect } from 'chai';
 
-import { SchemaNode } from 'schema/node';
-import { Store } from 'store/store';
-import { StoreMap } from 'store/storeMap';
-import { each } from 'util/tools';
-import { IClassification, IKeyValue } from 'util/types';
+import { SchemaNode } from '../../schema/node';
+import { Store } from '../../store/store';
+import { StoreMap } from '../../store/storeMap';
+import { each } from '../../util/tools';
+import { IClassification, IKeyValue } from '../../util/types';
 
 // tslint:disable no-magic-numbers no-unused-expression
 

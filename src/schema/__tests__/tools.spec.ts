@@ -7,8 +7,8 @@
  */
 import { expect } from 'chai';
 
-import { defaultStore, validatePath } from 'schema/tools';
-import { Store } from 'store/store';
+import { defaultStore, validatePath } from '../../schema/tools';
+import { Store } from '../../store/store';
 
 // tslint:disable: no-magic-numbers no-empty
 

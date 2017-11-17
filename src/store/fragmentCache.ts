@@ -5,8 +5,8 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { ResourceDescriptor } from 'resource/descriptor';
-import RefraxConfig from 'util/config';
+import { ResourceDescriptor } from '../resource/descriptor';
+import RefraxConfig from '../util/config';
 import {
   concatUnique,
   each,
@@ -16,8 +16,8 @@ import {
   isObject,
   isPlainObject,
   map
-} from 'util/tools';
-import { IClassification, IKeyValue, IStatus, IStrategy, ITimestamp } from 'util/types';
+} from '../util/tools';
+import { IClassification, IKeyValue, IStatus, IStrategy, ITimestamp } from '../util/types';
 import { FragmentResult } from './fragmentResult';
 
 export interface ICacheTouchResult {

@@ -17,18 +17,18 @@ import {
   wait_for_promise
 } from 'test/TestSupport';
 
-import { ResourceDescriptor } from 'resource/descriptor';
-import { Resource } from 'resource/resource';
-import { createSchemaCollection } from 'schema/createSchemaCollection';
-import { Schema } from 'schema/schema';
-import { FragmentResult } from 'store/fragmentResult';
-import { RefraxOptions } from 'util/composableHash';
+import { ResourceDescriptor } from '../../resource/descriptor';
+import { Resource } from '../../resource/resource';
+import { createSchemaCollection } from '../../schema/createSchemaCollection';
+import { Schema } from '../../schema/schema';
+import { FragmentResult } from '../../store/fragmentResult';
+import { RefraxOptions } from '../../util/composableHash';
 import {
   IActionType,
   IStatus,
   ITimestamp,
   TRequestResult
-} from 'util/types';
+} from '../../util/types';
 
 // tslint:disable: no-unused-expression no-empty no-magic-numbers
 

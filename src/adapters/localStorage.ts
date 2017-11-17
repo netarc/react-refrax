@@ -7,15 +7,15 @@
  */
 import * as Promise from 'bluebird';
 
-import { ResourceDescriptor } from 'resource/descriptor';
-import { RequestError } from 'util/requestError';
-import { extend, invariant } from 'util/tools';
+import { ResourceDescriptor } from '../resource/descriptor';
+import { RequestError } from '../util/requestError';
+import { extend, invariant } from '../util/tools';
 import {
   IActionType,
   IAdapterResponse,
   IClassification,
   IKeyValue
-} from 'util/types';
+} from '../util/types';
 import { BaseAdapter, IStorage } from './base';
 
 const decodeGet = (localStorage: IStorage, key: string): object =>

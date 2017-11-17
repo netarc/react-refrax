@@ -5,9 +5,9 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { ResourceDescriptor } from 'resource/descriptor';
-import { RefraxOptions, RefraxParameters } from 'util/composableHash';
-import { Configurable } from 'util/configurable';
+import { ResourceDescriptor } from '../resource/descriptor';
+import { RefraxOptions, RefraxParameters } from '../util/composableHash';
+import { Configurable } from '../util/configurable';
 import {
   cleanIdentifier,
   each,
@@ -16,8 +16,8 @@ import {
   isPlainObject,
   select,
   warning
-} from 'util/tools';
-import { IActionType, IKeyValue, TStackItem } from 'util/types';
+} from '../util/tools';
+import { IActionType, IKeyValue, TStackItem } from '../util/types';
 import { createSchemaCollection } from './createSchemaCollection';
 import { createSchemaNamespace } from './createSchemaNamespace';
 import { createSchemaResource } from './createSchemaResource';

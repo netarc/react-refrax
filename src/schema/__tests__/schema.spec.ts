@@ -8,7 +8,7 @@
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
-import { Schema } from 'schema/schema';
+import { Schema } from '../../schema/schema';
 
 /* eslint-disable no-new */
 describe('Schema', () => {

@@ -8,10 +8,10 @@
 import { expect } from 'chai';
 import { SinonSpy, spy } from 'sinon';
 
-import { extendMutable, IMutable } from 'actions/mutable';
-import { Eventable } from 'util/eventable';
-import { extend } from 'util/tools';
-import { IKeyValue } from 'util/types';
+import { extendMutable, IMutable } from '../../actions/mutable';
+import { Eventable } from '../../util/eventable';
+import { extend } from '../../util/tools';
+import { IKeyValue } from '../../util/types';
 
 // tslint:disable no-magic-numbers no-empty
 

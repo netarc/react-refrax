@@ -7,7 +7,7 @@
  */
 import { expect } from 'chai';
 
-import { FragmentCache } from 'store/fragmentCache';
+import { FragmentCache } from '../../store/fragmentCache';
 import partialFragmentCacheDestroy from './fragmentCache-destroy.specp';
 import partialFragmentCacheFetch from './fragmentCache-fetch.specp';
 import partialFragmentCacheInvalidate from './fragmentCache-invalidate.specp';

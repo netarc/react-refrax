@@ -7,17 +7,17 @@
  */
 import { expect } from 'chai';
 
-import { BaseResource } from 'resource/base';
-import { RefraxPath } from 'resource/path';
-import { createSchemaCollection } from 'schema/createSchemaCollection';
-import { SchemaPath } from 'schema/path';
-import { Schema } from 'schema/schema';
+import { BaseResource } from '../../resource/base';
+import { RefraxPath } from '../../resource/path';
+import { createSchemaCollection } from '../../schema/createSchemaCollection';
+import { SchemaPath } from '../../schema/path';
+import { Schema } from '../../schema/schema';
 import {
   RefraxOptions,
   RefraxParameters,
   RefraxQueryParameters
-} from 'util/composableHash';
-import { IActionType, TStackItem } from 'util/types';
+} from '../../util/composableHash';
+import { IActionType, TStackItem } from '../../util/types';
 
 // tslint:disable: no-unused-expression no-empty no-magic-numbers
 

@@ -8,9 +8,9 @@
 import Axios, { AxiosResponse } from 'axios';
 import * as Promise from 'bluebird';
 
-import { ResourceDescriptor } from 'resource/descriptor';
-import { RequestError } from 'util/requestError';
-import { any, each, invariant } from 'util/tools';
+import { ResourceDescriptor } from '../resource/descriptor';
+import { RequestError } from '../util/requestError';
+import { any, each, invariant } from '../util/tools';
 import {
   IActionType,
   IAdapterResponse,
@@ -18,7 +18,7 @@ import {
   IStatus,
   ITimestamp,
   TRequestResult
-} from 'util/types';
+} from '../util/types';
 import { BaseAdapter } from './base';
 
 const containsMultipart = (data: IKeyValue) =>

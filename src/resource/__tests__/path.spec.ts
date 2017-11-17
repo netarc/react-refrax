@@ -7,7 +7,7 @@
  */
 import { expect } from 'chai';
 
-import { RefraxPath } from 'resource/path';
+import { RefraxPath } from '../../resource/path';
 
 // tslint:disable: no-magic-numbers no-unused-expression no-empty
 

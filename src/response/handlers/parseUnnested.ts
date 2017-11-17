@@ -5,14 +5,14 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { ResourceDescriptor } from 'resource/descriptor';
+import { ResourceDescriptor } from '../../resource/descriptor';
 import {
   each,
   invariant,
   isArray,
   isPlainObject
-} from 'util/tools';
-import { IKeyValue, IResponseHandlerResult, TResponseHandler } from 'util/types';
+} from '../../util/tools';
+import { IKeyValue, IResponseHandlerResult, TResponseHandler } from '../../util/types';
 
 const parseObject = (descriptor: ResourceDescriptor, object: IKeyValue): IKeyValue => {
   const result: IKeyValue = {};

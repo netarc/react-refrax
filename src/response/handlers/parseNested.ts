@@ -11,8 +11,8 @@ import {
   isArray,
   isPlainObject,
   objToString
-} from 'util/tools';
-import { IKeyValue, IResponseHandlerResult, TResponseHandler } from 'util/types';
+} from '../../util/tools';
+import { IKeyValue, IResponseHandlerResult, TResponseHandler } from '../../util/types';
 
 const parseObject = (object: IKeyValue): IKeyValue => {
   const result: IKeyValue = {};

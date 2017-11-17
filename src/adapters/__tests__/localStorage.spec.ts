@@ -13,14 +13,14 @@ import {
   mock_reset
 } from 'test/TestSupport';
 
-import { LocalStorageAdapter } from 'adapters/localStorage';
-import { ResourceDescriptor } from 'resource/descriptor';
-import { createSchemaCollection } from 'schema/createSchemaCollection';
-import { createSchemaResource } from 'schema/createSchemaResource';
-import { Schema } from 'schema/schema';
-import { RefraxParameters } from 'util/composableHash';
-import { each, keysFor } from 'util/tools';
-import { IActionType, IKeyValue } from 'util/types';
+import { LocalStorageAdapter } from '../../adapters/localStorage';
+import { ResourceDescriptor } from '../../resource/descriptor';
+import { createSchemaCollection } from '../../schema/createSchemaCollection';
+import { createSchemaResource } from '../../schema/createSchemaResource';
+import { Schema } from '../../schema/schema';
+import { RefraxParameters } from '../../util/composableHash';
+import { each, keysFor } from '../../util/tools';
+import { IActionType, IKeyValue } from '../../util/types';
 
 // tslint:disable no-magic-numbers no-unused-expression no-empty
 

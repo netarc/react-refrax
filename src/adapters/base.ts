@@ -7,9 +7,9 @@
  */
 import * as Promise from 'bluebird';
 
-import { ResourceDescriptor } from 'resource/descriptor';
-import { invariant, isPlainObject } from 'util/tools';
-import { IKeyValue, TRequestResult } from 'util/types';
+import { ResourceDescriptor } from '../resource/descriptor';
+import { invariant, isPlainObject } from '../util/tools';
+import { IKeyValue, TRequestResult } from '../util/types';
 
 export interface IStorage {
   setItem(id: string, val: string): void;

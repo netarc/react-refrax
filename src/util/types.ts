@@ -5,10 +5,10 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-// import { BaseAdapter } from 'adapters/base';
-import { ResourceDescriptor } from 'resource/descriptor';
-import { RefraxPath } from 'resource/path';
-// import { Store } from 'resource/store';
+// import { BaseAdapter } from '../adapters/base';
+import { ResourceDescriptor } from '../resource/descriptor';
+import { RefraxPath } from '../resource/path';
+// import { Store } from '../resource/store';
 import {
   ComposableHash,
   RefraxOptions,

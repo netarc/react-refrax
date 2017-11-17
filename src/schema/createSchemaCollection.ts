@@ -7,9 +7,9 @@
  */
 import { singular } from 'pluralize';
 
-import { SchemaPath } from 'schema/path';
-import { cleanIdentifier, extend, invariant, isPlainObject } from 'util/tools';
-import { IClassification, IKeyValue } from 'util/types';
+import { SchemaPath } from '../schema/path';
+import { cleanIdentifier, extend, invariant, isPlainObject } from '../util/tools';
+import { IClassification, IKeyValue } from '../util/types';
 import { SchemaNode } from './node';
 import { storeReference, validatePath } from './tools';
 

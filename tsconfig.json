@@ -2,7 +2,7 @@
   "version": "2.0.10",
   "compilerOptions": {
     "alwaysStrict": true,
-    "declaration": true,
+    "declaration": false,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "lib": [

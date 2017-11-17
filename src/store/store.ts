@@ -5,10 +5,10 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { ResourceDescriptor } from 'resource/descriptor';
-import { Eventable } from 'util/eventable';
-import { extend, invariant, isPlainObject, randomString } from 'util/tools';
-import { IKeyValue, IStatus, IStoreEvent } from 'util/types';
+import { ResourceDescriptor } from '../resource/descriptor';
+import { Eventable } from '../util/eventable';
+import { extend, invariant, isPlainObject, randomString } from '../util/tools';
+import { IKeyValue, IStatus, IStoreEvent } from '../util/types';
 import { FragmentCache } from './fragmentCache';
 import { FragmentResult } from './fragmentResult';
 

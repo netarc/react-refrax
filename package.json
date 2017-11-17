@@ -46,7 +46,7 @@
     "@types/sinon": "^2.3.6",
     "ansi-styles": "^3.2.0",
     "babel-core": "^6.26.0",
-    "babel-plugin-module-resolver": "^2.7.1",
+    "babel-plugin-module-resolver": "^3.0.0",
     "chai": "^4.1.2",
     "del": "^3.0.0",
     "eslint": "^4.2.0",

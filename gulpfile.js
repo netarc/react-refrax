@@ -104,22 +104,12 @@ gulp.task('modules', () => {
   return gulp
     .src(paths.src)
     .pipe(ts.createProject('tsconfig.json', {
+      declaration: true
     })())
     .pipe(babel({
       ignore: ['*.d.ts'],
       plugins: [
-        babelPluginDEV,
-        ['babel-plugin-module-resolver', {
-          alias: {
-            'actions': './lib/actions',
-            'adapters': './lib/adapters',
-            'resource': './lib/resource',
-            'response': './lib/response',
-            'schema': './lib/schema',
-            'store': './lib/store',
-            'util': './lib/util'
-          }
-        }]
+        babelPluginDEV
       ]
     }))
     .pipe(gulp.dest(paths.lib));

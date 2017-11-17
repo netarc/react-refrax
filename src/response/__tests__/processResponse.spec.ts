@@ -12,12 +12,12 @@ import {
   mock_reset
 } from 'test/TestSupport';
 
-import { ResourceDescriptor } from 'resource/descriptor';
-import { processResponse } from 'response/processResponse';
-import { createSchemaCollection } from 'schema/createSchemaCollection';
-import { Schema } from 'schema/schema';
-import { each } from 'util/tools';
-import { IActionType, IStatus } from 'util/types';
+import { ResourceDescriptor } from '../../resource/descriptor';
+import { processResponse } from '../../response/processResponse';
+import { createSchemaCollection } from '../../schema/createSchemaCollection';
+import { Schema } from '../../schema/schema';
+import { each } from '../../util/tools';
+import { IActionType, IStatus } from '../../util/types';
 
 // tslint:disable: no-empty no-magic-numbers
 
