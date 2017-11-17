@@ -5,14 +5,16 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import { createAction } from './actions/action';
-import { ActionEntity } from './actions/entity';
+import * as Action from './actions/action';
+import * as Entity from './actions/entity';
 import { MutableResource } from './resource/mutableResource';
 import { Resource } from './resource/resource';
-import { processResponse } from './response/processResponse';
+import * as Response from './response/processResponse';
 import { createSchemaCollection } from './schema/createSchemaCollection';
 import { createSchemaNamespace } from './schema/createSchemaNamespace';
 import { createSchemaResource } from './schema/createSchemaResource';
+// @ts-ignore error TS4082: Default export of the module has or is using private name..
+import { SchemaNode } from './schema/node';
 import * as SchemaPath from './schema/path';
 import * as Schema from './schema/schema';
 import { Store } from './store/store';
@@ -27,7 +29,7 @@ export * from './actions/action';
 
 // tslint:disable-next-line:no-default-export
 export default {
-  ActionEntity,
+  ActionEntity: Entity.ActionEntity,
   MutableResource,
   Resource,
   Schema,
@@ -38,10 +40,10 @@ export default {
   Config,
   Tools,
   Constants,
-  createAction,
+  createAction: Action.createAction,
   createSchemaCollection,
   createSchemaNamespace,
   createSchemaResource,
-  processResponse,
+  processResponse: Response.processResponse,
   invalidate
 };
