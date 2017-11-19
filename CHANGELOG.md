@@ -1,10 +1,11 @@
 # Unreleased
 
-## [v0.7.0]
+# Released
+
+## [v0.7.0](https://github.com/netarc/refrax/compare/v0.6.1...v0.7)
+> November 18, 2017
 - **Major** Removed addons (React) support to external lib `refrax-react`
 - **Major** Rewrite library in typescript
-
-# Released
 
 ## [v0.6.0](https://github.com/netarc/refrax/compare/v0.6.0...v0.6.1)
 > Octobober 13, 2017
