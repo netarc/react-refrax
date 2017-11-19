@@ -143,7 +143,7 @@ gulp.task('modules-test', () => {
     .pipe(gulp.dest(paths.test));
 });
 
-gulp.task('dist', ['modules'], () => {
+gulp.task('dist', function() {
   var distOpts = {
     debug: true,
     output: 'refrax.js'
@@ -157,7 +157,7 @@ gulp.task('dist', ['modules'], () => {
     .pipe(gulp.dest(paths.dist));
 });
 
-gulp.task('dist:min', ['modules'], () => {
+gulp.task('dist:min', function() {
   var distOpts = {
     debug: false,
     output: 'refrax.min.js'
@@ -170,7 +170,7 @@ gulp.task('dist:min', ['modules'], () => {
     .pipe(gulp.dest(paths.dist));
 });
 
-gulp.task('testMocha', () => {
+gulp.task('testMocha', function() {
   return gulp
     .src([
       'test/**/*.spec.js'
@@ -193,5 +193,5 @@ gulp.task('test', (cb) => {
 });
 
 gulp.task('default', (cb) => {
-  runSequence('clean', ['dist', 'dist:min'], cb);
+  runSequence('clean', 'modules', ['dist', 'dist:min'], cb);
 });

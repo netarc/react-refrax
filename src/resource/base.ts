@@ -16,7 +16,11 @@ import {
   Configurable,
   mixinConfigurable
 } from '../util/configurable';
-import { CompoundDisposable, Disposable } from '../util/disposable';
+import {
+  CompoundDisposable,
+  Disposable,
+  IDisposable
+} from '../util/disposable';
 import {
   // @ts-ignore - Exported variable .. cannot be named https://github.com/Microsoft/TypeScript/issues/9944
   Eventable,
@@ -43,7 +47,7 @@ export type IGenerateDescriptorCallback<T = any> = (descriptor: ResourceDescript
 /**
  * Resource is a public facing interface class to querying a Schema Node.
  */
-export class BaseResource extends mixinEventable(mixinConfigurable(CompoundDisposable)) {
+export class BaseResource extends mixinEventable(mixinConfigurable(CompoundDisposable)) implements IDisposable {
   _schemaPath: SchemaPath;
   _paths: Array<string | RefraxPath>;
 

@@ -1,4 +1,4 @@
-# [Refrax](https://github.com/netarc/refrax/) [![npm version](https://badge.fury.io/js/refrax.svg)](http://badge.fury.io/js/refrax)
+# [Refrax](https://github.com/netarc/refrax/) [![npm version](https://badge.fury.io/js/refrax.svg)](http://badge.fury.io/js/refrax)[![npm downloads](https://img.shields.io/npm/dm/refrax.svg?style=flat-square)](https://www.npmjs.com/package/refrax)
 
 Refrax is a JavaScript framework for building api-based data-driven applications. Inspired by collaboration with [sarahhenkens](https://github.com/sarahhenkens) and [omab](https://github.com/omab) and concepts from similar libraries.
 
