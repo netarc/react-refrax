@@ -49,8 +49,9 @@ export class CompoundDisposable extends Disposable implements ICompoundDisposabl
       for (let i = 0, len = this._disposables.length; i < len; i++) {
         const disposer = this._disposables[i];
 
-        // tslint:disable-next-line: no-unused-expression
-        disposer.disposed && disposer.dispose();
+        if (!disposer.disposed) {
+          disposer.dispose();
+        }
       }
       this._disposables = [];
     });

@@ -19,7 +19,8 @@ import {
   IStatus,
   IStoreEvent,
   ITimestamp,
-  TRequestResult
+  TRequestResult,
+  TResourceArgument
 } from '../util/types';
 import { BaseResource } from './base';
 import { ResourceDescriptor } from './descriptor';
@@ -56,7 +57,7 @@ export class Resource extends BaseResource {
     return result.data;
   }
 
-  constructor(schemaPath: SchemaPath, ...args: any[]) {
+  constructor(schemaPath: SchemaPath, ...args: TResourceArgument[]) {
     super(schemaPath, ...args);
 
     this.addDisposable(new Disposable((): void => {
