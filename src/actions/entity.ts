@@ -12,6 +12,7 @@ import { SchemaPath } from '../schema/path';
 import { Eventable } from '../util/eventable';
 import { RequestError } from '../util/requestError';
 import { each, extend, isPlainObject, isPromise } from '../util/tools';
+import { TResourceArgument } from '../util/types';
 import { ActionMethod, IAction } from './action';
 import * as mutable from './mutable';
 
@@ -22,7 +23,7 @@ export class ActionInvoker {
     this._action = action;
   }
 
-  mutableFrom(schemaPath: SchemaPath, ...args: any[]): MutableResource {
+  mutableFrom(schemaPath: SchemaPath, ...args: TResourceArgument[]): MutableResource {
     const action = this._action;
     const stack = ([] as any[]).concat(
       action._options,
