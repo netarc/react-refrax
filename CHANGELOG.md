@@ -2,7 +2,11 @@
 
 # Released
 
-## [v0.7.0](https://github.com/netarc/refrax/compare/v0.6.1...v0.7)
+## [v0.7.1](https://github.com/netarc/refrax/compare/v0.7.0...v0.7.1)
+> November 21, 2017
+- **Bugfix** Fixed `compoundDisposable` not properly disposing
+
+## [v0.7.0](https://github.com/netarc/refrax/compare/v0.6.1...v0.7.0)
 > November 18, 2017
 - **Major** Removed addons (React) support to external lib `refrax-react`
 - **Major** Rewrite library in typescript
