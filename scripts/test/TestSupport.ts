@@ -14,6 +14,9 @@ import * as Promise from 'bluebird';
 import { axiosMock, Request } from './AxiosMock';
 const map = require('mocha/lib/utils.js').map;
 
+import { IAction } from 'actions/action';
+import { Resource } from 'resource/resource';
+
 // @ts-ignore global access
 global.window = {};
 // @ts-ignore readonly write-protect
@@ -108,7 +111,7 @@ export const delay_for = (delay = 5) =>
       }, delay);
     });
 
-export const delay_for_resource_request = (resource: any) =>
+export const delay_for_resource_request = (resource: Resource) =>
   () => {
     // pre-create our error so we can use its stack-trace when we reject
     const err = new Error('delay timeout!');
@@ -121,13 +124,13 @@ export const delay_for_resource_request = (resource: any) =>
       });
 
       timeout = setTimeout(() => {
-        disposer();
+        disposer.dispose();
         reject(err);
       }, 50);
     });
   };
 
-export const delay_for_action = (resource: any) =>
+export const delay_for_action = (resource: IAction) =>
   () => {
     // pre-create our error so we can use its stack-trace when we reject
     const err = new Error('delay timeout!');
@@ -140,7 +143,7 @@ export const delay_for_action = (resource: any) =>
       });
 
       timeout = setTimeout(() => {
-        disposer();
+        disposer.dispose();
         reject(err);
       }, 50);
     });
