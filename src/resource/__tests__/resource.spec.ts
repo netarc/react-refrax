@@ -124,7 +124,7 @@ describe('resource', () => {
           expect(onChange.callCount).to.equal(1);
           expect(resource.data).to.deep.equal(dataCollectionUsers);
           expect(resource.status).to.equal(IStatus.complete);
-          expect(resource.timestamp).to.not.equal(ITimestamp.loading);
+          expect(resource.timestamp).to.be.greaterThan(ITimestamp.loading);
           expect(store.once.callCount).to.equal(0);
 
           const descriptor = new ResourceDescriptor(null, IActionType.get, schema.users.__stack);
@@ -134,7 +134,46 @@ describe('resource', () => {
           expect(onChange.callCount).to.equal(2);
           expect(resource.data).to.deep.equal(dataCollectionUsersUpdate);
           expect(resource.status).to.equal(IStatus.complete);
-          expect(resource.timestamp).to.not.equal(ITimestamp.loading);
+          expect(resource.timestamp).to.be.greaterThan(ITimestamp.loading);
+        });
+    });
+
+    it('should handle loading a failed request', () => {
+      mock_reset();
+      mock_get('/users', { error: 'foobar' }, 500);
+
+      const onLoad = spy();
+      const onChange = spy();
+      const store = schema.__node.definition.storeMap.getOrCreate('user');
+      spy(store, 'once');
+
+      const resource = new Resource(schema.users);
+
+      resource.on('load', onLoad);
+      resource.on('change', onChange);
+      expect(store.once.callCount).to.equal(0);
+      expect(mock_request_count()).to.equal(0);
+      expect(onLoad.callCount).to.equal(0);
+      expect(onChange.callCount).to.equal(0);
+
+      return delay_for_resource_request(resource)()
+        .then(() => {
+          expect(mock_request_count()).to.equal(1);
+          expect(onLoad.callCount).to.equal(0);
+          expect(onChange.callCount).to.equal(1);
+          expect(resource.data).to.equal(null);
+          expect(resource.status).to.equal(IStatus.stale);
+          expect(resource.timestamp).to.be.greaterThan(ITimestamp.loading);
+          expect(store.once.callCount).to.equal(0);
+
+          const descriptor = new ResourceDescriptor(null, IActionType.get, schema.users.__stack);
+          store.updateResource(descriptor, dataCollectionUsersUpdate, IStatus.complete);
+
+          expect(onLoad.callCount).to.equal(1);
+          expect(onChange.callCount).to.equal(2);
+          expect(resource.data).to.deep.equal(dataCollectionUsersUpdate);
+          expect(resource.status).to.equal(IStatus.complete);
+          expect(resource.timestamp).to.be.greaterThan(ITimestamp.loading);
         });
     });
   });
@@ -323,6 +362,8 @@ describe('resource', () => {
             expect(spyFetchFragment.getCall(0).args[0]).to.deep.equal({ foo: 1 });
             expect(spyDispatchLoad.callCount).to.equal(0);
             expect(resource._dispatchLoad).to.equal(spyDispatchLoad);
+
+            spyFetchFragment.reset();
           })
           .then(delay_for_resource_request(resource))
           .then(() => {
@@ -330,8 +371,8 @@ describe('resource', () => {
             expect(resource.status).to.equal(IStatus.complete);
             expect(resource.timestamp).to.not.equal(ITimestamp.loading);
             expect(mock_request_count()).to.equal(1);
-            expect(spyFetchFragment.callCount).to.equal(2);
-            expect(spyFetchFragment.getCall(1).args[0]).to.deep.equal({
+            expect(spyFetchFragment.callCount).to.equal(1);
+            expect(spyFetchFragment.getCall(0).args[0]).to.deep.equal({
               noPropagate: false,
               noFetchGet: false
             });

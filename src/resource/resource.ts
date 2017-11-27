@@ -89,9 +89,10 @@ export class Resource extends BaseResource {
 
   _subscribeToStore(descriptor: ResourceDescriptor): void {
     const onEvent = (event: IKeyValue) => {
-      // 'touch' actions that originate from ourself come from `_fetchFragment` so we can
-      // safely ignore them as that implicitly updates our cache state
-      if (event.action === IStoreEvent.touch && event.invoker === this) {
+      // Ignore the initial 'touch' action when starting to fetch but not when the request finishes
+      if (event.action === IStoreEvent.touch &&
+          event.invoker === this &&
+          event.touch.timestamp <= ITimestamp.loading) {
         return;
       }
 

@@ -1,5 +1,9 @@
 # Unreleased
 
+## v0.7.2
+
+- **Bugfix** Fixed `Resource` store `onEvent` ignoring touch end events
+
 # Released
 
 ## [v0.7.1](https://github.com/netarc/refrax/compare/v0.7.0...v0.7.1)

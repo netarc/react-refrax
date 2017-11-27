@@ -94,7 +94,7 @@ export class Store extends Eventable {
 
   touchResource(resourceDescriptor: ResourceDescriptor, touch: IKeyValue, options: IKeyValue = {}): void {
     const touched = this.cache.touch(resourceDescriptor, touch);
-    this._notifyChange(IStoreEvent.touch, touched, options);
+    this._notifyChange(IStoreEvent.touch, touched, extend({}, options, { touch }));
   }
 
   updateResource(resourceDescriptor: ResourceDescriptor, data: any, status?: IStatus, options: IKeyValue = {}): void {
