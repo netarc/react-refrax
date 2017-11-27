@@ -1,17 +1,22 @@
 # Unreleased
 
-## v0.7.2
-
-- **Bugfix** Fixed `Resource` store `onEvent` ignoring touch end events
+## v0.7.3
 
 # Released
 
+## [v0.7.2](https://github.com/netarc/refrax/compare/v0.7.1...v0.7.2)
+> November 27, 2017
+
+- **Bugfix** Fixed `compoundDisposable` not properly disposing
+
 ## [v0.7.1](https://github.com/netarc/refrax/compare/v0.7.0...v0.7.1)
 > November 21, 2017
+
 - **Bugfix** Fixed `compoundDisposable` not properly disposing
 
 ## [v0.7.0](https://github.com/netarc/refrax/compare/v0.6.1...v0.7.0)
 > November 18, 2017
+
 - **Major** Removed addons (React) support to external lib `refrax-react`
 - **Major** Rewrite library in typescript
 
