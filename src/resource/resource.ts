@@ -32,7 +32,7 @@ const ResourceMap = new WeakMap();
 /**
  * Resource is a public facing interface class to querying a Schema Node.
  */
-export class Resource extends BaseResource {
+export class Resource<D = any> extends BaseResource {
   static from(schemaPath: SchemaPath, ...args: any[]): Resource {
     return new Resource(schemaPath, ...args);
   }
@@ -51,7 +51,7 @@ export class Resource extends BaseResource {
     return result.status;
   }
 
-  get data(): IKeyValue | Array<IKeyValue | string | number> {
+  get data(): D | null {
     const result = ResourceMap.get(this) || this._fetchFragment();
 
     return result.data;

@@ -16,6 +16,8 @@ const map = require('mocha/lib/utils.js').map;
 
 import { IAction } from 'actions/action';
 import { Resource } from 'resource/resource';
+// @ts-ignore - cannot be named
+import { IKeyValue } from 'util/types';
 
 // @ts-ignore global access
 global.window = {};
