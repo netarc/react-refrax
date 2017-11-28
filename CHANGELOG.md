@@ -1,10 +1,13 @@
 # Unreleased
 
-## v0.7.4
-
-- **Minor** Added generic typing to `Resource` data
+## v0.7.5
 
 # Released
+
+## [v0.7.4](https://github.com/netarc/refrax/compare/v0.7.3...v0.7.4)
+> November 28, 2017
+
+- **Minor** Added generic typing to `Resource` data
 
 ## [v0.7.3](https://github.com/netarc/refrax/compare/v0.7.1...v0.7.3)
 > November 27, 2017

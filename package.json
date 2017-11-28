@@ -1,6 +1,6 @@
 {
   "name": "refrax",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "A framework for building api-based data-driven applications.",
   "author": "Joshua Hollenbeck",
   "license": "BSD-3-Clause",
