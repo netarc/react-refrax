@@ -28,7 +28,7 @@ export type ActionMethod = (this: ActionInvoker, data: object, ...args: any[]) =
 export type ActionParam = RefraxOptions | RefraxParameters | RefraxQueryParameters | string | object;
 
 export interface IAction extends IStatusActionable, Configurable, IMutable, Eventable {
-  (...args: any[]): PromiseLike<object>;
+  (...args: any[]): PromiseLike<any>;
   _entity: ActionEntity;
   _stack: ActionEntity[];
   clone(): IAction;
