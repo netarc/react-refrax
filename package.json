@@ -19,8 +19,8 @@
     "dist/",
     "lib/"
   ],
-  "main": "lib/Refrax.js",
-  "typings": "lib/Refrax.d.ts",
+  "main": "lib/refrax.js",
+  "typings": "lib/refrax.d.ts",
   "scripts": {
     "build": "gulp",
     "lint": "tslint -p . -c tslint.json",

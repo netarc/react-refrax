@@ -2,6 +2,8 @@
 
 ## v0.7.5
 
+- **Bugfix** Fix case-sensitive package information
+
 # Released
 
 ## [v0.7.4](https://github.com/netarc/refrax/compare/v0.7.3...v0.7.4)
